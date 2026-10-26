@@ -309,7 +309,7 @@ function Settings() {
             </section>
 
             {/* Payment gateways */}
-            <section className="overflow-hidden rounded-2xl border border-border bg-surface">
+            {/* <section className="overflow-hidden rounded-2xl border border-border bg-surface">
               <div className="flex items-center justify-between gap-3 p-5">
                 <div className="flex items-center gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-secondary">
@@ -342,7 +342,7 @@ function Settings() {
               </div>
 
               {renderEntries(gateways, "gateway")}
-            </section>
+            </section> */}
           </div>
         )}
       </div>
