@@ -20,8 +20,11 @@ export async function loadReferenceData() {
       country.currencies ?? [],
     ]),
   );
-
-  return { countries, currencies, countryCurrencies };
+  return {
+    countries,
+    currencies,
+    countryCurrencies,
+  };
 }
 
 

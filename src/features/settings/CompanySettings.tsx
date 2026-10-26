@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { getCountryTimezones } from "@countrystatecity/countries-browser";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
@@ -7,6 +8,7 @@ import FormField from "@/components/ui/FormField";
 import { Section } from "@/features/insights/components/Kpi";
 import { useAsync } from "@/features/insights/hooks/useReport";
 import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
+import { loadReferenceData } from "@/lib/referenceData";
 import { ATTRIBUTION_MODELS } from "@/services/insights";
 import { api } from "@/services/api";
 
@@ -33,9 +35,15 @@ const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 /** Company profile + attribution settings (5.10). Changing timezone / currency / model / lookback recalculates reports. */
 export default function CompanySettings() {
   const settings = useAsync<WorkspaceSettings>(async () => (await api.get<{ data: WorkspaceSettings }>("/api/workspace/settings")).data.data, []);
+  const referenceData = useAsync(loadReferenceData, []);
   const [form, setForm] = useState<WorkspaceSettings | null>(null);
   const [overrides, setOverrides] = useState("");
   const [saving, setSaving] = useState(false);
+  const timezoneOptions = useAsync(
+    () => getCountryTimezones(form?.country ?? ""),
+    [form?.country],
+    Boolean(form?.country),
+  );
 
   useEffect(() => {
     if (!settings.data) return;
@@ -43,8 +51,37 @@ export default function CompanySettings() {
     setOverrides(Object.entries(settings.data.lookbackOverrides ?? {}).map(([k, v]) => `${k}=${v}`).join(", "));
   }, [settings.data]);
 
-  if (!form) return <Section title="Company profile"><p className="text-sm text-text-muted">{settings.error ?? "Loading…"}</p></Section>;
+  if (!form || !referenceData.data) {
+    return <Section title="Company profile"><p className="text-sm text-text-muted">{settings.error ?? referenceData.error ?? "Loading…"}</p></Section>;
+  }
+  const referenceDataValue = referenceData.data;
   const set = <K extends keyof WorkspaceSettings>(key: K, value: WorkspaceSettings[K]) => setForm({ ...form, [key]: value });
+  const countries = [...referenceDataValue.countries].sort((a, b) => a.name.localeCompare(b.name));
+  const currencies = [...referenceDataValue.currencies]
+    .filter((currency, index, list) => list.findIndex((item) => item.code === currency.code) === index)
+    .sort((a, b) => a.code.localeCompare(b.code));
+  const countryTimezones = timezoneOptions.data ?? [];
+  const timezones = countryTimezones.includes(form.timezone) ? countryTimezones : [form.timezone, ...countryTimezones];
+
+  const handleCountryChange = async (countryCode: string) => {
+    const countryCurrency = referenceDataValue.countryCurrencies[countryCode]?.find((code) =>
+      currencies.some((currency) => currency.code === code),
+    );
+    setForm((current) => current ? {
+      ...current,
+      country: countryCode,
+      reportingCurrency: countryCurrency ?? current.reportingCurrency,
+    } : current);
+
+    try {
+      const countryTimezones = await getCountryTimezones(countryCode);
+      if (countryTimezones[0]) {
+        setForm((current) => current ? { ...current, timezone: countryTimezones[0] } : current);
+      }
+    } catch (error) {
+      toast.error(getRequestErrorMessage(error));
+    }
+  };
 
   const save = async () => {
     let parsed: Record<string, number> | null = null;
@@ -89,9 +126,21 @@ export default function CompanySettings() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <FormField label="Company name" htmlFor="s-name"><Input id="s-name" value={form.name} onChange={(e) => set("name", e.target.value)} /></FormField>
         <FormField label="Website" htmlFor="s-web"><Input id="s-web" value={form.websiteUrl ?? ""} onChange={(e) => set("websiteUrl", e.target.value)} placeholder="https://example.com" /></FormField>
-        <FormField label="Country (ISO-2)" htmlFor="s-country"><Input id="s-country" maxLength={2} value={form.country} onChange={(e) => set("country", e.target.value.toUpperCase())} /></FormField>
-        <FormField label="Timezone (IANA)" htmlFor="s-tz" hint="Days in every report follow this timezone"><Input id="s-tz" value={form.timezone} onChange={(e) => set("timezone", e.target.value)} placeholder="Asia/Kolkata" /></FormField>
-        <FormField label="Reporting currency" htmlFor="s-cur"><Input id="s-cur" maxLength={3} value={form.reportingCurrency} onChange={(e) => set("reportingCurrency", e.target.value.toUpperCase())} /></FormField>
+        <FormField label="Country (ISO-2)" htmlFor="s-country">
+          <Select id="s-country" value={form.country} onChange={(e) => void handleCountryChange(e.target.value)}>
+            {countries.map((country) => <option key={country.iso2} value={country.iso2}>{country.name} ({country.iso2})</option>)}
+          </Select>
+        </FormField>
+        <FormField label="Timezone (IANA)" htmlFor="s-tz" hint="Days in every report follow this timezone">
+          <Select id="s-tz" value={form.timezone} onChange={(e) => set("timezone", e.target.value)}>
+            {timezones.map((timezone) => <option key={timezone} value={timezone}>{timezone}</option>)}
+          </Select>
+        </FormField>
+        <FormField label="Reporting currency" htmlFor="s-cur">
+          <Select id="s-cur" value={form.reportingCurrency} onChange={(e) => set("reportingCurrency", e.target.value)}>
+            {currencies.map((currency) => <option key={currency.code} value={currency.code}>{currency.code} - {currency.name}</option>)}
+          </Select>
+        </FormField>
         <FormField label="Week starts on" htmlFor="s-week">
           <Select id="s-week" value={form.weekStart} onChange={(e) => set("weekStart", Number(e.target.value))}>{DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}</Select>
         </FormField>
