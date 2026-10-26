@@ -14,7 +14,21 @@ import Transactions from "@/pages/company/Transactions";
 import Customers from "@/pages/company/Customers";
 import Team from "@/pages/company/Team";
 import Campaign from "@/pages/company/Campaign";
-// import Upcoming from "@/pages/company/Upcoming";
+import Upcoming from "@/pages/company/Upcoming";
+import Refunds from "@/pages/company/Refunds";
+import Channels from "@/pages/insights/Channels";
+import Journeys from "@/pages/insights/Journeys";
+import Locations from "@/pages/insights/Locations";
+import AdSpend from "@/pages/insights/AdSpend";
+import Integrations from "@/pages/insights/Integrations";
+import ForgotPassword from "@/pages/auth/ForgotPassword";
+import ResetPassword from "@/pages/auth/ResetPassword";
+import VerifyEmail from "@/pages/auth/VerifyEmail";
+import AcceptInvite from "@/pages/auth/AcceptInvite";
+import SetupTwoFactor from "@/pages/auth/SetupTwoFactor";
+import PlatformHealth from "@/pages/superAdmin/PlatformHealth";
+import PlatformAuditLog from "@/pages/superAdmin/PlatformAuditLog";
+import FxRates from "@/pages/superAdmin/FxRates";
 
 import SignIn from "@/pages/auth/SignIn";
 import Dashboard from "@/pages/superAdmin/Dashboard";
@@ -63,7 +77,14 @@ function App() {
             <Route path="campaigns" element={<Campaign />} />
             <Route path="customers" element={<Customers />} />
             <Route path="transactions" element={<Transactions />} />
-            {/* <Route path="upcoming" element={<Upcoming />} /> */}
+            <Route path="refunds" element={<Refunds />} />
+            <Route path="bookings" element={<Upcoming />} />
+            <Route path="upcoming" element={<Upcoming />} />
+            <Route path="channels" element={<Channels />} />
+            <Route path="journeys" element={<Journeys />} />
+            <Route path="locations" element={<Locations />} />
+            <Route path="ad-spend" element={<AdSpend />} />
+            <Route path="integrations" element={<Integrations />} />
           </Route>
         </Route>
 
@@ -93,8 +114,18 @@ function App() {
               <Route path="campaigns" element={<Campaign />} />
               <Route path="customers" element={<Customers />} />
               <Route path="transactions" element={<Transactions />} />
-              {/* <Route path="upcoming" element={<Upcoming />} /> */}
+              <Route path="refunds" element={<Refunds />} />
+              <Route path="bookings" element={<Upcoming />} />
+              <Route path="upcoming" element={<Upcoming />} />
+              <Route path="channels" element={<Channels />} />
+              <Route path="journeys" element={<Journeys />} />
+              <Route path="locations" element={<Locations />} />
+              <Route path="ad-spend" element={<AdSpend />} />
+              <Route path="integrations" element={<Integrations />} />
             </Route>
+            <Route path="health" element={<PlatformHealth />} />
+            <Route path="audit-log" element={<PlatformAuditLog />} />
+            <Route path="fx-rates" element={<FxRates />} />
             <Route path="members" element={<Members />} />
             <Route path="settings" element={<Settings />}/>
           </Route>
@@ -105,6 +136,15 @@ function App() {
         element={<GuestRoute />}>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+        </Route>
+        {/* Reached from emailed links: work signed in or out */}
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-user" element={<VerifyEmail />} />
+        <Route path="/accept-invite" element={<AcceptInvite />} />
+        {/* Platform admins without two-factor login land here (the API refuses everything else) */}
+        <Route element={<ProtectedRoute allowedRoles={["platform_admin", "company_admin", "company_viewer"]} />}>
+          <Route path="/setup-2fa" element={<SetupTwoFactor />} />
         </Route>
         <Route path="/docs" element={<Docs/>} />
         <Route path="/test" element={<Testing />} />

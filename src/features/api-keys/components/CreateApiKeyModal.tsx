@@ -32,6 +32,7 @@ function CreateApiKeyModal({
 }: CreateApiKeyModalProps) {
   const [name, setName] = useState("");
   const [mode, setMode] = useState<TMode>("live");
+  const [keyType, setKeyType] = useState<"publishable" | "secret">("publishable");
   const [originInput, setOriginInput] = useState("");
   const [origins, setOrigins] = useState<string[]>([]);
   const [validationError, setValidationError] = useState("");
@@ -91,7 +92,7 @@ function CreateApiKeyModal({
       setValidationError("Enter a name for this API key.");
       return;
     }
-    if (origins.length === 0) {
+    if (keyType === "publishable" && origins.length === 0) {
       setValidationError("Add at least one allowed origin.");
       return;
     }
@@ -105,7 +106,7 @@ function CreateApiKeyModal({
       return;
     }
 
-    if (await onSubmit({ name: name.trim() , mode: mode, allowedOrigins: origins })) {
+    if (await onSubmit({ name: name.trim(), mode, type: keyType, allowedOrigins: keyType === "publishable" ? origins : [] })) {
       setName("");
       setOrigins([]);
       setOriginInput("");
@@ -136,6 +137,13 @@ function CreateApiKeyModal({
           />
         </FormField>
 
+        <FormField label="Key type" htmlFor="api-key-type">
+          <Select id="api-key-type" value={keyType} onChange={(event) => setKeyType(event.target.value as "publishable" | "secret")}>
+            <option value="publishable">Publishable — website tracking script (safe to show in page source)</option>
+            <option value="secret">Secret — your server: orders, refunds, reports (never put it in a website)</option>
+          </Select>
+        </FormField>
+
         <FormField label="Mode" htmlFor="api-key-mode">
           <Select
             id="api-key-mode"
@@ -143,7 +151,7 @@ function CreateApiKeyModal({
             onChange={(event) => setMode(event.target.value as TMode)}
           >
             <option value="live">Live</option>
-            <option value="test">Test</option>
+            <option value="test">Test (sandbox: data is marked as test and kept out of reports)</option>
           </Select>
         </FormField>
 

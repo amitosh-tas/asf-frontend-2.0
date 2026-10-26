@@ -23,9 +23,12 @@ import {
   getWorkspaceById,
   revokeKeyAdmin,
   updateUser,
+  setWorkspaceStatus,
   updateWorkspace,
   type WorkspaceWriteData,
 } from "@/services/platfromAdmin";
+import SupportTools from "@/features/support/components/SupportTools";
+import ReasonDialog from "@/components/ui/ReasonDialog";
 import toast from "react-hot-toast";
 import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
 
@@ -136,6 +139,7 @@ function WorkspaceById() {
   const [showAddMember, setShowAddMember] = useState(false);
   const [savingWorkspace, setSavingWorkspace] = useState(false);
   const [deletingWorkspace, setDeletingWorkspace] = useState(false);
+  const [dialog, setDialog] = useState<null | "deleteUser" | "deleteWorkspace" | "suspend">(null);
   const [editingWorkspace, setEditingWorkspace] = useState(false);
   const [workspaceEditForm, setWorkspaceEditForm] =
     useState<CompanyDetailsValues>({
@@ -273,10 +277,14 @@ function WorkspaceById() {
     }
   };
 
-  const handleDeleteUser = async () => {
+  const handleDeleteUser = () => {
+    if (!userToEdit || deletingUser) return;
+    setDialog("deleteUser");
+  };
+
+  const doDeleteUser = async () => {
     if (!userToEdit || deletingUser) return;
     const user = userToEdit;
-    if (!window.confirm(`Delete ${user.name} from this workspace?`)) return;
 
     setDeletingUser(true);
     try {
@@ -344,35 +352,40 @@ function WorkspaceById() {
     setEditingWorkspace(true);
   };
 
-  const handleDeleteWorkspace = async () => {
+  const handleDeleteWorkspace = () => {
     if (!id || !workspaceData || deletingWorkspace || savingWorkspace) return;
-    const workspaceName = workspaceData.workspace.name;
-    if (!window.confirm(`Delete workspace "${workspaceName}"? This cannot be undone.`)) {
-      return;
-    }
+    setDialog("deleteWorkspace");
+  };
+
+  const doDeleteWorkspace = async (reason: string) => {
+    if (!id || !workspaceData || deletingWorkspace || savingWorkspace) return;
 
     setDeletingWorkspace(true);
     setWorkspaceFormError("");
     try {
-      await deleteWorkspace(id);
+      await deleteWorkspace(id, reason);
       toast.success("Workspace deleted successfully.");
       navigate("/super/workspaces", { replace: true });
     } catch (deleteError) {
       console.error("Failed to delete workspace:", deleteError);
-      setWorkspaceFormError("Unable to delete this workspace. Please try again.");
+      setWorkspaceFormError(getRequestErrorMessage(deleteError));
     } finally {
       setDeletingWorkspace(false);
     }
   };
 
-  const changeWorkspaceStatus = async () => {
+  const changeWorkspaceStatus = async (reason?: string) => {
     if (!id || !workspaceData || savingWorkspace) return;
-    const nextStatus = workspaceData.workspace.status.toLowerCase() === "suspended"
+    const nextStatus = ["suspended", "pending"].includes(workspaceData.workspace.status.toLowerCase())
       ? "active"
       : "suspended";
+    if (nextStatus === "suspended" && !reason) {
+      setDialog("suspend");
+      return;
+    }
     setSavingWorkspace(true);
     try {
-      await updateWorkspace({ id, data: { status: nextStatus } });
+      await setWorkspaceStatus(id, nextStatus, reason);
       toast.success(nextStatus === "active" ? "Workspace activated." : "Workspace suspended.");
       await refreshWorkspaceData();
     } catch (updateError) {
@@ -495,9 +508,11 @@ function WorkspaceById() {
             disabled={savingWorkspace}
             onClick={() => void changeWorkspaceStatus()}
           >
-            {workspaceData?.workspace.status.toLowerCase() === "suspended"
-              ? "Activate workspace"
-              : "Suspend workspace"}
+            {workspaceData?.workspace.status.toLowerCase() === "pending"
+              ? "Approve workspace"
+              : workspaceData?.workspace.status.toLowerCase() === "suspended"
+                ? "Activate workspace"
+                : "Suspend workspace"}
           </Button>
         </div>
       }
@@ -579,6 +594,13 @@ function WorkspaceById() {
             connectors={workspaceData.connectors}
             revokingApiKeyId={revokingApiKeyId}
             onRevokeApiKey={revokeWorkspaceApiKey}
+          />
+
+          <SupportTools
+            workspaceId={workspaceData.workspace.id}
+            slug={workspaceData.workspace.slug}
+            apiKeys={workspaceData.apiKeys.filter((key) => !key.revokedAt)}
+            onDone={() => void refreshWorkspaceData()}
           />
 
           {editingWorkspace && (
@@ -917,6 +939,51 @@ function WorkspaceById() {
         <EmptyState
           title="No Workspace Defined"
           description="Please go back and select a workspace again."
+        />
+      )}
+      {dialog === "deleteUser" && userToEdit && (
+        <ReasonDialog
+          title={`Delete ${userToEdit.name}?`}
+          description={`${userToEdit.email} loses access to this company straight away.`}
+          requireReason={false}
+          confirmLabel="Delete user"
+          destructive
+          busy={deletingUser}
+          onClose={() => setDialog(null)}
+          onConfirm={() => {
+            setDialog(null);
+            void doDeleteUser();
+          }}
+        />
+      )}
+      {dialog === "deleteWorkspace" && workspaceData && (
+        <ReasonDialog
+          title={`Delete ${workspaceData.workspace.name} and all of its data?`}
+          description="Every user, key, visit, customer, order, booking and report row of this company is deleted. This cannot be undone. The deletion is kept in the platform audit log."
+          reasonLabel="Reason (kept in the platform audit log)"
+          confirmText={workspaceData.workspace.slug}
+          confirmLabel="Delete company"
+          destructive
+          busy={deletingWorkspace}
+          onClose={() => setDialog(null)}
+          onConfirm={(reason) => {
+            setDialog(null);
+            void doDeleteWorkspace(reason);
+          }}
+        />
+      )}
+      {dialog === "suspend" && workspaceData && (
+        <ReasonDialog
+          title={`Suspend ${workspaceData.workspace.name}?`}
+          description="The company's users cannot sign in and its API keys are refused until you activate it again. Data is kept."
+          confirmLabel="Suspend company"
+          destructive
+          busy={savingWorkspace}
+          onClose={() => setDialog(null)}
+          onConfirm={(reason) => {
+            setDialog(null);
+            void changeWorkspaceStatus(reason);
+          }}
         />
       )}
     </PageLayout>

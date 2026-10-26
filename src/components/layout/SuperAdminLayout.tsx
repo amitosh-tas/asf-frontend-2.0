@@ -1,10 +1,7 @@
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "@/components/layout/Sidebar";
 import Button from "@/components/ui/Button";
-import {
-  getCompanyNavigation,
-  superAdminNavigation,
-} from "@/config/navigation";
+import { getViewNavigation, superAdminNavigation } from "@/config/navigation";
 
 interface WorkspaceViewerLocationState {
   workspaceName?: string;
@@ -21,11 +18,7 @@ function SuperAdminLayout() {
     location.state as WorkspaceViewerLocationState | null;
   const viewerBasePath = `/super/workspaces/${id ?? ""}/view`;
   const navigationItems = isViewingWorkspace
-    ? getCompanyNavigation("company_viewer").map((item) => ({
-        ...item,
-        path: item.path === "/" ? viewerBasePath : `${viewerBasePath}${item.path}`,
-        end: item.path === "/",
-      }))
+    ? getViewNavigation(viewerBasePath)
     : superAdminNavigation;
 
   return (

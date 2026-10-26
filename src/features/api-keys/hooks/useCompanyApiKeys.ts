@@ -65,7 +65,7 @@ export function useCompanyApiKeys() {
     setError("");
 
     try {
-      const response = await rotateCompanyKey();
+      const response = await rotateCompanyKey(selectedKey.id);
 
       // Supports both { data: { key } } and { key }.
       const key: string | undefined =

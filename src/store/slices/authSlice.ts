@@ -9,6 +9,14 @@ export interface AuthUser {
   email: string;
   role: UserRole;
   status?: AccountStatus;
+  workspaceId?: string | null;
+  twoFactorEnabled?: boolean;
+  /** this session passed a two-factor check */
+  mfa?: boolean;
+  /** platform admin who must still set up / pass two-factor login */
+  mfaPending?: boolean;
+  /** company viewers limited to some locations (empty = all) */
+  allowedLocationIds?: string[];
 }
 
 interface AuthState {

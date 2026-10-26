@@ -10,10 +10,17 @@ import {
   RevokeApiKeyModal,
 } from "@/features/api-keys";
 import { normalizeAllowedOrigin } from "@/features/api-keys/utils/origins";
-import Connectors from "@/features/connectors/components/Connectors";
 import SupportAccessLog from "@/features/support/components/SupportAccessLog";
 import Button from "@/components/ui/Button";
 import { Plus } from "lucide-react";
+import CompanySettings from "@/features/settings/CompanySettings";
+import ChannelRules from "@/features/settings/ChannelRules";
+import LocationsManager from "@/features/settings/LocationsManager";
+import Webhooks from "@/features/settings/Webhooks";
+import AuditLog from "@/features/settings/AuditLog";
+import DataPrivacy from "@/features/settings/DataPrivacy";
+import SetupChecklist from "@/features/settings/SetupChecklist";
+import { TwoFactorFromSession } from "@/features/settings/TwoFactor";
 
 function Settings() {
   const {
@@ -80,7 +87,11 @@ function Settings() {
 
   return (
     <PageLayout title="Settings" headTitle="Manage your workflow">
-      <div className="flex flex-col gap-6">
+      <SetupChecklist canRunTest />
+      <CompanySettings />
+      <ChannelRules />
+      <LocationsManager />
+      <div className="mb-6 flex flex-col gap-6">
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
@@ -90,7 +101,7 @@ function Settings() {
 
             <p className="text-sm text-text-muted">
               Manage the API credentials used to connect your website
-              to Ledger.
+              to the platform: a publishable key for your website, a secret key for your server. Test keys write sandbox data kept out of reports.
             </p>
           </div>
 
@@ -99,7 +110,7 @@ function Settings() {
               <i className="fi fi-rr-shield-check" />
               Keys are sensitive credentials
             </div>
-            {activeKeys === 0 && (
+            {activeKeys < 4 && (
               <Button
                 type="button"
                 onClick={() => setCreateModalOpen(true)}
@@ -198,7 +209,11 @@ function Settings() {
         />
       </div>
 
-      <Connectors />
+      <Webhooks />
+      <div className="mb-6"><AuditLog /></div>
+      <DataPrivacy />
+      <TwoFactorFromSession />
+      <p className="mb-6 text-sm text-text-muted">Payment, booking and store connections live under Integrations.</p>
       <SupportAccessLog />
 
     </PageLayout>

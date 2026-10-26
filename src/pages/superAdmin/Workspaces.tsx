@@ -12,17 +12,17 @@ import CompanyDetailsFields, {
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
+import ReasonDialog from "@/components/ui/ReasonDialog";
 
 import {
+  createCompanyWorkspace,
   getWorkspaces,
-  updateWorkspace,
+  setWorkspaceStatus,
 } from "@/services/platfromAdmin";
+import { passwordProblem } from "@/features/auth/passwordPolicy";
+import { formatDateTime, formatNumber } from "@/features/reports/utils/formatting";
 import toast from "react-hot-toast";
 import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
-import {
-  registerCompany,
-  type RegisterCompanyCredentials,
-} from "@/services/authService";
 
 interface WorkspacePagination {
   page: number;
@@ -45,16 +45,21 @@ interface Workspace {
   status: WorkspaceStatus;
   reportingCurrency: string;
   createdAt: string;
+  emailVerified?: boolean;
+  eventsPerDay?: number;
+  lastEventAt?: string | null;
+  integrationHealth?: "healthy" | "pending" | "failing" | "none";
+  connectors?: number;
 }
 
-type WorkspaceStatus = "active" | "suspended" | "closed";
+type WorkspaceStatus = "pending" | "active" | "suspended" | "closed";
 
 const WORKSPACE_STATUSES: ReadonlyArray<{
   value: WorkspaceStatus;
   label: string;
 }> = [
     { value: "active", label: "Active" },
-    // { value: "pending", label: "Pending" },
+    { value: "pending", label: "Pending approval" },
     { value: "suspended", label: "Suspended" },
     { value: "closed", label: "Closed" },
   ];
@@ -118,6 +123,7 @@ function Workspaces() {
   const [savingWorkspaceId, setSavingWorkspaceId] = useState<string | null>(null);
   const [companyForm, setCompanyForm] = useState<AddCompanyForm>(EMPTY_COMPANY);
   const [showAddCompany, setShowAddCompany] = useState(false);
+  const [statusChange, setStatusChange] = useState<{ workspace: Workspace; status: WorkspaceStatus } | null>(null);
 
   const handleWorkspaceClick = (workspace: Workspace) => {
     navigate(`/super/workspaces/${workspace.id}`);
@@ -170,8 +176,9 @@ function Workspaces() {
     event.preventDefault();
     if (addingWorkspace) return;
     setAddCompanyError("");
-    if (companyForm.password.length < 8) {
-      setAddCompanyError("Password must contain at least 8 characters.");
+    const weak = passwordProblem(companyForm.password, companyForm.email);
+    if (weak) {
+      setAddCompanyError(weak);
       return;
     }
     if (companyForm.password !== companyForm.confirmPassword) {
@@ -180,27 +187,22 @@ function Workspaces() {
     }
     setAddingWorkspace(true);
     try {
-      const payload: RegisterCompanyCredentials = {
+      // Created by a platform admin: active straight away, no email confirmation needed.
+      await createCompanyWorkspace({
         name: companyForm.name.trim(),
-        email: companyForm.email.trim(),
-        password: companyForm.password,
-        adminName: companyForm.adminName.trim(),
         country: companyForm.country,
-        industry: companyForm.industry,
-        timezone: companyForm.timezone,
-        dataRegion: companyForm.dataRegion,
-        currency: companyForm.currency,
-        // paymentMethod: companyForm.paymentMethod.trim(),
-      };
-      await registerCompany(payload, { preserveSession: true });
+        industry: companyForm.industry || undefined,
+        timezone: companyForm.timezone || undefined,
+        currency: companyForm.currency || undefined,
+        admin: { name: companyForm.adminName.trim(), email: companyForm.email.trim(), password: companyForm.password },
+      });
       toast.success("Company workspace created.");
       setCompanyForm(EMPTY_COMPANY);
       setShowAddCompany(false);
       setAddCompanyError("");
       await loadWorkspaces();
     } catch (createError) {
-      console.error("Failed to create company workspace:", createError);
-      setAddCompanyError("Unable to create company workspace. Please try again.");
+      setAddCompanyError(getRequestErrorMessage(createError));
     } finally {
       setAddingWorkspace(false);
     }
@@ -209,12 +211,17 @@ function Workspaces() {
   const updateWorkspaceStatus = async (
     workspace: Workspace,
     status: WorkspaceStatus,
+    reason?: string,
   ) => {
     if (workspace.status === status) return;
+    if ((status === "suspended" || status === "closed") && !reason) {
+      setStatusChange({ workspace, status });
+      return;
+    }
     setSavingWorkspaceId(workspace.id);
     try {
-      await updateWorkspace({ id: workspace.id, data: { status } });
-      toast.success(`Workspace status changed to ${status}.`);
+      await setWorkspaceStatus(workspace.id, status, reason);
+      toast.success(workspace.status === "pending" && status === "active" ? `${workspace.name} approved.` : `Workspace status changed to ${status}.`);
       await loadWorkspaces();
     } catch (updateError) {
       console.error("Failed to update workspace status:", updateError);
@@ -251,8 +258,30 @@ function Workspaces() {
       key: "status",
       header: "Status",
       render: (row) => (
-        <StatusPill status={row.status.toUpperCase() as
-          "ACTIVE" | "SUSPENDED" | "CLOSED"} />
+        <div className="flex flex-col gap-1">
+          {row.status === "pending" ? <Pill name="pending approval" /> : <StatusPill status={row.status.toUpperCase() as "ACTIVE" | "SUSPENDED" | "CLOSED"} />}
+          {row.emailVerified === false && <span className="text-xs text-text-muted">email not confirmed</span>}
+        </div>
+      ),
+    },
+    {
+      key: "activity",
+      header: "Events / day",
+      align: "right",
+      render: (row) => (
+        <div className="flex flex-col items-end gap-0.5">
+          <span>{formatNumber(row.eventsPerDay, 1)}</span>
+          <span className="text-xs text-text-muted">{row.lastEventAt ? `last ${formatDateTime(row.lastEventAt)}` : "no events yet"}</span>
+        </div>
+      ),
+    },
+    {
+      key: "health",
+      header: "Integrations",
+      render: (row) => (
+        <span className={row.integrationHealth === "failing" ? "text-sm font-medium text-danger" : "text-sm text-text-muted"}>
+          {row.integrationHealth === "none" || !row.integrationHealth ? "none" : `${row.connectors ?? 0} · ${row.integrationHealth}`}
+        </span>
       ),
     },
     {
@@ -281,6 +310,20 @@ function Workspaces() {
           >
             Edit
           </button> */}
+          {row.status === "pending" && (
+            <Button
+              type="button"
+              size="sm"
+              disabled={savingWorkspaceId === row.id || row.emailVerified === false}
+              title={row.emailVerified === false ? "The company has not confirmed its email yet" : undefined}
+              onClick={(event) => {
+                event.stopPropagation();
+                void updateWorkspaceStatus(row, "active");
+              }}
+            >
+              Approve
+            </Button>
+          )}
           <Select
             aria-label={`Change status for ${row.name}`}
             value={row.status}
@@ -498,6 +541,21 @@ function Workspaces() {
             </div>
           </form>
         </div>
+      )}
+      {statusChange && (
+        <ReasonDialog
+          title={`${statusChange.status === "closed" ? "Close" : "Suspend"} ${statusChange.workspace.name}?`}
+          description={statusChange.status === "closed" ? "Nobody at the company can sign in and its keys stop working. Data is kept." : "The company's users cannot sign in and its keys are refused until you activate it again. Data is kept."}
+          confirmLabel={statusChange.status === "closed" ? "Close company" : "Suspend company"}
+          destructive
+          busy={savingWorkspaceId === statusChange.workspace.id}
+          onClose={() => setStatusChange(null)}
+          onConfirm={(reason) => {
+            const { workspace, status } = statusChange;
+            setStatusChange(null);
+            void updateWorkspaceStatus(workspace, status, reason);
+          }}
+        />
       )}
     </PageLayout>
   );

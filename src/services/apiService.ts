@@ -5,6 +5,7 @@ export type TMode = "live" | "test"
 export interface KeyCredentials {
   name: string;
   mode?: TMode;
+  type?: "publishable" | "secret";
   allowedOrigins: string[];
 }
 
@@ -12,8 +13,9 @@ export async function getCompanyKey() {
   return api.get("/api/api-keys");
 }
 
-export async function rotateCompanyKey() {
-  return api.post("/api/api-keys/rotate");
+/** Rotates one key; the old key keeps working for `graceHours` so a live site can switch over. */
+export async function rotateCompanyKey(id?: string, graceHours = 24) {
+  return id ? api.post(`/api/api-keys/${encodeURIComponent(id)}/rotate`, { graceHours }) : api.post("/api/api-keys/rotate", { graceHours });
 }
 
 export async function generateKey(credentials: KeyCredentials) {

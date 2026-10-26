@@ -1,4 +1,4 @@
-import { getMe, loginUser } from "@/services/authService";
+import { getMe, loginUser, resendVerification, verifyTwoFactor } from "@/services/authService";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import FormField from "@/components/ui/FormField";
-import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
+import { getRequestErrorData, getRequestErrorMessage } from "@/features/reports/utils/requestError";
 import Title from "@/components/ui/Title";
 
 interface ISignInData {
@@ -28,17 +28,35 @@ function SignIn() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [challenge, setChallenge] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+  const [notice, setNotice] = useState<string | null>(null);
+  const [unverified, setUnverified] = useState(false);
 
   async function handleSignIn(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      await loginUser(formData);
+      if (challenge) {
+        await verifyTwoFactor(challenge, code);
+      } else {
+        const result = await loginUser(formData);
+        if (result.twoFactorRequired && result.challengeToken) {
+          setChallenge(result.challengeToken);
+          toast("Enter the 6-digit code from your authenticator app.");
+          return;
+        }
+      }
       const user = await getMe();
       dispatch(setCredentials(user))
       toast.success("Signed in successfully.");
     } catch (e) {
+      const { code: errorCode } = getRequestErrorData(e);
+      setUnverified(errorCode === "email_unverified");
+      if (errorCode === "workspace_pending") setNotice("Your company is waiting for approval. We'll email you as soon as it is live.");
+      else if (errorCode === "email_unverified") setNotice("Verify your email address first. Check your inbox for the link.");
+      else setNotice(null);
       toast.error(getRequestErrorMessage(e));
     } finally {
       setIsLoading(false);
@@ -68,6 +86,28 @@ function SignIn() {
             </p>
           </div>
 
+          {notice && (
+            <div className="mb-6 rounded-lg border border-border bg-surface-muted px-4 py-3 text-sm">
+              {notice}
+              {unverified && (
+                <button
+                  type="button"
+                  className="ml-2 font-semibold underline"
+                  onClick={async () => {
+                    try {
+                      await resendVerification(formData.email.trim());
+                      toast.success("If the account needs it, a new link is on its way.");
+                    } catch (err) {
+                      toast.error(getRequestErrorMessage(err));
+                    }
+                  }}
+                >
+                  Resend link
+                </button>
+              )}
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSignIn} className="flex flex-col gap-7">
             {/* <div className="flex flex-col gap-2">
@@ -93,6 +133,22 @@ function SignIn() {
               />
             </div> */}
 
+            {challenge ? (
+              <FormField label="Authentication code" htmlFor="code">
+                <Input
+                  id="code"
+                  name="code"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  placeholder="123456"
+                  required
+                  autoFocus
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.trim())}
+                />
+              </FormField>
+            ) : (
+              <>
             <FormField label="Email address" htmlFor="email">
               <Input
                 id="email"
@@ -142,13 +198,24 @@ function SignIn() {
               />
             </FormField>
 
+                <Link to="/forgot-password" className="-mt-4 self-end text-xs font-medium text-text-muted hover:text-primary">
+                  Forgot password?
+                </Link>
+              </>
+            )}
+
             <Button
               type="submit"
               loading={isLoading}
               className="mt-2 w-full"
             >
-              Sign in
+              {challenge ? "Verify" : "Sign in"}
             </Button>
+            {challenge && (
+              <button type="button" className="text-xs text-text-muted hover:text-primary" onClick={() => { setChallenge(null); setCode(""); }}>
+                Use a different account
+              </button>
+            )}
           </form>
 
           {/* Footer */}

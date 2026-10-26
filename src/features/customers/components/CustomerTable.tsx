@@ -3,7 +3,10 @@ import DataTable, {
 } from "@/components/ui/DataTable";
 // import Pill from "@/components/ui/Pill";
 import { getCustomerJourney } from "@/services/companyServices";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import { api } from "@/services/api";
+import { channelLabel, listUrl } from "@/services/insights";
+import { formatMinorUnits } from "@/features/reports/utils/formatting";
 import CustomerJourneyDrawer, { type CustomerJourney, } from "./CustomerJourneyDrawer";
 
 
@@ -14,7 +17,13 @@ export interface Customer {
   firstSeenAt: string;
   firstPurchaseAt: string | null;
   lastPurchaseAt: string | null;
-  externalIds: Record<string, unknown> | null;  
+  externalIds: Record<string, unknown> | null;
+  orders?: number;
+  lifetimeRevenueMinorUnits?: string;
+  currency?: string | null;
+  firstSource?: string | null;
+  lastSource?: string | null;
+  type?: "new" | "returning" | "prospect";
 }
 
 interface CustomerTableProps {
@@ -23,6 +32,9 @@ interface CustomerTableProps {
   onMerge?: (customer: Customer) => void;
   loading: boolean;
   total: number;
+  /** set when a platform admin views the company (support session) */
+  workspaceId?: string;
+  filters?: ReactNode;
   pagination: {
     page: number;
     limit: number;
@@ -67,6 +79,8 @@ export default function CustomerTable({
   loading,
   total,
   pagination,
+  workspaceId,
+  filters,
 }: CustomerTableProps) {
 
   const [journeyData, setJourneyData] =
@@ -81,7 +95,7 @@ export default function CustomerTable({
     setJourneyData(null);
 
     try {
-      const res = await getCustomerJourney(id);
+      const res = workspaceId ? await api.get(listUrl.journey(id, workspaceId)) : await getCustomerJourney(id);
 
       // Assumes your service returns the response payload directly.
       setJourneyData(res.data as CustomerJourney);
@@ -133,6 +147,23 @@ export default function CustomerTable({
           {formatDate(customer.lastPurchaseAt)}
         </span>
       ),
+    },
+    {
+      key: "orders",
+      header: "Orders",
+      align: "right",
+      render: (customer) => customer.orders ?? "—",
+    },
+    {
+      key: "ltv",
+      header: "Lifetime revenue",
+      align: "right",
+      render: (customer) => (customer.lifetimeRevenueMinorUnits && customer.currency ? formatMinorUnits(customer.lifetimeRevenueMinorUnits, customer.currency) : "—"),
+    },
+    {
+      key: "sources",
+      header: "First → last source",
+      render: (customer) => (customer.firstSource ? `${channelLabel(customer.firstSource)} → ${channelLabel(customer.lastSource ?? customer.firstSource)}` : "—"),
     },
     {
       key: "journey",
@@ -193,6 +224,7 @@ export default function CustomerTable({
         data={customers}
         getRowKey={(customer) => customer.id}
         loading={loading}
+        filters={filters}
         emptyMessage="No customers found."
         pagination={pagination}
       />

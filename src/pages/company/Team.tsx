@@ -16,7 +16,9 @@ import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Modal from "@/components/ui/Modal";
 import FormField from "@/components/ui/FormField";
-import AddTeamMemberCard from "@/features/customers/components/AddTeamMemberCard";
+import ReasonDialog from "@/components/ui/ReasonDialog";
+import { InviteForm, LocationAccessModal, PendingInvites, type PendingInvite } from "@/features/team/TeamAccess";
+import { useLocationOptions } from "@/features/insights/hooks/useReport";
 
 type UserStatus = "invited" | "active" | "deactivated";
 
@@ -53,6 +55,12 @@ function Team() {
   const [savingUser, setSavingUser] = useState(false);
   const [deletingUser, setDeletingUser] = useState(false);
   const [userToEdit, setUserToEdit] = useState<TeamUser | null>(null);
+  const [invites, setInvites] = useState<PendingInvite[]>([]);
+  const [locationUser, setLocationUser] = useState<TeamUser | null>(null);
+  const [userToDelete, setUserToDelete] = useState<TeamUser | null>(null);
+  const locations = useLocationOptions();
+  const locationOptions = locations.data ?? [];
+  const locationNames = new Map(locationOptions.map((l) => [l.id, l.name]));
   const isCurrentUser = (user: TeamUser) =>
     user.id === currentUser?.id ||
     user.email.trim().toLowerCase() === currentUser?.email.trim().toLowerCase();
@@ -63,6 +71,7 @@ function Team() {
     try {
       const response = await getTeamUsers();
       setUsers(response.data.data);
+      setInvites(response.data.pendingInvites ?? []);
     } catch (requestError: unknown) {
       const message = getRequestErrorMessage(requestError);
       setError(message);
@@ -78,7 +87,7 @@ function Team() {
     async function loadInitialUsers() {
       try {
         const response = await getTeamUsers();
-        if (!cancelled) setUsers(response.data.data);
+        if (!cancelled) { setUsers(response.data.data); setInvites(response.data.pendingInvites ?? []); }
       } catch (requestError: unknown) {
         if (cancelled) return;
         setError(getRequestErrorMessage(requestError));
@@ -127,10 +136,6 @@ function Team() {
 
     if (!user.id || isCurrentUser(user)) {
       toast.error("You cannot delete your own account from Team settings.");
-      return;
-    }
-
-    if (!window.confirm(`Delete ${user.name} from this workspace?`)) {
       return;
     }
 
@@ -183,6 +188,18 @@ function Team() {
     },
 
     {
+      key: "locations",
+      header: "Locations",
+      render: (user) =>
+        user.role === "company_admin" ? (
+          <span className="text-sm text-text-muted">All</span>
+        ) : (
+          <button type="button" className="text-left text-sm underline decoration-border underline-offset-4 hover:decoration-primary disabled:no-underline" disabled={isCurrentUser(user)} onClick={() => setLocationUser(user)}>
+            {user.allowedLocationIds?.length ? user.allowedLocationIds.map((id) => locationNames.get(id) ?? "Unknown").join(", ") : "All"}
+          </button>
+        ),
+    },
+    {
       key: "action",
       header: "Action",
       render: (user) =>
@@ -205,7 +222,7 @@ function Team() {
               size="sm"
               disabled={deletingUser || savingUser}
               loading={deletingUser && userToEdit?.id === user.id}
-              onClick={() => void handleDeleteUser(user)}
+              onClick={() => setUserToDelete(user)}
             >
               Delete
             </Button>
@@ -222,7 +239,8 @@ function Team() {
       description="Invite teammates and manage access to this workspace."
     >
       {/* <InviteCard onUserCreated={refreshUsers} /> */}
-      <AddTeamMemberCard onUserCreated={refreshUsers} />
+      <InviteForm locations={locationOptions} onInvited={refreshUsers} />
+      <PendingInvites invites={invites} locations={locationOptions} />
 
       {error && (
         <p role="alert" className="text-sm text-danger">
@@ -347,6 +365,25 @@ function Team() {
         </Modal>
       }
 
+      {userToDelete && (
+        <ReasonDialog
+          title={`Remove ${userToDelete.name}?`}
+          description={`${userToDelete.email} loses access to this company straight away. Their past actions stay in the audit log.`}
+          requireReason={false}
+          confirmLabel="Remove from team"
+          destructive
+          busy={deletingUser}
+          onClose={() => setUserToDelete(null)}
+          onConfirm={() => {
+            const user = userToDelete;
+            setUserToDelete(null);
+            void handleDeleteUser(user);
+          }}
+        />
+      )}
+      {locationUser && (
+        <LocationAccessModal user={locationUser} locations={locationOptions} onClose={() => setLocationUser(null)} onSaved={refreshUsers} />
+      )}
     </PageLayout>
   );
 }

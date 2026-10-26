@@ -43,6 +43,11 @@ function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
 
   // console.log(location)
 
+  // Platform admins must use two-factor login before anything else (scope 4.9).
+  if (user.mfaPending && location.pathname !== "/setup-2fa") {
+    return <Navigate to="/setup-2fa" replace />;
+  }
+
   if(user.role === "platform_admin" && location.pathname === "/"){
     return <Navigate to="/super" replace />
   }

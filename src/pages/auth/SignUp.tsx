@@ -15,12 +15,17 @@ import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
 import Alert from "@/components/ui/Alert";
 import Title from "@/components/ui/Title";
+import Select from "@/components/ui/Select";
+import { passwordProblem } from "@/features/auth/passwordPolicy";
+import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
 
 interface SignUpForm extends CompanyDetailsValues {
   adminName: string;
   email: string;
   password: string;
   confirmPassword: string;
+  websiteUrl: string;
+  weekStart: string;
 }
 
 const initialForm: SignUpForm = {
@@ -28,6 +33,8 @@ const initialForm: SignUpForm = {
   email: "",
   password: "",
   confirmPassword: "",
+  websiteUrl: "",
+  weekStart: "1",
   name: "",
   country: "",
   industry: "",
@@ -46,6 +53,7 @@ function SignUp() {
   const [form, setForm] = useState<SignUpForm>(initialForm);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [done, setDone] = useState<{ message: string; approvalRequired?: boolean } | null>(null);
 
   function updateField<K extends keyof SignUpForm>(
     field: K,
@@ -59,8 +67,9 @@ function SignUp() {
     e.preventDefault();
     setError("");
 
-    if (form.password.length < 8) {
-      setError("Password must contain at least 8 characters.");
+    const weak = passwordProblem(form.password, form.email);
+    if (weak) {
+      setError(weak);
       return;
     }
 
@@ -84,16 +93,18 @@ function SignUp() {
         currency: form.currency,
         industry: form.industry,
         dataRegion: form.dataRegion,
+        websiteUrl: form.websiteUrl.trim() || undefined,
+        weekStart: Number(form.weekStart),
         // paymentMethod: form.paymentMethod.trim(),
       };
 
-      await registerCompany(payload);
-
-      await restoreSession(dispatch);
+      const result = await registerCompany(payload);
+      // The account can sign in once the email is confirmed (and, if required, the company approved).
+      setDone({ message: result?.message ?? "Check your inbox to confirm your email address.", approvalRequired: result?.approvalRequired });
       toast.success("Your company account has been created.");
-
-    } catch {
-      setError("Something went wrong. Please try again.");
+      void restoreSession(dispatch);
+    } catch (err) {
+      setError(getRequestErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -125,6 +136,13 @@ function SignUp() {
               </p>
             </div>
 
+            {done ? (
+              <div className="flex flex-col gap-4 text-sm leading-6">
+                <Alert variant="info">{done.message}</Alert>
+                {done.approvalRequired && <p className="text-text-muted">After you confirm your email, our team reviews new companies. We'll email you when your dashboard is ready.</p>}
+                <Link to="/signin" className="font-semibold underline underline-offset-4">Go to sign in</Link>
+              </div>
+            ) : (
             <form onSubmit={handleSignUp} className="flex flex-col gap-9">
               {/* Account details */}
               <section className="flex flex-col gap-5">
@@ -203,6 +221,27 @@ function SignUp() {
                 onChange={(field, value) => updateField(field, value)}
               />
 
+              <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+                <FormField label="Website" htmlFor="websiteUrl">
+                  <Input
+                    id="websiteUrl"
+                    name="websiteUrl"
+                    type="text"
+                    inputMode="url"
+                    placeholder="www.yourcompany.com"
+                    value={form.websiteUrl}
+                    onChange={(e) => updateField("websiteUrl", e.target.value)}
+                  />
+                </FormField>
+                <FormField label="Week starts on" htmlFor="weekStart">
+                  <Select id="weekStart" value={form.weekStart} onChange={(e) => updateField("weekStart", e.target.value)} className="w-full">
+                    <option value="1">Monday</option>
+                    <option value="0">Sunday</option>
+                    <option value="6">Saturday</option>
+                  </Select>
+                </FormField>
+              </div>
+
               {/* Error */}
               {error && <Alert>{error}</Alert>}
 
@@ -215,6 +254,7 @@ function SignUp() {
                 Create account
               </Button>
             </form>
+            )}
 
             {/* Footer */}
             <div className="mt-8 text-center">

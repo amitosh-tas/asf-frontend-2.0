@@ -135,10 +135,14 @@ export interface TeamUser {
   email: string;
   role: string;
   status: string;
+  allowedLocationIds?: string[];
+  lastLoginAt?: string | null;
+  twoFactorEnabled?: boolean;
 }
 
 export interface TeamUsersResponse {
   data: TeamUser[];
+  pendingInvites?: import("@/features/team/TeamAccess").PendingInvite[];
 }
 
 export interface CustomerRecord {

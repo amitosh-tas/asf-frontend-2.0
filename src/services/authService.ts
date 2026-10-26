@@ -17,10 +17,38 @@ export interface RegisterCompanyCredentials {
   industry: string;
   dataRegion: string;
   paymentMethod?: string;
+  websiteUrl?: string;
+  weekStart?: number;
 }
 
-export async function loginUser(credentials: LoginCredentials) {
-  const res = await api.post("/api/auth/user/login", credentials);
+export interface LoginResult {
+  message: string;
+  twoFactorRequired?: boolean;
+  challengeToken?: string;
+  twoFactorSetupRequired?: boolean;
+}
+
+export async function verifyTwoFactor(challengeToken: string, code: string) {
+  return (await api.post("/api/auth/2fa/verify", { challengeToken, code })).data;
+}
+export async function requestPasswordReset(email: string) {
+  return (await api.post<{ message: string }>("/api/auth/user/forgotpass", { email })).data;
+}
+export async function resetPassword(token: string, newPassword: string) {
+  return (await api.post<{ message: string }>("/api/auth/user/reset-password", { token, newPassword })).data;
+}
+export async function verifyEmail(verifytoken: string) {
+  return (await api.post<{ message: string; status?: string }>("/api/auth/verify-user", { verifytoken })).data;
+}
+export async function resendVerification(email: string) {
+  return (await api.post<{ message: string }>("/api/auth/resend-verification", { email })).data;
+}
+export async function acceptInvite(token: string, name: string, password: string) {
+  return (await api.post<{ message: string }>("/api/workspace/invites/accept", { token, name, password })).data;
+}
+
+export async function loginUser(credentials: LoginCredentials): Promise<LoginResult> {
+  const res = await api.post<LoginResult>("/api/auth/user/login", credentials);
   return res.data;
 }
 
