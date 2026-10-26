@@ -20,7 +20,7 @@ interface FeedItem { kind: "event" | "touch"; id: string; at: string; source: st
 /** Integrations and data quality (scope 5.9). */
 export default function Integrations() {
   const workspaceId = useViewWorkspaceId();
-  const role = useAppSelector((state: { auth: { user?: { role?: string } } }) => state.auth.user?.role);
+  const role = useAppSelector((state) => state.auth.user?.role);
   const isAdmin = !workspaceId && role === "company_admin";
   const { filters, update, query } = useReportFilters();
   const quality = useReport<DataQualityReport>("data-quality", query, workspaceId);
