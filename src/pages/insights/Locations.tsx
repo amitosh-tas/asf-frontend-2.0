@@ -14,8 +14,11 @@ export default function Locations() {
   const cur = r.data?.currency ?? "USD";
   const money = (v: string | null) => (v === null ? "—" : formatMinorUnits(v, cur));
   return (
-    <PageLayout headTitle="Business" title="Locations" description="Revenue, customers, bookings, top sources and CAC per location, ranked.">
-      <ReportToolbar filters={{ ...filters, locationId: undefined }} onChange={update} workspaceId={workspaceId} lastUpdated={r.data?.lastUpdated} csv={{ url: reportUrl("locations", workspaceId), query, filename: "locations.csv" }} />
+    <PageLayout headTitle="Business" title="Locations" description="Revenue, customers, bookings, top sources and CAC per location, ranked."
+      actions={
+        <ReportToolbar filters={{ ...filters, locationId: undefined }} onChange={update} workspaceId={workspaceId} lastUpdated={r.data?.lastUpdated} csv={{ url: reportUrl("locations", workspaceId), query, filename: "locations.csv" }} />
+      }
+    >
       <ErrorBox error={r.error} onRetry={r.reload} />
       <Warnings warnings={r.data?.warnings} />
       <DataTable

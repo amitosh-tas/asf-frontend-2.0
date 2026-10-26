@@ -20,8 +20,7 @@ interface FeedItem { kind: "event" | "touch"; id: string; at: string; source: st
 /** Integrations and data quality (scope 5.9). */
 export default function Integrations() {
   const workspaceId = useViewWorkspaceId();
-  // const role = useAppSelector((state: { auth: { user?: { role?: string } } }) => state.auth.user?.role);
-  const role = useAppSelector((state) => state.auth.user?.role);
+  const role = useAppSelector((state: { auth: { user?: { role?: string } } }) => state.auth.user?.role);
   const isAdmin = !workspaceId && role === "company_admin";
   const { filters, update, query } = useReportFilters();
   const quality = useReport<DataQualityReport>("data-quality", query, workspaceId);
@@ -42,7 +41,11 @@ export default function Integrations() {
   };
 
   return (
-    <PageLayout headTitle="Data" title="Integrations & data quality" description="Connector health, the live event feed and checks that keep the numbers trustworthy.">
+    <PageLayout headTitle="Data" title="Integrations & data quality" description="Connector health, the live event feed and checks that keep the numbers trustworthy."
+      actions={
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} showModel={false} lastUpdated={quality.data?.lastUpdated} />
+      }
+    >
       {isAdmin && (
         <Section title="Connectors" subtitle="Last event, error count, health check and replay of failed events">
           <Connectors />
@@ -69,7 +72,6 @@ export default function Integrations() {
         </Section>
       )}
 
-      <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} showModel={false} lastUpdated={quality.data?.lastUpdated} />
       <ErrorBox error={quality.error} onRetry={quality.reload} />
       <Section title="Data quality checks" actions={isAdmin ? <Button type="button" size="sm" variant="outline" loading={rerunning} onClick={rerun}>Re-run attribution</Button> : undefined}>
         <ul className="flex flex-col divide-y divide-border">

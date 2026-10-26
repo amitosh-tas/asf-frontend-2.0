@@ -19,8 +19,11 @@ export default function Channels() {
   const money = (v: string | null | undefined) => (v === null || v === undefined ? "—" : formatMinorUnits(v, cur));
 
   return (
-    <PageLayout headTitle="Marketing" title="Channels & campaigns" description="Revenue, new customers, spend, CAC and ROAS by channel under the attribution model you choose.">
-      <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={channels.data?.lastUpdated} csv={{ url: reportUrl("channels", workspaceId), query, filename: "channels.csv" }} />
+    <PageLayout headTitle="Marketing" title="Channels & campaigns" description="Revenue, new customers, spend, CAC and ROAS by channel under the attribution model you choose."
+      actions={
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={channels.data?.lastUpdated} csv={{ url: reportUrl("channels", workspaceId), query, filename: "channels.csv" }} />
+      }
+    >
       <ErrorBox error={channels.error} onRetry={channels.reload} />
       <Warnings warnings={channels.data?.warnings} />
 

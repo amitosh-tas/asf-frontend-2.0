@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import AuthShell from "@/components/auth/AuthShell";
 import Button from "@/components/ui/Button";
@@ -12,7 +12,8 @@ import { passwordProblem } from "@/features/auth/passwordPolicy";
 /** /reset-password?token=… — set a new password (signs out every other session). */
 export default function ResetPassword() {
   const [params] = useSearchParams();
-  const token = params.get("token") ?? "";
+  const { token: pathToken } = useParams();
+  const token = params.get("token") ?? pathToken ?? "";
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");

@@ -36,32 +36,9 @@ export default function ReportToolbar({ filters, onChange, workspaceId, showMode
     }
   };
 
+  // Rendered in <PageLayout actions={…}> (top right of the page header), like the original filters.
   return (
-    <div className="mb-6 flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-end gap-3">
-        {showModel && (
-          <label className="flex items-center gap-2 text-xs font-medium text-text-muted">
-            Model
-            <select
-              value={filters.model ?? defaultModel ?? ""}
-              onChange={(event) => onChange({ model: (event.target.value || undefined) as AttributionModel | undefined })}
-              className="rounded-full border border-border bg-transparent px-3 py-2 text-sm text-text"
-            >
-              {!defaultModel && <option value="">Company default</option>}
-              {ATTRIBUTION_MODELS.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
-        {csv && (
-          <Button type="button" variant="outline" size="sm" loading={exporting} onClick={exportCsv}>
-            Export CSV
-          </Button>
-        )}
-      </div>
+    <div className="flex w-full flex-col items-end gap-2 md:w-auto">
       <ReportFilters
         dateRange={filters.range}
         onDateRangeChange={(range) => onChange({ range })}
@@ -70,7 +47,33 @@ export default function ReportToolbar({ filters, onChange, workspaceId, showMode
         locations={locations.data ?? []}
         locationsLoading={locations.loading}
       />
-      {lastUpdated && <p className="text-right text-xs text-text-muted">Last updated {formatDateTime(lastUpdated)}</p>}
+      {(showModel || csv) && (
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {showModel && (
+            <label className="flex items-center gap-2 text-xs font-medium text-text-muted">
+              Model
+              <select
+                value={filters.model ?? defaultModel ?? ""}
+                onChange={(event) => onChange({ model: (event.target.value || undefined) as AttributionModel | undefined })}
+                className="rounded-full border border-border bg-transparent px-3 py-1.5 text-sm text-text"
+              >
+                {!defaultModel && <option value="">Company default</option>}
+                {ATTRIBUTION_MODELS.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          {csv && (
+            <Button type="button" variant="outline" size="sm" loading={exporting} onClick={exportCsv}>
+              Export CSV
+            </Button>
+          )}
+        </div>
+      )}
+      {lastUpdated && <p className="text-xs text-text-muted">Last updated {formatDateTime(lastUpdated)}</p>}
     </div>
   );
 }

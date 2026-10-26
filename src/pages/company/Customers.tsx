@@ -31,8 +31,11 @@ function Customers() {
   const p = list.data?.pagination;
 
   return (
-    <PageLayout title="Customers" headTitle="Audience" description="Who your customers are, where they first came from, and how often they come back.">
-      <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={r?.lastUpdated} csv={{ url: listUrl.customers(workspaceId), query: { search: search || undefined, sort, type: type || undefined }, filename: "customers.csv" }} />
+    <PageLayout title="Customers" headTitle="Audience" description="Who your customers are, where they first came from, and how often they come back."
+      actions={
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={r?.lastUpdated} csv={{ url: listUrl.customers(workspaceId), query: { search: search || undefined, sort, type: type || undefined }, filename: "customers.csv" }} />
+      }
+    >
       <ErrorBox error={list.error ?? report.error} onRetry={() => (list.reload(), report.reload())} />
       <KpiGrid>
         <Kpi label="New customers" value={formatNumber(r?.newCustomers)} loading={report.loading} hint={r ? `${formatMinorUnits(r.newCustomerRevenueMinorUnits, cur)} revenue` : undefined} />

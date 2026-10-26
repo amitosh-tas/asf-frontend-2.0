@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import AuthShell from "@/components/auth/AuthShell";
 import Button from "@/components/ui/Button";
@@ -12,7 +12,9 @@ import { passwordProblem } from "@/features/auth/passwordPolicy";
 /** /accept-invite?token=… — a teammate sets their name and password. */
 export default function AcceptInvite() {
   const [params] = useSearchParams();
-  const token = params.get("token") ?? "";
+  const { token: pathToken } = useParams();
+  // the emailed link is /accept-invite?token=…; older or hand-shared links may carry it in the path
+  const token = params.get("token") ?? params.get("invite") ?? pathToken ?? "";
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");

@@ -140,8 +140,14 @@ function App() {
         </Route>
         {/* Reached from emailed links: work signed in or out */}
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/verify-user" element={<VerifyEmail />} />
+        <Route path="/verify-user/:token" element={<VerifyEmail />} />
         <Route path="/accept-invite" element={<AcceptInvite />} />
+        <Route path="/accept-invite/:token" element={<AcceptInvite />} />
+        <Route path="/invite" element={<AcceptInvite />} />
+        <Route path="/invite/:token" element={<AcceptInvite />} />
+        <Route path="/invites/accept" element={<AcceptInvite />} />
         {/* Platform admins without two-factor login land here (the API refuses everything else) */}
         <Route element={<ProtectedRoute allowedRoles={["platform_admin", "company_admin", "company_viewer"]} />}>
           <Route path="/setup-2fa" element={<SetupTwoFactor />} />

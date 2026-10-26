@@ -48,14 +48,17 @@ function Overview() {
   const drill = (params: Record<string, string>) => navigate(`${to("/transactions")}?${new URLSearchParams({ from: filters.range.from, to: filters.range.to, ...params })}`);
 
   return (
-    <PageLayout headTitle="Overview" title="Company dashboard" description="Revenue, customers and where they came from, in your company's timezone and currency.">
-      <ReportToolbar
-        filters={filters}
-        onChange={update}
-        workspaceId={workspaceId}
-        lastUpdated={d?.lastUpdated}
-        csv={{ url: reportUrl("summary", workspaceId), query, filename: `summary-${filters.range.from}-${filters.range.to}.csv` }}
-      />
+    <PageLayout headTitle="Overview" title="Company dashboard" description="Revenue, customers and where they came from, in your company's timezone and currency."
+      actions={
+        <ReportToolbar
+          filters={filters}
+          onChange={update}
+          workspaceId={workspaceId}
+          lastUpdated={d?.lastUpdated}
+          csv={{ url: reportUrl("summary", workspaceId), query, filename: `summary-${filters.range.from}-${filters.range.to}.csv` }}
+        />
+      }
+    >
       <AlertsBanner workspaceId={workspaceId} />
       <ErrorBox error={report.error} onRetry={report.reload} />
       <Warnings warnings={d?.warnings} />

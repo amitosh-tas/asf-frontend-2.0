@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import AuthShell from "@/components/auth/AuthShell";
 import { verifyEmail } from "@/services/authService";
 import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
@@ -7,7 +7,8 @@ import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
 /** /verify-user?verifytoken=… — the link in the sign-up email. */
 export default function VerifyEmail() {
   const [params] = useSearchParams();
-  const token = params.get("verifytoken") ?? params.get("token") ?? "";
+  const { token: pathToken } = useParams();
+  const token = params.get("verifytoken") ?? params.get("token") ?? pathToken ?? "";
   const [state, setState] = useState<{ ok: boolean; message: string } | null>(null);
 
   useEffect(() => {

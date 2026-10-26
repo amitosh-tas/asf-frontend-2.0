@@ -13,8 +13,11 @@ export default function Journeys() {
   const r = useReport<JourneysReport>("journeys", query, workspaceId);
   const cur = r.data?.currency ?? "USD";
   return (
-    <PageLayout headTitle="Marketing" title="Customer journeys" description='The paths customers take before buying, such as "Meta → Google → purchase".'>
-      <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} showModel={false} lastUpdated={r.data?.lastUpdated} csv={{ url: reportUrl("journeys", workspaceId), query, filename: "journeys.csv" }} />
+    <PageLayout headTitle="Marketing" title="Customer journeys" description='The paths customers take before buying, such as "Meta → Google → purchase".'
+      actions={
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} showModel={false} lastUpdated={r.data?.lastUpdated} csv={{ url: reportUrl("journeys", workspaceId), query, filename: "journeys.csv" }} />
+      }
+    >
       <ErrorBox error={r.error} onRetry={r.reload} />
       <KpiGrid>
         <Kpi label="Average touches per journey" value={formatNumber(r.data?.averageTouches, 2)} loading={r.loading} />

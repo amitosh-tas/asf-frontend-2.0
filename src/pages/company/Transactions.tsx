@@ -41,23 +41,26 @@ function Transactions() {
   const p = orders.data?.pagination;
 
   return (
-    <PageLayout headTitle="Sales" title="Orders & transactions" description="Every paid order with its source under the selected model, how it was matched, and whether the customer was new.">
-      <ReportToolbar
-        filters={{ ...filters, range }}
-        onChange={(patch) => {
-          if (patch.range) {
-            const next = new URLSearchParams(params);
-            next.set("from", patch.range.from);
-            next.set("to", patch.range.to);
-            setParams(next, { replace: true });
-          }
-          update(patch);
-          setPage(1);
-        }}
-        workspaceId={workspaceId}
-        csv={{ url: listUrl.orders(workspaceId), query: { ...query, ...range, ...extra }, filename: "orders.csv" }}
-        lastUpdated={orders.data?.lastUpdated}
-      />
+    <PageLayout headTitle="Sales" title="Orders & transactions" description="Every paid order with its source under the selected model, how it was matched, and whether the customer was new."
+      actions={
+        <ReportToolbar
+          filters={{ ...filters, range }}
+          onChange={(patch) => {
+            if (patch.range) {
+              const next = new URLSearchParams(params);
+              next.set("from", patch.range.from);
+              next.set("to", patch.range.to);
+              setParams(next, { replace: true });
+            }
+            update(patch);
+            setPage(1);
+          }}
+          workspaceId={workspaceId}
+          csv={{ url: listUrl.orders(workspaceId), query: { ...query, ...range, ...extra }, filename: "orders.csv" }}
+          lastUpdated={orders.data?.lastUpdated}
+        />
+      }
+    >
       <ErrorBox error={orders.error} onRetry={orders.reload} />
       <DataTable
         tableHead="Orders"

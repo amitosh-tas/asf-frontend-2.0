@@ -38,17 +38,20 @@ function Refunds() {
   const mixedCurrencies = new Set((refunds.data?.data ?? []).map((r) => r.currency)).size > 1;
 
   return (
-    <PageLayout headTitle="Refunds" title="Refunds" description="Refunds reduce revenue on the day they happen. Each one is linked to the order it reverses.">
-      <ReportToolbar
-        filters={filters}
-        onChange={(patch) => {
-          update(patch);
-          setPage(1);
-        }}
-        workspaceId={workspaceId}
-        csv={{ url: listUrl.refunds(workspaceId), query: { ...query, ...extra }, filename: `refunds-${filters.range.from}-${filters.range.to}.csv` }}
-        lastUpdated={refunds.data?.lastUpdated}
-      />
+    <PageLayout headTitle="Refunds" title="Refunds" description="Refunds reduce revenue on the day they happen. Each one is linked to the order it reverses."
+      actions={
+        <ReportToolbar
+          filters={filters}
+          onChange={(patch) => {
+            update(patch);
+            setPage(1);
+          }}
+          workspaceId={workspaceId}
+          csv={{ url: listUrl.refunds(workspaceId), query: { ...query, ...extra }, filename: `refunds-${filters.range.from}-${filters.range.to}.csv` }}
+          lastUpdated={refunds.data?.lastUpdated}
+        />
+      }
+    >
       <ErrorBox error={refunds.error} onRetry={refunds.reload} />
       <KpiGrid>
         <Kpi label="Refunds" value={formatNumber(totals?.refunds)} loading={refunds.loading} />

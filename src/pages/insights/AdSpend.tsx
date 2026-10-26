@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import PageLayout from "@/components/layout/PageLayout";
 import DataTable from "@/components/ui/DataTable";
@@ -18,14 +19,25 @@ interface AdAccount { id: string; platform: string; name: string; externalAccoun
 /** Ad spend and CAC (scope 4.8 / 5.8). */
 export default function AdSpend() {
   const workspaceId = useViewWorkspaceId();
-  // const role = useAppSelector((state: { auth: { user?: { role?: string } } }) => state.auth.user?.role);
-  const role = useAppSelector((state) => state.auth.user?.role);
+  const role = useAppSelector((state: { auth: { user?: { role?: string } } }) => state.auth.user?.role);
   const canManage = !workspaceId && role === "company_admin";
   const { filters, update, query } = useReportFilters();
   const cac = useReport<CacReport>("cac", query, workspaceId);
   const spend = useReport<SpendReport>("spend", query, workspaceId);
   const accounts = useAsync<{ data: AdAccount[]; platforms: Record<string, boolean> }>(async () => (await api.get("/api/workspace/ad-accounts")).data, [], canManage);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [params, setParams] = useSearchParams();
+  // result of the Meta / Google sign-in redirect (?adAccounts=connected|cancelled|error)
+  useEffect(() => {
+    const result = params.get("adAccounts");
+    if (!result) return;
+    if (result === "connected") toast.success(`Ad account connected (${params.get("count") ?? "1"}). The first sync is running.`);
+    else if (result === "cancelled") toast("Connection cancelled.");
+    else toast.error(params.get("message") ?? "Could not connect the ad account.");
+    const next = new URLSearchParams(params);
+    ["adAccounts", "count", "message"].forEach((k) => next.delete(k));
+    setParams(next, { replace: true });
+  }, [params, setParams]);
   const [uploading, setUploading] = useState(false);
   const cur = cac.data?.currency ?? "USD";
   const money = (v: string | null | undefined) => (v === null || v === undefined ? "—" : formatMinorUnits(v, cur));
@@ -66,8 +78,11 @@ export default function AdSpend() {
   };
 
   return (
-    <PageLayout headTitle="Marketing" title="Ad spend & CAC" description="Spend by platform and campaign, blended and per-channel CAC, ROAS and cost per booking.">
-      <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={cac.data?.lastUpdated} csv={{ url: reportUrl("spend", workspaceId), query, filename: "ad-spend.csv" }} />
+    <PageLayout headTitle="Marketing" title="Ad spend & CAC" description="Spend by platform and campaign, blended and per-channel CAC, ROAS and cost per booking."
+      actions={
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={cac.data?.lastUpdated} csv={{ url: reportUrl("spend", workspaceId), query, filename: "ad-spend.csv" }} />
+      }
+    >
       <ErrorBox error={cac.error ?? spend.error} onRetry={() => (cac.reload(), spend.reload())} />
       <Warnings warnings={[...(cac.data?.warnings ?? [])]} />
       <KpiGrid>

@@ -240,7 +240,7 @@ function Team() {
     >
       {/* <InviteCard onUserCreated={refreshUsers} /> */}
       <InviteForm locations={locationOptions} onInvited={refreshUsers} />
-      <PendingInvites invites={invites} locations={locationOptions} />
+      <PendingInvites invites={invites} locations={locationOptions} onChanged={refreshUsers} />
 
       {error && (
         <p role="alert" className="text-sm text-danger">

@@ -58,11 +58,7 @@ export default function ApiKeyTable({
     {
       key: "status",
       header: "Status",
-      render: (key) => (
-        <StatusPill
-          status={key.revokedAt ? "DEACTIVE" : "ACTIVE"}
-        />
-      ),
+      render: (key) => <KeyStatus apiKey={key} />,
     },
     {
       key: "rateLimitPerMin",
@@ -138,5 +134,43 @@ export default function ApiKeyTable({
       emptyMessage="No API keys found for this company."
       loading={loading}
     />
+  );
+}
+
+const formatWhen = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+
+/** Status with an indication for keys replaced by a rotation (display only). */
+function KeyStatus({ apiKey }: { apiKey: CompanyApiKey }) {
+  const expiresAt = apiKey.expiresAt ? new Date(apiKey.expiresAt) : null;
+  const expired = apiKey.status === "expired" || (!apiKey.revokedAt && expiresAt !== null && expiresAt.getTime() <= Date.now());
+  if (apiKey.revokedAt) return <StatusPill status="DEACTIVE" />;
+  if (expired) {
+    return (
+      <span className="flex flex-col gap-1">
+        <StatusPill status="DEACTIVE" />
+        <span className="text-xs text-text-muted">
+          Expired {expiresAt ? formatWhen(expiresAt.toISOString()) : ""}
+          {apiKey.replacedByPrefix ? ` · replaced by ${apiKey.replacedByPrefix}…` : ""}
+        </span>
+      </span>
+    );
+  }
+  if (apiKey.status === "replaced" || apiKey.replacedById) {
+    return (
+      <span className="flex flex-col gap-1">
+        <span className="w-max"><Badge variant="warning">Replaced</Badge></span>
+        <span className="text-xs text-text-muted">
+          {apiKey.replacedByPrefix ? `New key ${apiKey.replacedByPrefix}… · ` : ""}
+          {expiresAt ? `works until ${formatWhen(expiresAt.toISOString())}` : "still works"}
+        </span>
+      </span>
+    );
+  }
+  return (
+    <span className="flex flex-col gap-1">
+      <StatusPill status="ACTIVE" />
+      {apiKey.rotatedFromId && <span className="text-xs text-text-muted">New key (from rotation)</span>}
+    </span>
   );
 }
