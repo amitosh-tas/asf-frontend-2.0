@@ -16,7 +16,7 @@ const control = "rounded-full border border-border bg-transparent px-3 py-2 text
 /** Customers (scope 5.5): searchable, sortable list; new vs returning trend; cohorts; LTV by acquisition channel. */
 function Customers() {
   const workspaceId = useViewWorkspaceId();
-  const role = useAppSelector((state: { auth: { user?: { role?: string } } }) => state.auth.user?.role);
+  const role = useAppSelector((state) => state.auth.user?.role);
   const canMerge = !workspaceId && role === "company_admin";
   const { filters, update, query } = useReportFilters();
   const [page, setPage] = useState(1);
