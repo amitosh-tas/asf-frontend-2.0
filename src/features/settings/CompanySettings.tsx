@@ -16,7 +16,8 @@ export interface WorkspaceSettings {
   id: string;
   name: string;
   slug: string;
-  country: string;
+  country?: string;
+  countryCode?: string;
   timezone: string;
   reportingCurrency: string;
   weekStart: number;
@@ -30,7 +31,37 @@ export interface WorkspaceSettings {
   industry: string | null;
 }
 
+type ReferenceData = Awaited<ReturnType<typeof loadReferenceData>>;
+
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function getCountryCode(
+  value: string | undefined,
+  countries: ReferenceData["countries"],
+) {
+  const normalized = value?.trim().toUpperCase();
+  if (!normalized) return "";
+
+  const countryAlias = normalized === "UK" ? "GB" : normalized;
+  const country = countries.find(
+    (option) =>
+      option.iso2.toUpperCase() === countryAlias ||
+      option.name.trim().toUpperCase() === normalized ||
+      option.iso3.toUpperCase() === normalized,
+  );
+  return country?.iso2 ?? value;
+}
+
+function getCurrencyCode(
+  value: string | undefined,
+  currencies: ReferenceData["currencies"],
+) {
+  const normalized = value?.trim().toUpperCase();
+  if (!normalized) return "";
+  return currencies.some((currency) => currency.code === normalized)
+    ? normalized
+    : value ?? "";
+}
 
 /** Company profile + attribution settings (5.10). Changing timezone / currency / model / lookback recalculates reports. */
 export default function CompanySettings() {
@@ -46,10 +77,24 @@ export default function CompanySettings() {
   );
 
   useEffect(() => {
-    if (!settings.data) return;
-    setForm(settings.data);
-    setOverrides(Object.entries(settings.data.lookbackOverrides ?? {}).map(([k, v]) => `${k}=${v}`).join(", "));
-  }, [settings.data]);
+    if (!settings.data || !referenceData.data) return;
+
+    const currentSettings = settings.data;
+    const countries = referenceData.data.countries;
+    const currencies = referenceData.data.currencies;
+    setForm({
+      ...currentSettings,
+      country: getCountryCode(
+        currentSettings.country ?? currentSettings.countryCode,
+        countries,
+      ),
+      reportingCurrency: getCurrencyCode(
+        currentSettings.reportingCurrency,
+        currencies,
+      ),
+    });
+    setOverrides(Object.entries(currentSettings.lookbackOverrides ?? {}).map(([k, v]) => `${k}=${v}`).join(", "));
+  }, [settings.data, referenceData.data]);
 
   if (!form || !referenceData.data) {
     return <Section title="Company profile"><p className="text-sm text-text-muted">{settings.error ?? referenceData.error ?? "Loading…"}</p></Section>;

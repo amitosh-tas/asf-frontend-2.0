@@ -42,6 +42,10 @@ interface WorkspaceUser {
   status: string;
 }
 
+function getWorkspaceCurrency(workspace: Workspace) {
+  return workspace.reportingCurrency || workspace.currency || "—";
+}
+
 interface WorkspaceUserUpdate {
   role: string;
   status: UserStatus;
@@ -56,7 +60,8 @@ interface Workspace {
   country: string;
   dataRegion: string;
   defaultModel: string;
-  reportingCurrency: string;
+  reportingCurrency?: string | null;
+  currency?: string | null;
   timezone: string;
   consentMode: string;
   lookbackDays: number;
@@ -345,7 +350,7 @@ function WorkspaceById() {
       industry: workspace.industry ?? "",
       timezone: workspace.timezone,
       dataRegion: workspace.dataRegion,
-      currency: workspace.reportingCurrency,
+      currency: getWorkspaceCurrency(workspace),
       // paymentMethod: workspace.paymentMethod ?? "",
     });
     setWorkspaceFormError("");
@@ -553,7 +558,9 @@ function WorkspaceById() {
                 <div key={key}>
                   <p className="text-sm text-text-muted">{label}</p>
                   <p className="mt-1 font-medium">
-                    {workspaceData.workspace[key]}
+                    {key === "reportingCurrency"
+                      ? getWorkspaceCurrency(workspaceData.workspace)
+                      : workspaceData.workspace[key]}
                     {suffix ? ` ${suffix}` : ""}
                   </p>
                 </div>
