@@ -487,7 +487,7 @@ function WorkspaceById() {
       title="Workspace"
       description="Manage client workspace, edit, and monitor their status."
       actions={
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap justify-end">
           <Button
             type="button"
             onClick={handleViewAs}
@@ -579,7 +579,7 @@ function WorkspaceById() {
             emptyMessage="No users found in this workspace."
           />
 
-          {/* 
+          {/*
           it was in filters
           <button
                 type="button"

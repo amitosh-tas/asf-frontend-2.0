@@ -21,7 +21,7 @@ export default function PageLayout({
   return (
     <div className="mx-auto w-full max-w-360">
       {(title || description || actions) && (
-        <header className="mb-8 items-start justify-between gap-5 border-b border-border pb-6 md:flex-row
+        <header className="mb-8 justify-between gap-5 border-b border-border pb-6 md:flex-row
         grid grid-cols-1 md:grid-cols-3
         ">
           <div className="flex min-w-0 flex-col gap-2 md:col-span-2">
@@ -42,7 +42,7 @@ export default function PageLayout({
           </div>
 
           {actions &&
-          <div className="flex w-full flex-wrap items-end justify-end gap-3 md:w-fit md:flex-col">{actions}</div>}
+          <div className="flex w-full flex-wrap justify-self-end gap-3 md:w-fit md:flex-col">{actions}</div>}
         </header>
       )}
 
