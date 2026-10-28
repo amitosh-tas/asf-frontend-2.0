@@ -1,4 +1,4 @@
-import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, BarChart, Bar } from "recharts";
+import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar } from "recharts";
 import { ChartSkeleton } from "@/components/ui/Skeleton";
 import { formatReportDate } from "@/features/reports/utils/formatting";
 
