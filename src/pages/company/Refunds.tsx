@@ -57,9 +57,20 @@ function Refunds() {
         <Kpi label="Refunds" value={formatNumber(totals?.refunds)} loading={refunds.loading} />
         <Kpi
           label="Refunded amount"
-          value={mixedCurrencies ? "Several currencies" : formatMinorUnits(totals?.amountMinorUnits, refunds.data?.data[0]?.currency ?? totals?.currency ?? "USD")}
-          loading={refunds.loading}
-          hint={mixedCurrencies ? "see each row for its currency" : "in the order currency"}
+          value={
+            mixedCurrencies
+              ? "Several currencies"
+              : formatMinorUnits(
+                totals?.amountMinorUnits,
+                totals?.currency ?? refunds.data?.fx?.reportingCurrency ?? "USD"
+              )
+          }
+        loading={refunds.loading}
+          hint={
+            mixedCurrencies
+              ? "see each row for its currency"
+              : "in the reporting currency"
+          }
         />
       </KpiGrid>
       <DataTable
