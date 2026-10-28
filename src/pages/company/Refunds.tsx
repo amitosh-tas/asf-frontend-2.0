@@ -48,7 +48,7 @@ function Refunds() {
           }}
           workspaceId={workspaceId}
           csv={{ url: listUrl.refunds(workspaceId), query: { ...query, ...extra }, filename: `refunds-${filters.range.from}-${filters.range.to}.csv` }}
-          lastUpdated={refunds.data?.lastUpdated}
+          lastUpdated={refunds.data?.lastUpdated} fx={refunds.data?.fx}
         />
       }
     >

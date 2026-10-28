@@ -39,6 +39,7 @@ export interface ReportMeta {
   model: AttributionModel;
   lastUpdated: string;
   warnings?: string[];
+  fx?: FxInfo | null;
 }
 
 export interface MatchMethodRow {
@@ -289,10 +290,20 @@ export interface OrderRow {
   bookingId: string | null;
 }
 
+/** The `fx` block of report responses: which exchange rates money figures were converted with. */
+export interface FxInfo {
+  mode: "transaction_date" | "latest";
+  reportingCurrency: string;
+  /** latest mode: the date of the rates used */
+  ratesAsOf: string | null;
+  convertedCurrencies?: string[];
+}
+
 export interface Page<T> {
   data: T[];
   pagination: { page?: number; limit: number; total: number; pages?: number; nextCursor: string | null };
   lastUpdated?: string;
+  fx?: FxInfo | null;
 }
 
 export interface RefundRow {

@@ -15,7 +15,7 @@ export default function Journeys() {
   return (
     <PageLayout headTitle="Marketing" title="Customer journeys" description='The paths customers take before buying, such as "Meta → Google → purchase".'
       actions={
-        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} showModel={false} lastUpdated={r.data?.lastUpdated} csv={{ url: reportUrl("journeys", workspaceId), query, filename: "journeys.csv" }} />
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} showModel={false} lastUpdated={r.data?.lastUpdated} fx={r.data?.fx} csv={{ url: reportUrl("journeys", workspaceId), query, filename: "journeys.csv" }} />
       }
     >
       <ErrorBox error={r.error} onRetry={r.reload} />

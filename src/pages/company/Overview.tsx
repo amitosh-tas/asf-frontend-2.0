@@ -54,7 +54,7 @@ function Overview() {
           filters={filters}
           onChange={update}
           workspaceId={workspaceId}
-          lastUpdated={d?.lastUpdated}
+          lastUpdated={d?.lastUpdated} fx={d?.fx}
           csv={{ url: reportUrl("summary", workspaceId), query, filename: `summary-${filters.range.from}-${filters.range.to}.csv` }}
         />
       }

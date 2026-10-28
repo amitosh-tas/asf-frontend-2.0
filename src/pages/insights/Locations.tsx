@@ -16,7 +16,7 @@ export default function Locations() {
   return (
     <PageLayout headTitle="Business" title="Locations" description="Revenue, customers, bookings, top sources and CAC per location, ranked."
       actions={
-        <ReportToolbar filters={{ ...filters, locationId: undefined }} onChange={update} workspaceId={workspaceId} lastUpdated={r.data?.lastUpdated} csv={{ url: reportUrl("locations", workspaceId), query, filename: "locations.csv" }} />
+        <ReportToolbar filters={{ ...filters, locationId: undefined }} onChange={update} workspaceId={workspaceId} lastUpdated={r.data?.lastUpdated} fx={r.data?.fx} csv={{ url: reportUrl("locations", workspaceId), query, filename: "locations.csv" }} />
       }
     >
       <ErrorBox error={r.error} onRetry={r.reload} />

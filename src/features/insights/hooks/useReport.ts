@@ -16,9 +16,21 @@ export interface ReportFiltersState {
   model?: AttributionModel;
   locationId?: string;
   channel?: string;
+  /** show money in this currency instead of the company's reporting currency (viewer's choice) */
+  currency?: string;
 }
 
 const STORAGE_KEY = "report-filters";
+const CURRENCY_KEY = "report-currency"; // remembered across visits, per browser
+
+function readCurrency(): string | undefined {
+  try {
+    const v = localStorage.getItem(CURRENCY_KEY);
+    return v && /^[A-Z]{3}$/.test(v) ? v : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 function readStored(): Partial<ReportFiltersState> {
   try {
@@ -32,19 +44,23 @@ function readStored(): Partial<ReportFiltersState> {
 export function useReportFilters(defaultDays: 7 | 14 | 30 | 90 = 30) {
   const [filters, setFilters] = useState<ReportFiltersState>(() => {
     const stored = readStored();
-    return { range: stored.range ?? getPresetDateRange(defaultDays), model: stored.model, locationId: stored.locationId, channel: undefined };
+    return { range: stored.range ?? getPresetDateRange(defaultDays), model: stored.model, locationId: stored.locationId, channel: undefined, currency: readCurrency() };
   });
   const update = (patch: Partial<ReportFiltersState>) =>
     setFilters((current) => {
       const next = { ...current, ...patch };
       try {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ range: next.range, model: next.model, locationId: next.locationId }));
+        if ("currency" in patch) {
+          if (next.currency) localStorage.setItem(CURRENCY_KEY, next.currency);
+          else localStorage.removeItem(CURRENCY_KEY);
+        }
       } catch {
         /* storage unavailable: filters just don't persist */
       }
       return next;
     });
-  const query: ReportQuery = { from: filters.range.from, to: filters.range.to, model: filters.model, locationId: filters.locationId, channel: filters.channel };
+  const query: ReportQuery = { from: filters.range.from, to: filters.range.to, model: filters.model, locationId: filters.locationId, channel: filters.channel, currency: filters.currency };
   return { filters, update, query };
 }
 

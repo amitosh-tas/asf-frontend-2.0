@@ -21,7 +21,7 @@ export default function Channels() {
   return (
     <PageLayout headTitle="Marketing" title="Channels & campaigns" description="Revenue, new customers, spend, CAC and ROAS by channel under the attribution model you choose."
       actions={
-        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={channels.data?.lastUpdated} csv={{ url: reportUrl("channels", workspaceId), query, filename: "channels.csv" }} />
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={channels.data?.lastUpdated} fx={channels.data?.fx} csv={{ url: reportUrl("channels", workspaceId), query, filename: "channels.csv" }} />
       }
     >
       <ErrorBox error={channels.error} onRetry={channels.reload} />

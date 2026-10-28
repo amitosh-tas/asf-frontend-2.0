@@ -19,7 +19,7 @@ interface AdAccount { id: string; platform: string; name: string; externalAccoun
 /** Ad spend and CAC (scope 4.8 / 5.8). */
 export default function AdSpend() {
   const workspaceId = useViewWorkspaceId();
-  const role = useAppSelector((state) => state.auth.user?.role);
+  const role = useAppSelector((state: { auth: { user?: { role?: string } } }) => state.auth.user?.role);
   const canManage = !workspaceId && role === "company_admin";
   const { filters, update, query } = useReportFilters();
   const cac = useReport<CacReport>("cac", query, workspaceId);
@@ -80,7 +80,7 @@ export default function AdSpend() {
   return (
     <PageLayout headTitle="Marketing" title="Ad spend & CAC" description="Spend by platform and campaign, blended and per-channel CAC, ROAS and cost per booking."
       actions={
-        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={cac.data?.lastUpdated} csv={{ url: reportUrl("spend", workspaceId), query, filename: "ad-spend.csv" }} />
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={cac.data?.lastUpdated} fx={cac.data?.fx} csv={{ url: reportUrl("spend", workspaceId), query, filename: "ad-spend.csv" }} />
       }
     >
       <ErrorBox error={cac.error ?? spend.error} onRetry={() => (cac.reload(), spend.reload())} />

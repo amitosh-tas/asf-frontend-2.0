@@ -36,6 +36,8 @@ Integrations (`/integrations`) drives the backend's gateway API (`/api/workspace
 Platform admins can only open a company's data inside a **support session** (written reason, expiry, PII masking). `SupportViewGate` wraps `/super/workspaces/:id/view`: with no live session it asks for a reason and renders nothing else (so no request is made that the backend would refuse); with one it shows `SupportSessionBanner` (countdown, End session). The session id lives in `sessionStorage` per workspace. Companies see every session under Settings → Support access.
 
 ## Reports and dates
+Money in other currencies is converted with the company's FX mode (Settings → Company profile → Exchange rates: own-date rate or today's rate; rates sync hourly). Reports return an `fx` block, shown under the filters by `FxNote` (`ReportToolbar`'s `fx` prop).
+
 "A day" is the **company's** local day. The date presets use the company timezone once a report response has revealed it (`features/reports/utils/timezone.ts`); `YYYY-MM-DD` values are sent as-is and the backend treats them as whole local days. Money values from the API are strings in minor units.
 
 ## Conventions

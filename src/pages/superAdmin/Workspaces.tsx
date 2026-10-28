@@ -43,8 +43,7 @@ interface Workspace {
   country: string;
   industry: string | null;
   status: WorkspaceStatus;
-  reportingCurrency?: string | null;
-  currency?: string | null;
+  reportingCurrency: string;
   createdAt: string;
   emailVerified?: boolean;
   eventsPerDay?: number;
@@ -103,10 +102,6 @@ function formatDate(value: string) {
     month: "short",
     year: "numeric",
   }).format(date);
-}
-
-function getWorkspaceCurrency(workspace: Workspace) {
-  return workspace.reportingCurrency || workspace.currency || "—";
 }
 
 function Workspaces() {
@@ -292,7 +287,7 @@ function Workspaces() {
     {
       key: "currency",
       header: "Currency",
-      render: (row) => getWorkspaceCurrency(row),
+      render: (row) => row.reportingCurrency,
     },
     {
       key: "createdAt",

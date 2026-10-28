@@ -42,10 +42,6 @@ interface WorkspaceUser {
   status: string;
 }
 
-function getWorkspaceCurrency(workspace: Workspace) {
-  return workspace.reportingCurrency || workspace.currency || "—";
-}
-
 interface WorkspaceUserUpdate {
   role: string;
   status: UserStatus;
@@ -60,8 +56,7 @@ interface Workspace {
   country: string;
   dataRegion: string;
   defaultModel: string;
-  reportingCurrency?: string | null;
-  currency?: string | null;
+  reportingCurrency: string;
   timezone: string;
   consentMode: string;
   lookbackDays: number;
@@ -350,7 +345,7 @@ function WorkspaceById() {
       industry: workspace.industry ?? "",
       timezone: workspace.timezone,
       dataRegion: workspace.dataRegion,
-      currency: getWorkspaceCurrency(workspace),
+      currency: workspace.reportingCurrency,
       // paymentMethod: workspace.paymentMethod ?? "",
     });
     setWorkspaceFormError("");
@@ -492,7 +487,7 @@ function WorkspaceById() {
       title="Workspace"
       description="Manage client workspace, edit, and monitor their status."
       actions={
-        <div className="flex gap-2 flex-wrap justify-end">
+        <div className="flex gap-2">
           <Button
             type="button"
             onClick={handleViewAs}
@@ -558,9 +553,7 @@ function WorkspaceById() {
                 <div key={key}>
                   <p className="text-sm text-text-muted">{label}</p>
                   <p className="mt-1 font-medium">
-                    {key === "reportingCurrency"
-                      ? getWorkspaceCurrency(workspaceData.workspace)
-                      : workspaceData.workspace[key]}
+                    {workspaceData.workspace[key]}
                     {suffix ? ` ${suffix}` : ""}
                   </p>
                 </div>
@@ -586,7 +579,7 @@ function WorkspaceById() {
             emptyMessage="No users found in this workspace."
           />
 
-          {/*
+          {/* 
           it was in filters
           <button
                 type="button"

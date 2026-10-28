@@ -16,7 +16,7 @@ const control = "rounded-full border border-border bg-transparent px-3 py-2 text
 /** Customers (scope 5.5): searchable, sortable list; new vs returning trend; cohorts; LTV by acquisition channel. */
 function Customers() {
   const workspaceId = useViewWorkspaceId();
-  const role = useAppSelector((state) => state.auth.user?.role);
+  const role = useAppSelector((state: { auth: { user?: { role?: string } } }) => state.auth.user?.role);
   const canMerge = !workspaceId && role === "company_admin";
   const { filters, update, query } = useReportFilters();
   const [page, setPage] = useState(1);
@@ -33,7 +33,7 @@ function Customers() {
   return (
     <PageLayout title="Customers" headTitle="Audience" description="Who your customers are, where they first came from, and how often they come back."
       actions={
-        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={r?.lastUpdated} csv={{ url: listUrl.customers(workspaceId), query: { search: search || undefined, sort, type: type || undefined }, filename: "customers.csv" }} />
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={r?.lastUpdated} fx={r?.fx} csv={{ url: listUrl.customers(workspaceId), query: { search: search || undefined, sort, type: type || undefined }, filename: "customers.csv" }} />
       }
     >
       <ErrorBox error={list.error ?? report.error} onRetry={() => (list.reload(), report.reload())} />

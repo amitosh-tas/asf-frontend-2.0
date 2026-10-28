@@ -57,7 +57,8 @@ function Transactions() {
           }}
           workspaceId={workspaceId}
           csv={{ url: listUrl.orders(workspaceId), query: { ...query, ...range, ...extra }, filename: "orders.csv" }}
-          lastUpdated={orders.data?.lastUpdated}
+          lastUpdated={orders.data?.lastUpdated} fx={orders.data?.fx}
+          showCurrency={false}
         />
       }
     >

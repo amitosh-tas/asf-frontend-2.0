@@ -27,7 +27,7 @@ function Upcoming() {
   return (
     <PageLayout headTitle="Pipeline" title="Bookings & upcoming" description="Upcoming appointments by day, week, location, service and source, plus cancellation, no-show and lead time by channel."
       actions={
-        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={b?.lastUpdated} csv={{ url: reportUrl("bookings", workspaceId), query, filename: "bookings-by-channel.csv" }} />
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={b?.lastUpdated} fx={b?.fx} csv={{ url: reportUrl("bookings", workspaceId), query, filename: "bookings-by-channel.csv" }} />
       }
     >
       <ErrorBox error={upcoming.error ?? report.error} onRetry={() => (upcoming.reload(), report.reload())} />
