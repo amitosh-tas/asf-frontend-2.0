@@ -31,8 +31,15 @@ export default function TrendChart({ data, xKey = "date", series, format, loadin
           <CartesianGrid stroke="#eeeeee" vertical={false} />
           <XAxis dataKey={xKey} tickFormatter={(v: string) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? formatReportDate(String(v)) : String(v))} tick={{ fontSize: 11, fill: "#737373" }} tickLine={false} axisLine={false} minTickGap={16} />
           <YAxis tickFormatter={(v: number) => format(v)} tick={{ fontSize: 11, fill: "#737373" }} tickLine={false} axisLine={false} width={84} />
-          <Tooltip formatter={(v: number) => format(Number(v))} labelFormatter={(v: string) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? formatReportDate(String(v)) : String(v))} />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Tooltip
+            formatter={(value) => format(Number(value ?? 0))}
+            labelFormatter={(value) =>
+              /^\d{4}-\d{2}-\d{2}$/.test(String(value))
+                ? /* your existing date formatting */
+                String(value)
+                : String(value)
+            }
+          />
           {series.map((s) =>
             type === "bar" ? (
               <Bar key={s.key} dataKey={s.key} name={s.label} fill={s.color} radius={[3, 3, 0, 0]} />
