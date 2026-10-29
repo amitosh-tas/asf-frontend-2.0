@@ -7,6 +7,14 @@ import { logoutUser } from "@/services/authService";
 import toast from "react-hot-toast";
 import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
 import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import PlanCards from "@/features/billing/components/PlanCards";
+import {
+  createCheckout,
+  getWorkspacePlans,
+  type BillingInterval,
+  type Plan,
+} from "@/services/billingService";
 import Title from "../ui/Title";
 
 interface SidebarProps {
@@ -115,6 +123,40 @@ function AccountComponent() {
   const user = useAppSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const currentPlan = user?.workspace?.plan;
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [plansLoading, setPlansLoading] = useState(false);
+  const [upgradeError, setUpgradeError] = useState("");
+  const [interval, setInterval] = useState<BillingInterval>("monthly");
+  const [busyTier, setBusyTier] = useState<string | null>(null);
+
+  async function openUpgrade() {
+    setUpgradeOpen(true);
+    setUpgradeError("");
+    if (plans.length > 0) return;
+
+    setPlansLoading(true);
+    try {
+      setPlans(await getWorkspacePlans());
+    } catch (error) {
+      setUpgradeError(getRequestErrorMessage(error));
+    } finally {
+      setPlansLoading(false);
+    }
+  }
+
+  async function upgrade(tier: string) {
+    setBusyTier(tier);
+    setUpgradeError("");
+    try {
+      const { checkoutUrl } = await createCheckout(tier, interval);
+      window.location.assign(checkoutUrl);
+    } catch (error) {
+      setUpgradeError(getRequestErrorMessage(error));
+      setBusyTier(null);
+    }
+  }
 
   const handleLogout = async () => {
     try {
@@ -154,6 +196,12 @@ function AccountComponent() {
         </span>
       )}
 
+      {user?.role === "company_admin" && (
+        <Button type="button" size="sm" onClick={() => void openUpgrade()}>
+          Upgrade
+        </Button>
+      )}
+
       <Button
         type="button"
         variant="outline"
@@ -162,6 +210,44 @@ function AccountComponent() {
       >
         Sign out
       </Button>
+
+      <Modal
+        open={upgradeOpen}
+        onClose={() => setUpgradeOpen(false)}
+        title="Upgrade your plan"
+        description="Choose a plan to unlock higher limits and premium features."
+        size="xl"
+      >
+        {upgradeError && <p role="alert" className="mb-4 rounded-lg border border-danger/20 bg-danger/5 px-3 py-2.5 text-sm text-danger">{upgradeError}</p>}
+        <div className="mb-5 flex gap-2">
+          {(["monthly", "annually"] as const).map((value) => (
+            <Button
+              key={value}
+              type="button"
+              size="sm"
+              variant={interval === value ? "primary" : "outline"}
+              onClick={() => setInterval(value)}
+            >
+              {value === "monthly" ? "Monthly" : "Annually"}
+            </Button>
+          ))}
+        </div>
+        {plansLoading ? (
+          <p className="text-sm text-text-muted">Loading plans...</p>
+        ) : (
+          <PlanCards
+            plans={plans}
+            interval={interval}
+            selectedTier={currentPlan}
+            busyTier={busyTier}
+            actionLabel={(plan) => plan.tier === currentPlan ? "Current plan" : "Upgrade"}
+            onSelect={() => undefined}
+            onAction={(plan) => {
+              if (plan.tier !== currentPlan) void upgrade(plan.tier);
+            }}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

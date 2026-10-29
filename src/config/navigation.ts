@@ -26,7 +26,7 @@ export const companyNavigation: SidebarItem[] = [
   { label: "Integrations", path: "/integrations" },
   { label: "Team", path: "/team", adminOnly: true, companyOnly: true },
   { label: "Settings", path: "/settings", adminOnly: true, companyOnly: true },
-  { label: "Billing", path: "/billing", adminOnly: true, companyOnly: true },
+  { label: "Billing", path: "/settings/billing", adminOnly: true, companyOnly: true },
   { label: "API Docs", path: "/docs", companyOnly: true },
 ];
 
