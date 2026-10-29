@@ -92,6 +92,12 @@ function Billing() {
         <Alert variant="info">Payment received. Your subscription is being verified by the server before access is changed.</Alert>
       )}
       {error && <Alert>{error}</Alert>}
+      {!error && onboarding && onboardingPlans.length === 0 && (
+        <Alert>No upgrade plans are currently available. Please try again later.</Alert>
+      )}
+      {!error && !onboarding && overview && overview.plans.length === 0 && (
+        <Alert>No billing plans were returned by the billing service.</Alert>
+      )}
       {onboarding ? (
         <>
           <Alert variant="info">
@@ -114,7 +120,7 @@ function Billing() {
             onAction={(plan) => void handleCheckout(plan.tier)}
           />
         </>
-      ) : overview && (
+      ) : overview?.subscription ? (
         <>
           <section className="rounded-2xl border border-border bg-card p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -148,7 +154,7 @@ function Billing() {
             onAction={(plan) => plan.tier !== overview.subscription.plan && void handleCheckout(plan.tier)}
           />
         </>
-      )}
+      ) : null}
     </PageLayout>
   );
 }

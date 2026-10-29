@@ -54,6 +54,10 @@ export interface BillingOverview {
   hasPaymentMethod: boolean;
 }
 
+type BillingOverviewResponse =
+  | BillingOverview
+  | { data?: BillingOverview };
+
 export interface CheckoutResponse {
   checkoutUrl: string;
   sessionId: string;
@@ -71,10 +75,18 @@ type RawPlan = Omit<Plan, "id" | "tier" | "pricing"> & {
   pricing: RawPricing;
 };
 
-type PlanResponse = RawPlan[] | { data: RawPlan[] } | { plans: RawPlan[] };
+type PlanResponse = RawPlan[] | { data?: RawPlan[] } | { plans?: RawPlan[] } | undefined;
 
 function plansFromResponse(data: PlanResponse): Plan[] {
-  const plans = Array.isArray(data) ? data : "data" in data ? data.data : data.plans;
+  if (!data) return [];
+
+  const plans: RawPlan[] = Array.isArray(data)
+    ? data
+    : "data" in data
+      ? data.data ?? []
+      : "plans" in data
+        ? data.plans ?? []
+        : [];
   return plans
     .filter((plan) => Boolean(plan.id ?? plan.tier))
     .map((plan) => {
@@ -126,10 +138,18 @@ export async function getWorkspacePlans() {
 }
 
 export async function getBillingOverview() {
-  const response = await api.get<BillingOverview>("/api/workspace/billing");
+  const response = await api.get<BillingOverviewResponse>("/api/workspace/billing");
+  const billing = "subscription" in response.data
+    ? response.data
+    : response.data.data;
+
+  if (!billing?.subscription) {
+    throw new Error("The billing service returned an invalid overview response.");
+  }
+
   return {
-    ...response.data,
-    plans: plansFromResponse(response.data.plans),
+    ...billing,
+    plans: plansFromResponse(billing.plans),
   };
 }
 
