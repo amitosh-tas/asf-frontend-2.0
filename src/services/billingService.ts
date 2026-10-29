@@ -63,6 +63,16 @@ export interface CheckoutResponse {
   sessionId: string;
 }
 
+interface CheckoutPayload {
+  checkoutUrl?: string;
+  url?: string;
+  sessionId?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
 export interface RegistrationStatus {
   status: "pending" | "paid" | "provisioning" | "active" | "failed" | "canceled";
   workspaceId?: string | null;
@@ -154,16 +164,42 @@ export async function getBillingOverview() {
 }
 
 export async function createCheckout(tier: string, interval: BillingInterval) {
-  const response = await api.post<CheckoutResponse>("/api/workspace/billing/checkout", {
+  const response = await api.post<unknown>("/api/workspace/billing/checkout", {
     tier,
     interval,
   });
-  return response.data;
+  const responseBody = isRecord(response.data) ? response.data : {};
+  const nestedPayload = isRecord(responseBody.data) ? responseBody.data : undefined;
+  const payload: CheckoutPayload = nestedPayload ?? responseBody;
+  const checkoutUrl = payload?.checkoutUrl ?? payload?.url;
+
+  if (!checkoutUrl) {
+    throw new Error("The billing service did not return a Stripe checkout URL.");
+  }
+
+  return {
+    checkoutUrl,
+    sessionId: payload.sessionId ?? "",
+  };
 }
 
 export async function openBillingPortal() {
-  const response = await api.post<{ portalUrl: string }>("/api/workspace/billing/portal", {});
-  return response.data;
+  const response = await api.post<
+    unknown
+  >("/api/workspace/billing/portal", {});
+  const responseBody = isRecord(response.data) ? response.data : {};
+  const nestedPayload = isRecord(responseBody.data) ? responseBody.data : undefined;
+  const portalUrl = typeof nestedPayload?.portalUrl === "string"
+    ? nestedPayload.portalUrl
+    : typeof responseBody.portalUrl === "string"
+      ? responseBody.portalUrl
+      : undefined;
+
+  if (!portalUrl) {
+    throw new Error("The billing service did not return a customer portal URL.");
+  }
+
+  return { portalUrl };
 }
 
 export async function getRegistrationStatus() {
