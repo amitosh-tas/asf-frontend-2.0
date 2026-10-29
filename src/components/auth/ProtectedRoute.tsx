@@ -52,6 +52,14 @@ function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
     return <Navigate to="/super" replace />
   }
 
+  if (
+    user.role === "company_admin" &&
+    user.workspace?.status === "pending" &&
+    location.pathname !== "/billing"
+  ) {
+    return <Navigate to="/billing?onboarding=1" replace />;
+  }
+
   // Logged in, but role is not permitted
   if (!allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;

@@ -80,7 +80,7 @@ const EMPTY_COMPANY: AddCompanyForm = {
   country: "IN",
   industry: "",
   timezone: "Asia/Kolkata",
-  dataRegion: "IN",
+  // dataRegion: "IN",
   currency: "INR",
   // paymentMethod: "",
 };

@@ -40,7 +40,7 @@ export interface CompanyDetailsValues {
   country: string;
   industry: string;
   timezone: string;
-  dataRegion: string;
+  // dataRegion: string;
   currency: string;
   // paymentMethod: string;
 }
@@ -53,13 +53,13 @@ interface CompanyDetailsFieldsProps {
   ) => void;
 }
 
-const DATA_REGIONS = [
-  { value: "IN", label: "India" },
-  { value: "US", label: "United States" },
-  { value: "EU", label: "European Union" },
-  { value: "UK", label: "United Kingdom" },
-  { value: "APAC", label: "Asia Pacific" },
-];
+// const DATA_REGIONS = [
+//   { value: "IN", label: "India" },
+//   { value: "US", label: "United States" },
+//   { value: "EU", label: "European Union" },
+//   { value: "UK", label: "United Kingdom" },
+//   { value: "APAC", label: "Asia Pacific" },
+// ];
 
 const TIMEZONES =
   typeof Intl.supportedValuesOf === "function"
@@ -322,24 +322,19 @@ export default function CompanyDetailsFields({
         </FormField>
 
         <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+          {/* Data region is temporarily disabled.
           <FormField
             label="Data region *"
             htmlFor="company-data-region"
-          // hint="Availability depends on your backend infrastructure."
           >
             <Select
               id="company-data-region"
               name="dataRegion"
               required
               value={values.dataRegion}
-              onChange={(event) =>
-                onChange("dataRegion", event.target.value)
-              }
+              onChange={(event) => onChange("dataRegion", event.target.value)}
             >
-              <option value="" disabled>
-                Select data region
-              </option>
-
+              <option value="" disabled>Select data region</option>
               {DATA_REGIONS.map((region) => (
                 <option key={region.value} value={region.value}>
                   {region.label}
@@ -347,7 +342,7 @@ export default function CompanyDetailsFields({
               ))}
             </Select>
           </FormField>
-
+          */}
           <FormField
             label="Reporting currency *"
             htmlFor="company-currency"

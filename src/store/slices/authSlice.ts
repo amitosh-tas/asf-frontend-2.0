@@ -2,6 +2,18 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type UserRole = "platform_admin" | "company_admin" | "company_viewer";
 export type AccountStatus = "invited" | "active" | "inactive" | "deactivated";
+export type WorkspaceStatus = "pending" | "active" | "suspended" | "canceled";
+
+export interface AuthWorkspace {
+  id: string;
+  name: string;
+  status: WorkspaceStatus;
+  plan?: string;
+  subscriptionStatus?: string;
+  billingInterval?: "monthly" | "annually" | null;
+  currentPeriodEndsAt?: string | null;
+  cancelAtPeriodEnd?: boolean;
+}
 
 export interface AuthUser {
   id: string;
@@ -17,6 +29,7 @@ export interface AuthUser {
   mfaPending?: boolean;
   /** company viewers limited to some locations (empty = all) */
   allowedLocationIds?: string[];
+  workspace?: AuthWorkspace | null;
 }
 
 interface AuthState {

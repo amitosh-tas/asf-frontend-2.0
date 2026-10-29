@@ -54,7 +54,7 @@ interface Workspace {
   slug: string;
   status: string;
   country: string;
-  dataRegion: string;
+  // dataRegion: string;
   defaultModel: string;
   reportingCurrency: string;
   timezone: string;
@@ -75,7 +75,7 @@ const WORKSPACE_DETAIL_FIELDS: ReadonlyArray<{
   suffix?: string;
 }> = [
     { key: "country", label: "Country" },
-    { key: "dataRegion", label: "Data Region" },
+    // { key: "dataRegion", label: "Data Region" },
     { key: "reportingCurrency", label: "Reporting Currency" },
     { key: "defaultModel", label: "Default Attribution Model" },
     { key: "lookbackDays", label: "Lookback Window", suffix: "days" },
@@ -147,7 +147,7 @@ function WorkspaceById() {
       country: "",
       industry: "",
       timezone: "",
-      dataRegion: "",
+      // dataRegion: "",
       currency: "",
       // paymentMethod: "",
     });
@@ -309,7 +309,7 @@ function WorkspaceById() {
       country: String(formData.get("country")).trim(),
       industry: String(formData.get("industry")).trim(),
       timezone: String(formData.get("timezone")).trim(),
-      dataRegion: String(formData.get("dataRegion")).trim(),
+      // dataRegion: String(formData.get("dataRegion")).trim(),
       reportingCurrency: String(formData.get("currency")).trim(),
       paymentMethod: String(formData.get("paymentMethod")).trim(),
       defaultModel: String(formData.get("defaultModel")).trim(),
@@ -344,7 +344,7 @@ function WorkspaceById() {
       country: workspace.country,
       industry: workspace.industry ?? "",
       timezone: workspace.timezone,
-      dataRegion: workspace.dataRegion,
+      // dataRegion: workspace.dataRegion,
       currency: workspace.reportingCurrency,
       // paymentMethod: workspace.paymentMethod ?? "",
     });

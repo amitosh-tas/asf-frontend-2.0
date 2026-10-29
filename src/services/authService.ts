@@ -15,10 +15,12 @@ export interface RegisterCompanyCredentials {
   timezone: string;
   currency: string;
   industry: string;
-  dataRegion: string;
+  // dataRegion: string;
   paymentMethod?: string;
   websiteUrl?: string;
   weekStart?: number;
+  tier?: string;
+  interval?: "monthly" | "annually";
 }
 
 export interface LoginResult {
@@ -75,8 +77,8 @@ export async function registerCompany(
 }
 
 export async function getMe(): Promise<AuthUser> {
-  const res = await api.get<{ decoded: AuthUser }>("/api/auth/me");
-  return res.data.decoded;
+  const res = await api.get<{ decoded: AuthUser; workspace?: AuthUser["workspace"] }>("/api/auth/me");
+  return { ...res.data.decoded, workspace: res.data.workspace };
 }
 
 export async function logoutUser() {

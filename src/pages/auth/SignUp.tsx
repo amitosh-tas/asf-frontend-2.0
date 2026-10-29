@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   registerCompany,
@@ -6,7 +6,6 @@ import {
 } from "@/services/authService";
 import { restoreSession } from "@/services/restoreSession";
 import { useAppDispatch } from "@/app/hooks";
-import toast from "react-hot-toast";
 import CompanyDetailsFields, {
   type CompanyDetailsValues,
 } from "@/components/workspace/CompanyDetailsFields";
@@ -18,6 +17,12 @@ import Title from "@/components/ui/Title";
 import Select from "@/components/ui/Select";
 import { passwordProblem } from "@/features/auth/passwordPolicy";
 import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
+import PlanCards from "@/features/billing/components/PlanCards";
+import {
+  getAvailablePlans,
+  type BillingInterval,
+  type Plan,
+} from "@/services/billingService";
 
 interface SignUpForm extends CompanyDetailsValues {
   adminName: string;
@@ -39,7 +44,7 @@ const initialForm: SignUpForm = {
   country: "",
   industry: "",
   timezone: "",
-  dataRegion: "",
+  // dataRegion: "",
   currency: "",
   // paymentMethod: "",
 };
@@ -54,6 +59,31 @@ function SignUp() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [done, setDone] = useState<{ message: string; approvalRequired?: boolean } | null>(null);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [plansLoading, setPlansLoading] = useState(true);
+  const [selectedTier, setSelectedTier] = useState("");
+  const [interval, setInterval] = useState<BillingInterval>("monthly");
+
+  useEffect(() => {
+    let active = true;
+    void getAvailablePlans()
+      .then((availablePlans) => {
+        if (active) {
+          setPlans(availablePlans);
+          setSelectedTier(availablePlans[0]?.tier ?? "");
+        }
+      })
+      .catch((requestError: unknown) => {
+        if (active) setError(getRequestErrorMessage(requestError));
+      })
+      .finally(() => {
+        if (active) setPlansLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function updateField<K extends keyof SignUpForm>(
     field: K,
@@ -78,11 +108,14 @@ function SignUp() {
       return;
     }
 
+    if (!selectedTier) {
+      setError("Choose a plan before creating your account.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // TODO: Connect this to your backend signup endpoint.
-      // Never send confirmPassword to the backend.
       const payload: RegisterCompanyCredentials = {
         name: form.name.trim(),
         email: form.email.trim(),
@@ -92,17 +125,23 @@ function SignUp() {
         timezone: form.timezone,
         currency: form.currency,
         industry: form.industry,
-        dataRegion: form.dataRegion,
+        // dataRegion: form.dataRegion,
         websiteUrl: form.websiteUrl.trim() || undefined,
         weekStart: Number(form.weekStart),
-        // paymentMethod: form.paymentMethod.trim(),
+        tier: selectedTier,
+        interval,
       };
 
       const result = await registerCompany(payload);
-      // The account can sign in once the email is confirmed (and, if required, the company approved).
-      setDone({ message: result?.message ?? "Check your inbox to confirm your email address.", approvalRequired: result?.approvalRequired });
-      toast.success("Your company account has been created.");
-      void restoreSession(dispatch);
+      if (typeof result?.checkoutUrl === "string") {
+        window.location.assign(result.checkoutUrl);
+        return;
+      }
+      await restoreSession(dispatch);
+      setDone({
+        message: result?.message ?? "Your account has been created. Check your inbox to continue.",
+        approvalRequired: result?.approvalRequired,
+      });
     } catch (err) {
       setError(getRequestErrorMessage(err));
     } finally {
@@ -112,7 +151,7 @@ function SignUp() {
 
   return (
     <div className="cursor-default min-h-dvh w-full bg-page-background px-4 py-8 text-text sm:px-6 sm:py-12">
-      <main className="mx-auto w-full max-w-3xl rounded-3xl border border-border bg-card px-5 py-8 shadow-lg sm:px-10 sm:py-10">
+      <main className="mx-auto w-full max-w-6xl rounded-3xl border border-border bg-card px-5 py-8 shadow-lg sm:px-10 sm:py-10">
           <div className="w-full">
             {/* Brand */}
             <div className="mb-10">
@@ -220,6 +259,41 @@ function SignUp() {
                 values={form}
                 onChange={(field, value) => updateField(field, value)}
               />
+
+              <section className="flex flex-col gap-5">
+                <div>
+                  <h2 className={sectionTitleClass}>Choose your plan</h2>
+                  <p className={sectionDescriptionClass}>
+                    Plans and pricing are provided by the billing service. Your workspace is created only after the backend verifies payment.
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  {(["monthly", "annually"] as const).map((value) => (
+                    <Button
+                      key={value}
+                      type="button"
+                      variant={interval === value ? "primary" : "outline"}
+                      onClick={() => setInterval(value)}
+                    >
+                      {value === "monthly" ? "Monthly" : "Annually"}
+                    </Button>
+                  ))}
+                </div>
+                {plansLoading ? (
+                  <p className="text-sm text-text-muted">Loading available plans...</p>
+                ) : plans.length === 0 ? (
+                  <Alert>No plans are currently available. Please try again later.</Alert>
+                ) : (
+                  <PlanCards
+                    plans={plans}
+                    interval={interval}
+                    selectedTier={selectedTier}
+                    actionLabel={() => "Select plan"}
+                    onSelect={setSelectedTier}
+                    onAction={(plan) => setSelectedTier(plan.tier)}
+                  />
+                )}
+              </section>
 
               <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
                 <FormField label="Website" htmlFor="websiteUrl">

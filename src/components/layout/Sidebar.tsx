@@ -148,6 +148,11 @@ function AccountComponent() {
       >
         {user?.role}
       </span>
+      {user?.workspace?.plan && (
+        <span className="mt-1 w-max max-w-full rounded-md border border-primary/20 bg-primary/5 px-2 py-1 text-[10px] font-medium text-sidebar-text">
+          {user.workspace.plan}
+        </span>
+      )}
 
       <Button
         type="button"

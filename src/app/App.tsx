@@ -43,6 +43,8 @@ import { useEffect } from "react";
 import Members from "@/pages/superAdmin/Members";
 import Settings from "@/pages/superAdmin/Settings";
 import A_Settings from "@/pages/company/Settings";
+import Billing from "@/pages/company/Billing";
+import CheckoutReturn from "@/pages/auth/CheckoutReturn";
 import { restoreSession } from "@/services/restoreSession";
 import { Toaster } from "react-hot-toast";
 import Workspaces from "@/pages/superAdmin/Workspaces";
@@ -95,6 +97,7 @@ function App() {
           <Route path="/" element={<DashboardLayout />}>
             <Route path="team" element={<Team />} />
             <Route path="settings" element={<A_Settings />}/>
+            <Route path="billing" element={<Billing />}/>
           </Route>
         </Route>
 
@@ -145,6 +148,7 @@ function App() {
         <Route path="/verify-user/:token" element={<VerifyEmail />} />
         <Route path="/accept-invite" element={<AcceptInvite />} />
         <Route path="/accept-invite/:token" element={<AcceptInvite />} />
+        <Route path="/billing/checkout-return" element={<CheckoutReturn />} />
         <Route path="/invite" element={<AcceptInvite />} />
         <Route path="/invite/:token" element={<AcceptInvite />} />
         <Route path="/invites/accept" element={<AcceptInvite />} />

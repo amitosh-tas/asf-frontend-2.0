@@ -28,7 +28,7 @@ export interface WorkspaceWriteData {
   country?: string;
   industry?: string;
   timezone?: string;
-  dataRegion?: string;
+  // dataRegion?: string;
   reportingCurrency?: string;
   paymentMethod?: string;
   status?: string;
