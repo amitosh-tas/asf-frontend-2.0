@@ -239,13 +239,13 @@ function AccountComponent() {
         >
           {initials}
         </span>
-        <span className="min-w-0 flex-1">
-          <span className="flex min-w-0 items-center gap-1.5">
+        <span className="min-w-0 flex-1 ">
+          <span className="flex min-w-0  flex-col">
             <span className="truncate text-sm font-semibold text-sidebar-active">
               {userName}
             </span>
             {planLabel && (
-              <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-sidebar-active">
+              <span className="shrink-0px-1.5 text-[10px] font-medium text-sidebar-active/70">
                 {planLabel}
               </span>
             )}
