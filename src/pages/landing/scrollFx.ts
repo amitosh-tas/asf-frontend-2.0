@@ -79,6 +79,7 @@ export function useScrollProgress<T extends HTMLElement>() {
 export function usePageProgress() {
   const [p, setP] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [overDark, setOverDark] = useState(false);
   useEffect(() => {
     let raf = 0;
     const update = () => {
@@ -86,16 +87,24 @@ export function usePageProgress() {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       setP(max > 0 ? Math.min(1, window.scrollY / max) : 0);
       setScrolled(window.scrollY > 8);
+      // the header turns dark while it sits over a section marked data-nav-dark
+      const line = 32;
+      setOverDark(Array.from(document.querySelectorAll("[data-nav-dark]")).some((el) => {
+        const r = el.getBoundingClientRect();
+        return r.top <= line && r.bottom > line;
+      }));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
-  return { progress: p, scrolled };
+  return { progress: p, scrolled, overDark };
 }

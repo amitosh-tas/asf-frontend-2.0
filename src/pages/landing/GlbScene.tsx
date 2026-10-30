@@ -163,11 +163,39 @@ export interface GlbSceneProps {
   still?: boolean;
   className?: string;
   label: string;
+  /**
+   * Called every frame with each node's on-screen position (CSS px, relative to the canvas) so HTML
+   * labels and 2D effects can follow the 3D scene. `visible` is false while a node is hidden.
+   */
+  onFrame?: (points: ScreenPoint[], size: { width: number; height: number }) => void;
 }
 
-export default function GlbScene({ src, progress, still = false, className = "", label }: GlbSceneProps) {
+export interface ScreenPoint {
+  name: string;
+  x: number;
+  y: number;
+  /** projected size of one scene unit in px (for scaling effects with distance) */
+  unit: number;
+  visible: boolean;
+}
+
+/** Projects a model matrix's origin to canvas CSS pixels. */
+function project(proj: Mat4, view: Mat4, model: Mat4, w: number, h: number) {
+  const m = mul(proj, mul(view, model));
+  const cw = m[15];
+  const x = m[12] / cw;
+  const y = m[13] / cw;
+  // one unit to the right, for scale
+  const m2 = mul(proj, mul(view, mul(model, compose([1, 0, 0], 0, 0, 0, 1))));
+  const unit = Math.abs(m2[12] / m2[15] - x) * (w / 2);
+  return { x: ((x + 1) / 2) * w, y: ((1 - y) / 2) * h, unit };
+}
+
+export default function GlbScene({ src, progress, still = false, className = "", label, onFrame }: GlbSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const progressRef = useRef(progress);
+  const onFrameRef = useRef(onFrame);
+  onFrameRef.current = onFrame;
   const pointer = useRef({ x: 0, y: 0 });
   progressRef.current = progress;
 
@@ -248,10 +276,21 @@ export default function GlbScene({ src, progress, still = false, className = "",
       if (!meshes.length || !w || !h) return;
       const t = still ? 0 : (performance.now() - start) / 1000;
       const p = progressRef.current;
-      gl.uniformMatrix4fv(loc.proj, false, perspective(0.62, w / h, 0.1, 100));
+      const projM = perspective(0.62, w / h, 0.1, 100);
+      gl.uniformMatrix4fv(loc.proj, false, projM);
       // camera: slight parallax from the pointer
       const view = mul(compose([0, 0, -9.4], pointer.current.y * 0.12, pointer.current.x * 0.18, 0, 1), ident());
       gl.uniformMatrix4fv(loc.view, false, view);
+      if (onFrameRef.current) {
+        const cssW = canvas.clientWidth;
+        const cssH = canvas.clientHeight;
+        const points: ScreenPoint[] = ["sale", ...TOUCHES].map((name) => {
+          const model = pose(name, p, t, still);
+          if (!model) return { name, x: 0, y: 0, unit: 0, visible: false };
+          return { name, ...project(projM, view, model, cssW, cssH), visible: true };
+        });
+        onFrameRef.current(points, { width: cssW, height: cssH });
+      }
       for (const m of meshes) {
         const model = pose(m.name, p, t, still);
         if (!model) continue;
