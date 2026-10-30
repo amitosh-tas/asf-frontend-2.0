@@ -54,9 +54,25 @@ export interface BillingOverview {
   hasPaymentMethod: boolean;
 }
 
-type BillingOverviewResponse =
-  | BillingOverview
-  | { data?: BillingOverview };
+type RawSubscription = Omit<
+  BillingOverview["subscription"],
+  "currentPeriodEndsAt"
+> & {
+  currentPeriodStart?: string | null;
+  currentPeriodEnd?: string | null;
+  currentPeriodEndsAt?: string | null;
+};
+
+interface BillingPayload {
+  current?: RawSubscription;
+  subscription?: RawSubscription;
+  plans?: RawPlan[];
+  hasPaymentMethod?: boolean;
+}
+
+type BillingOverviewResponse = BillingPayload & {
+  data?: BillingPayload;
+};
 
 export interface CheckoutResponse {
   checkoutUrl: string;
@@ -129,6 +145,24 @@ function normalizePricing(pricing: RawPricing): Partial<Record<BillingInterval, 
   }, {});
 }
 
+function normalizeSubscription(
+  subscription: RawSubscription,
+): BillingOverview["subscription"] {
+  return {
+    plan: subscription.plan,
+    planName: subscription.planName,
+    billingInterval: subscription.billingInterval,
+    status: subscription.status,
+    trialEndsAt: subscription.trialEndsAt,
+    currentPeriodEndsAt:
+      subscription.currentPeriodEndsAt ?? subscription.currentPeriodEnd ?? null,
+    cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+    limits: subscription.limits,
+    features: subscription.features,
+    usage: subscription.usage,
+  };
+}
+
 function formatPrice(amount: number, currency: string) {
   return new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -149,17 +183,17 @@ export async function getWorkspacePlans() {
 
 export async function getBillingOverview() {
   const response = await api.get<BillingOverviewResponse>("/api/workspace/billing");
-  const billing = "subscription" in response.data
-    ? response.data
-    : response.data.data;
+  const billing = response.data.data ?? response.data;
+  const subscription = billing.subscription ?? billing.current;
 
-  if (!billing?.subscription) {
+  if (!subscription) {
     throw new Error("The billing service returned an invalid overview response.");
   }
 
   return {
-    ...billing,
+    subscription: normalizeSubscription(subscription),
     plans: plansFromResponse(billing.plans),
+    hasPaymentMethod: billing.hasPaymentMethod ?? false,
   };
 }
 
