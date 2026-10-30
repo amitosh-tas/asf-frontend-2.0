@@ -21,7 +21,7 @@ export default function JourneyScroll() {
     // no pinning or scroll-driven motion: the whole story at once, model at its final pose
     return (
       <section aria-label="How a sale is traced" className="bg-black text-white">
-        <div className="mx-auto grid max-w-[76rem] items-center gap-10 px-4 py-24 sm:px-6 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-304 items-center gap-10 px-4 py-24 sm:px-6 lg:grid-cols-2">
           <ol className="m-0 list-none space-y-8 p-0">
             {BEATS.map((b) => (
               <li key={b.title}>
@@ -40,7 +40,7 @@ export default function JourneyScroll() {
   return (
     <section ref={ref} aria-label="How a sale is traced" className="relative h-[420vh] bg-black text-white">
       <div className="sticky top-0 flex h-dvh items-center overflow-hidden">
-        <div className="mx-auto grid w-full max-w-[76rem] items-center gap-6 px-4 sm:px-6 lg:grid-cols-[1fr_1.15fr]">
+        <div className="mx-auto grid w-full max-w-304 items-center gap-6 px-4 sm:px-6 lg:grid-cols-[1fr_1.15fr]">
           <div className="relative z-10 order-2 lg:order-1">
             <ol className="m-0 mb-8 flex list-none gap-2 p-0" aria-hidden="true">
               {BEATS.map((b, i) => (
@@ -54,8 +54,8 @@ export default function JourneyScroll() {
             </ol>
             <div key={beat.title} className="beat-in" aria-live="polite">
               <p className="m-0 text-sm text-white/55">{beat.day}</p>
-              <h2 className="mt-2 mb-0 font-display text-[clamp(2.25rem,5vw,4.25rem)] leading-[1] font-bold tracking-[-0.03em]">{beat.title}</h2>
-              <p className="mt-5 mb-0 max-w-[28rem] text-lg leading-relaxed text-white/70">{beat.body}</p>
+              <h2 className="mt-2 mb-0 font-display text-[clamp(2.25rem,5vw,4.25rem)] leading-none font-bold tracking-[-0.03em]">{beat.title}</h2>
+              <p className="mt-5 mb-0 max-w-md text-lg leading-relaxed text-white/70">{beat.body}</p>
             </div>
           </div>
           <div className="order-1 lg:order-2">
@@ -63,7 +63,7 @@ export default function JourneyScroll() {
               src="/models/journey.glb"
               progress={progress}
               label="3D model: three visits orbiting a sale and merging into it as you scroll"
-              className="mx-auto aspect-square w-full max-w-[34rem] max-lg:max-h-[46dvh] max-lg:w-auto"
+              className="mx-auto aspect-square w-full max-w-136 max-lg:max-h-[46dvh] max-lg:w-auto"
             />
           </div>
         </div>

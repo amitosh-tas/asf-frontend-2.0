@@ -66,7 +66,7 @@ export default function JourneyDemo() {
             </button>
           ))}
         </div>
-        <p className="mt-3 mb-0 min-h-[2.75rem] text-sm leading-relaxed text-white/70" aria-live="polite">
+        <p className="mt-3 mb-0 min-h-11 text-sm leading-relaxed text-white/70" aria-live="polite">
           {current.explain}
         </p>
       </div>

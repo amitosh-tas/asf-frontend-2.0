@@ -86,7 +86,7 @@ export default function Landing() {
 
       {/* ── Navigation ──────────────────────────────────────────── */}
       <header className={`sticky top-0 z-40 border-b bg-white/90 backdrop-blur transition-colors ${page.scrolled ? "border-black/10" : "border-transparent"}`}>
-        <nav aria-label="Main" className="mx-auto flex h-16 max-w-[76rem] items-center gap-6 px-4 sm:px-6">
+        <nav aria-label="Main" className="mx-auto flex h-16 max-w-304 items-center gap-6 px-4 sm:px-6">
           <Link to="/" className={`text-black no-underline ${focusRing}`}>
             <Logo />
           </Link>
@@ -101,12 +101,12 @@ export default function Landing() {
             <Link to="/signup" className={`bg-black px-4 py-2 text-sm font-semibold text-white no-underline hover:bg-neutral-800 ${focusRing}`}>Start free</Link>
           </div>
         </nav>
-        <div aria-hidden="true" className="absolute inset-x-0 bottom-[-1px] h-[2px] origin-left bg-black" style={{ transform: `scaleX(${page.progress})` }} />
+        <div aria-hidden="true" className="absolute inset-x-0 -bottom-px h-0.5 origin-left bg-black" style={{ transform: `scaleX(${page.progress})` }} />
       </header>
 
       <main id="main">
         {/* ── Hero ──────────────────────────────────────────────── */}
-        <section className="mx-auto grid max-w-[76rem] items-end gap-12 px-4 pt-16 pb-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-24 lg:pb-28">
+        <section className="mx-auto grid max-w-304 items-end gap-12 px-4 pt-16 pb-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-24 lg:pb-28">
           <div>
             <h1 aria-label={HEADLINE} className="m-0 font-display text-[clamp(2.75rem,7vw,5.5rem)] leading-[0.95] font-bold tracking-[-0.035em]">
               {HEADLINE.split(" ").map((word, i) => (
@@ -116,7 +116,7 @@ export default function Landing() {
                 </span>
               ))}
             </h1>
-            <p style={{ ["--d" as string]: 550 }} className="h-after mt-7 mb-0 max-w-[34rem] text-lg leading-relaxed text-neutral-700">
+            <p style={{ ["--d" as string]: 550 }} className="h-after mt-7 mb-0 max-w-136 text-lg leading-relaxed text-neutral-700">
               Elysium follows each customer from the first ad they click to the order or booking they make, so you know
               where your revenue really comes from: Meta, Google, email or a friend's link.
             </p>
@@ -139,9 +139,9 @@ export default function Landing() {
 
         {/* ── Works with ────────────────────────────────────────── */}
         <section aria-labelledby="works-with" className="border-y border-black">
-          <div className="mx-auto flex max-w-[76rem] flex-col gap-4 px-4 py-6 sm:px-6 md:flex-row md:items-center md:gap-10">
+          <div className="mx-auto flex max-w-304 flex-col gap-4 px-4 py-6 sm:px-6 md:flex-row md:items-center md:gap-10">
             <h2 id="works-with" className="m-0 shrink-0 text-sm font-normal text-neutral-600">Works with</h2>
-            <div className="marquee-wrap min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
+            <div className="marquee-wrap min-w-0 flex-1 overflow-hidden mask-[linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
               <ul className="marquee m-0 flex w-max list-none gap-x-12 gap-y-2 p-0 font-display text-lg font-semibold">
                 {INTEGRATIONS.map((name) => <li key={name}>{name}</li>)}
                 {INTEGRATIONS.map((name) => <li key={`copy-${name}`} aria-hidden="true">{name}</li>)}
@@ -154,8 +154,8 @@ export default function Landing() {
         <JourneyScroll />
 
         {/* ── How it works (a real sequence) ────────────────────── */}
-        <section id="how-it-works" className="mx-auto max-w-[76rem] scroll-mt-20 px-4 py-24 sm:px-6">
-          <h2 data-reveal className="m-0 max-w-[40rem] font-display text-4xl leading-tight font-bold tracking-tight sm:text-5xl">Set up in an afternoon</h2>
+        <section id="how-it-works" className="mx-auto max-w-304 scroll-mt-20 px-4 py-24 sm:px-6">
+          <h2 data-reveal className="m-0 max-w-160 font-display text-4xl leading-tight font-bold tracking-tight sm:text-5xl">Set up in an afternoon</h2>
           <ol className="mt-12 mb-0 grid list-none gap-10 p-0 md:grid-cols-3 md:gap-8">
             {STEPS.map((step, i) => (
               <li key={step.title} data-reveal style={{ ["--i" as string]: i + 1 }} className="border-t-2 border-black pt-5">
@@ -169,8 +169,8 @@ export default function Landing() {
 
         {/* ── Features (black band) ─────────────────────────────── */}
         <section id="features" className="scroll-mt-16 bg-black text-white">
-          <div className="mx-auto max-w-[76rem] px-4 py-24 sm:px-6">
-            <h2 data-reveal className="m-0 max-w-[44rem] font-display text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
+          <div className="mx-auto max-w-304 px-4 py-24 sm:px-6">
+            <h2 data-reveal className="m-0 max-w-176 font-display text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
               Built for brands that sell online and in person
             </h2>
             <ul className="mt-14 mb-0 grid list-none gap-x-10 gap-y-12 p-0 sm:grid-cols-2 lg:grid-cols-3">
@@ -185,9 +185,9 @@ export default function Landing() {
         </section>
 
         {/* ── Pricing ───────────────────────────────────────────── */}
-        <section id="pricing" className="mx-auto max-w-[76rem] scroll-mt-20 px-4 py-24 sm:px-6">
+        <section id="pricing" className="mx-auto max-w-304 scroll-mt-20 px-4 py-24 sm:px-6">
           <h2 data-reveal className="m-0 font-display text-4xl leading-tight font-bold tracking-tight sm:text-5xl">Pricing</h2>
-          <p className="mt-4 mb-8 max-w-[36rem] text-lg leading-relaxed text-neutral-700">
+          <p className="mt-4 mb-8 max-w-xl text-lg leading-relaxed text-neutral-700">
             Start on the free trial. Upgrade when you need more orders, more models or your team on board.
           </p>
           <div data-reveal style={{ ["--i" as string]: 1 }}>
@@ -197,7 +197,7 @@ export default function Landing() {
 
         {/* ── FAQ ───────────────────────────────────────────────── */}
         <section aria-labelledby="faq" className="border-t border-black">
-          <div className="mx-auto grid max-w-[76rem] gap-10 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_2fr]">
+          <div className="mx-auto grid max-w-304 gap-10 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_2fr]">
             <h2 id="faq" data-reveal className="m-0 font-display text-4xl leading-tight font-bold tracking-tight sm:text-5xl">Questions</h2>
             <div data-reveal style={{ ["--i" as string]: 1 }} className="border-t border-black">
               {FAQ.map((item) => (
@@ -206,7 +206,7 @@ export default function Landing() {
                     {item.q}
                     <span aria-hidden="true" className="font-display text-2xl leading-none font-normal group-open:rotate-45 motion-safe:transition-transform">+</span>
                   </summary>
-                  <p className="mt-0 mb-6 max-w-[42rem] leading-relaxed text-neutral-700">{item.a}</p>
+                  <p className="mt-0 mb-6 max-w-2xl leading-relaxed text-neutral-700">{item.a}</p>
                 </details>
               ))}
             </div>
@@ -215,8 +215,8 @@ export default function Landing() {
 
         {/* ── Closing call to action ────────────────────────────── */}
         <section className="bg-black text-white">
-          <div className="mx-auto flex max-w-[76rem] flex-col items-start gap-8 px-4 py-24 sm:px-6 md:flex-row md:items-end md:justify-between">
-            <h2 data-reveal className="m-0 max-w-[40rem] font-display text-[clamp(2.25rem,5vw,4rem)] leading-[1] font-bold tracking-[-0.03em]">
+          <div className="mx-auto flex max-w-304 flex-col items-start gap-8 px-4 py-24 sm:px-6 md:flex-row md:items-end md:justify-between">
+            <h2 data-reveal className="m-0 max-w-160 font-display text-[clamp(2.25rem,5vw,4rem)] leading-none font-bold tracking-[-0.03em]">
               Find out what your ads really earn.
             </h2>
             <Link to="/signup" data-reveal style={{ ["--i" as string]: 2 }} className={`shrink-0 bg-white px-7 py-4 text-base font-semibold text-black no-underline hover:bg-neutral-200 ${focusRing}`}>
@@ -227,7 +227,7 @@ export default function Landing() {
       </main>
 
       <footer className="border-t border-white/15 bg-black text-white">
-        <div className="mx-auto flex max-w-[76rem] flex-col gap-6 px-4 py-10 text-sm sm:px-6 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-304 flex-col gap-6 px-4 py-10 text-sm sm:px-6 md:flex-row md:items-center md:justify-between">
           <Logo className="text-white" />
           <ul className="m-0 flex list-none flex-wrap gap-6 p-0 text-white/70">
             <li><a href="#pricing" className={`text-inherit no-underline hover:text-white ${focusRing}`}>Pricing</a></li>
