@@ -22,12 +22,10 @@ type Theme = "light" | "dark";
 const navigationGroups = ["Overview", "Attribution", "Customers & sales", "Performance", "Workspace", "Platform"] as const;
 
 interface SidebarProps {
-  companyName?: string;
   items: SidebarItem[];
 }
 
 function Sidebar({
-  companyName,
   items,
 }: SidebarProps) {
   const location = useLocation();
@@ -48,12 +46,12 @@ function Sidebar({
         className={`
           fixed left-4 top-4 z-50 flex h-10 items-center justify-center
           rounded-lg border border-border bg-card px-3 text-xs font-medium text-text
-          transition-colors duration-150 hover:bg-hover
+          duration-300 hover:bg-hover
           md:hidden
-          ${isOpen ? "" : "translate-x-0"}
+          ${isOpen ? "translate-x-40" : "translate-x-0"}
         `}
       >
-        {isOpen ? "Close" :  (<i className="fi fi-br-bars-sort flex items-center text-lg"></i>)}
+        {isOpen ? <i className="fi fi-br-cross flex items-center"></i> :  (<i className="fi fi-br-bars-sort flex items-center text-lg"></i>)}
       </button>
 
       {isOpen && (
@@ -79,10 +77,6 @@ function Sidebar({
               <Title/>
               <span className="text-text-muted">.</span>
             </p>
-            <div className="mt-5 rounded-xl border border-border/80 bg-surface-muted/70 px-3 py-2.5">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-text-muted">Workspace</p>
-              <p className="mt-1 truncate text-xs font-semibold text-text">{companyName || "Attribution workspace"}</p>
-            </div>
           </div>
 
           <nav
