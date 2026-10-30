@@ -144,7 +144,8 @@ function ThemeToggle() {
   }
 
   return (
-    <div className="mb-3 flex rounded-xl bg-surface-muted p-1" role="group" aria-label="Color theme">
+    <div className="mb-2 w-full" role="group" aria-label="Color theme">
+      <div className="flex w-full rounded-lg border border-border/80 bg-surface-muted p-0.5">
       {(["light", "dark"] as const).map((value) => {
         const selected = theme === value;
         return (
@@ -152,14 +153,17 @@ function ThemeToggle() {
             key={value}
             type="button"
             aria-pressed={selected}
+            aria-label={`${value === "light" ? "Light" : "Dark"} theme`}
+            title={`${value === "light" ? "Light" : "Dark"} theme`}
             onClick={() => selectTheme(value)}
-            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2 text-xs font-medium transition-colors ${selected ? "bg-card text-text shadow-sm" : "text-text-muted hover:text-text"}`}
+            className={`inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-normal transition-colors ${selected ? "bg-card text-text shadow-sm" : "text-text-muted hover:text-text"}`}
           >
-            <i aria-hidden="true" className={`fi fi-rr-${value === "light" ? "sun" : "moon"} text-sm`} />
-            {value === "light" ? "Light" : "Dark"}
+            <i aria-hidden="true" className={`fi fi-rr-${value === "light" ? "sun" : "moon"} text-[13px]`} />
+            <span>{value === "light" ? "Light" : "Dark"}</span>
           </button>
         );
       })}
+      </div>
     </div>
   );
 }
