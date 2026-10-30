@@ -98,7 +98,7 @@ function App() {
             <Route path="team" element={<Team />} />
             <Route path="settings" element={<A_Settings />}/>
             <Route path="billing" element={<Billing />}/>
-            {/* <Route path="settings/billing" element={<Billing />}/> */}
+            <Route path="settings/billing" element={<Billing />}/>
           </Route>
         </Route>
 

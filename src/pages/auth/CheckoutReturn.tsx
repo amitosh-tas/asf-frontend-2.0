@@ -14,8 +14,14 @@ function CheckoutReturn() {
   const [status, setStatus] = useState<RegistrationStatus["status"]>("pending");
   const [message, setMessage] = useState("Verifying your payment and preparing your workspace…");
   const [error, setError] = useState("");
+  const canceled = searchParams.get("canceled") === "true";
 
   useEffect(() => {
+    if (canceled) {
+      window.location.replace("https://asf-tas.vercel.app/settings/billing?canceled=true");
+      return;
+    }
+
     let active = true;
     let attempts = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -44,9 +50,7 @@ function CheckoutReturn() {
       active = false;
       if (timer) clearTimeout(timer);
     };
-  }, [navigate]);
-
-  const canceled = searchParams.get("canceled") === "true";
+  }, [canceled, navigate]);
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-page-background px-4 py-8">
