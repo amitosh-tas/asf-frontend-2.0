@@ -32,13 +32,13 @@ export default function SetupChecklist({ canRunTest }: { canRunTest: boolean }) 
   };
   return (
     <Section title="Setup checklist" subtitle={list.data ? `${list.data.completed} of ${list.data.total} done` : undefined} actions={canRunTest ? <Button type="button" variant="outline" loading={running} onClick={test}>Send test event</Button> : undefined}>
-      <ol className="flex flex-col gap-2 text-sm">
+      <ol className="flex flex-col gap-2 text-sm text-text">
         {(list.data?.steps ?? []).map((s, i) => (
           <li key={s.key} className="flex items-start gap-3">
             <span className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${s.done ? "bg-success text-white" : "border border-border text-text-muted"}`}>{s.done ? "✓" : i + 1}</span>
             <span>
               {s.label}
-              {s.action && !s.done && <Link to={s.action.split("#")[0]} className="ml-2 text-xs underline">Open</Link>}
+              {s.action && !s.done && <Link to={s.action.split("#")[0]} className="ml-2 text-xs text-text-muted underline underline-offset-2 hover:text-text">Open</Link>}
               {s.detail && <span className="block text-xs text-text-muted">{s.detail}</span>}
             </span>
           </li>
