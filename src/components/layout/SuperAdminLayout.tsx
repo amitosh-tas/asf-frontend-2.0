@@ -32,7 +32,7 @@ function SuperAdminLayout() {
         items={navigationItems}
       />
 
-      <main className="min-w-0 flex-1 px-4 pb-8 pt-16 sm:px-6 md:px-10 md:pt-8 xl:px-14">
+      <main className="min-w-0 flex-1 px-4 pb-10 pt-16 sm:px-6 md:px-9 md:pt-9 xl:px-12">
         {isViewingWorkspace && (
           <div className="mx-auto mb-6 flex w-full max-w-360 flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
             <p className="text-sm font-medium text-text">

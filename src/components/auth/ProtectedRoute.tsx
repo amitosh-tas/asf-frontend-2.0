@@ -27,6 +27,10 @@ function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
 
   // Not logged in: remember the route they wanted
   if (!user) {
+    if (location.pathname === "/") {
+      return <Navigate to="/landing" replace />;
+    }
+
     return (
       <Navigate
         to="/signin"

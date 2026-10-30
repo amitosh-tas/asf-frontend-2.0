@@ -15,14 +15,14 @@ interface KpiProps {
 
 export function Kpi({ label, value, change, inverse = false, hint, loading, onClick }: KpiProps) {
   const good = change === null || change === undefined ? null : inverse ? change <= 0 : change >= 0;
-  const className = `flex min-h-28 min-w-0 flex-col gap-1.5 rounded-lg border border-border bg-card p-5 text-left shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${onClick ? "cursor-pointer transition-shadow hover:shadow-md" : ""}`;
+  const className = `group flex min-h-32 min-w-0 flex-col gap-2 rounded-2xl border border-border/80 bg-card p-5 text-left shadow-[0_2px_10px_rgba(15,23,42,0.025)] transition duration-200 ${onClick ? "cursor-pointer hover:-translate-y-0.5 hover:border-border hover:shadow-[0_10px_28px_rgba(15,23,42,0.08)]" : ""}`;
   const body = (
     <>
-      <span className="text-sm font-medium text-text-muted">{label}</span>
-      {loading ? <Skeleton className="h-7 w-2/3" /> : <span className="font-heading text-2xl font-semibold tabular-nums tracking-tight text-text">{value}</span>}
+      <span className="text-[12px] font-medium tracking-[0.01em] text-text-muted">{label}</span>
+      {loading ? <Skeleton className="h-8 w-2/3" /> : <span className="font-heading text-[28px] font-semibold tabular-nums tracking-[-0.04em] text-text">{value}</span>}
       {!loading && change !== undefined && (
-        <span className={`text-xs font-medium ${good === null ? "text-text-muted" : good ? "text-success" : "text-danger"}`}>
-          {change === null ? "no previous period" : `${change >= 0 ? "▲" : "▼"} ${Math.abs(change)}% vs previous period`}
+        <span className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ${good === null ? "bg-surface-muted text-text-muted" : good ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
+          {change === null ? "No previous period" : `${change >= 0 ? "↑" : "↓"} ${Math.abs(change)}%`}
         </span>
       )}
       {!loading && hint && <span className="text-xs leading-5 text-text-muted">{hint}</span>}
@@ -38,15 +38,15 @@ export function Kpi({ label, value, change, inverse = false, hint, loading, onCl
 }
 
 export function KpiGrid({ children }: { children: ReactNode }) {
-  return <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">{children}</div>;
+  return <div className="mb-1 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">{children}</div>;
 }
 
 export function Section({ title, subtitle, actions, children }: { title: string; subtitle?: string; actions?: ReactNode; children: ReactNode }) {
   return (
-    <section className="mb-6 w-full min-w-0 rounded-lg border border-border bg-card p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] sm:p-6">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+    <section className="mb-1 w-full min-w-0 rounded-2xl border border-border/80 bg-card p-5 shadow-[0_2px_10px_rgba(15,23,42,0.025)] sm:p-6">
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-heading text-base font-semibold tracking-tight text-text">{title}</h2>
+          <h2 className="font-heading text-[15px] font-semibold tracking-tight text-text">{title}</h2>
           {subtitle && <p className="mt-1 text-xs text-text-muted">{subtitle}</p>}
         </div>
         {actions}
@@ -63,14 +63,14 @@ export function ShareBars({ rows, format }: { rows: { label: string; value: numb
     <div className="flex flex-col gap-3">
       <div className="flex h-3 w-full overflow-hidden rounded-full bg-surface-muted" aria-hidden="true">
         {rows.filter((r) => r.value > 0).map((r) => (
-          <span key={r.label} style={{ width: `${(r.value / total) * 100}%`, background: r.color ?? "#111" }} />
+          <span key={r.label} style={{ width: `${(r.value / total) * 100}%`, background: r.color ?? "var(--color-chart-1)" }} />
         ))}
       </div>
       <ul className="flex flex-col gap-2">
         {rows.map((r) => (
           <li key={r.label} className="flex items-center justify-between gap-3 text-sm">
             <span className="flex min-w-0 items-center gap-2">
-              <span className="size-2.5 shrink-0 rounded-full" style={{ background: r.color ?? "#111" }} />
+              <span className="size-2.5 shrink-0 rounded-full" style={{ background: r.color ?? "var(--color-chart-1)" }} />
               <span className="truncate text-text">{r.label}</span>
               {r.detail && <span className="text-xs text-text-muted">{r.detail}</span>}
             </span>

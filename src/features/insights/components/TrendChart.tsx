@@ -28,11 +28,11 @@ export default function TrendChart({ data, xKey = "date", series, format, loadin
     <div style={{ width: "100%", height }}>
       <ResponsiveContainer width="100%" height="100%">
         <Chart data={data} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
-          <CartesianGrid stroke="#eeeeee" vertical={false} />
-          <XAxis dataKey={xKey} tickFormatter={(v: string) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? formatReportDate(String(v)) : String(v))} tick={{ fontSize: 11, fill: "#737373" }} tickLine={false} axisLine={false} minTickGap={16} />
-          <YAxis tickFormatter={(v: number) => format(v)} tick={{ fontSize: 11, fill: "#737373" }} tickLine={false} axisLine={false} width={84} />
+          <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 5" vertical={false} />
+          <XAxis dataKey={xKey} tickFormatter={(v: string) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? formatReportDate(String(v)) : String(v))} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} tickLine={false} axisLine={false} minTickGap={16} tickMargin={12} />
+          <YAxis tickFormatter={(v: number) => format(v)} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} tickLine={false} axisLine={false} width={84} />
           <Tooltip
-            formatter={(value) => format(Number(value ?? 0))}
+            formatter={(value, name) => [format(Number(value ?? 0)), name]}
             labelFormatter={(value) =>
               /^\d{4}-\d{2}-\d{2}$/.test(String(value))
                 ? /* your existing date formatting */

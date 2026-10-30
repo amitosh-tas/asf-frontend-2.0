@@ -32,7 +32,7 @@ interface DashboardReport extends ReportMeta {
   topLocations: LocationRow[];
 }
 
-const MATCH_COLORS: Record<string, string> = { token: "#15803d", visitor_id: "#0ea5e9", click_id: "#3b82f6", email: "#a855f7", phone: "#ec4899", none: "#9ca3af" };
+const MATCH_COLORS: Record<string, string> = { token: "var(--color-chart-1)", visitor_id: "var(--color-chart-2)", click_id: "#64748b", email: "#8b8b95", phone: "#a1a1aa", none: "#d4d4d8" };
 
 /** Overview (scope 5.1). */
 function Overview() {
@@ -86,8 +86,8 @@ function Overview() {
           loading={report.loading}
           data={(d?.trend ?? []).map((t) => ({ date: t.date, current: Number(t.netMinorUnits), previous: Number(t.previousNetMinorUnits) }))}
           series={[
-            { key: "current", label: "This period", color: "#111111" },
-            { key: "previous", label: "Previous period", color: "#a3a3a3", dashed: true },
+            { key: "current", label: "This period", color: "var(--color-chart-1)" },
+            { key: "previous", label: "Previous period", color: "var(--color-chart-3)", dashed: true },
           ]}
           format={(v) => formatMinorCompact(v, cur)}
         />

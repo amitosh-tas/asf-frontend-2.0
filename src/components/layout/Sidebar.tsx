@@ -17,6 +17,10 @@ import {
 } from "@/services/billingService";
 import Title from "../ui/Title";
 
+type Theme = "light" | "dark";
+
+const navigationGroups = ["Overview", "Attribution", "Customers & sales", "Performance", "Workspace", "Platform"] as const;
+
 interface SidebarProps {
   companyName?: string;
   items: SidebarItem[];
@@ -42,7 +46,7 @@ function Sidebar({
         aria-expanded={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
         className={`
-          fixed left-4 top-4 z-0 flex h-10 items-center justify-center
+          fixed left-4 top-4 z-50 flex h-10 items-center justify-center
           rounded-lg border border-border bg-card px-3 text-xs font-medium text-text
           transition-colors duration-150 hover:bg-hover
           md:hidden
@@ -65,21 +69,20 @@ function Sidebar({
         <div
           className={`
             fixed inset-y-0 left-0 z-40 flex h-dvh w-60 flex-col
-            isolate border-r border-border bg-sidebar text-sidebar-text
+            isolate border-r border-border/80 bg-sidebar text-sidebar-text shadow-[8px_0_30px_rgba(15,23,42,0.025)]
             transition-transform duration-200 ease-out md:sticky md:top-0 md:translate-x-0
             ${isOpen ? "translate-x-0" : "-translate-x-full"}
           `}
         >
-          <div className="shrink-0 border-b border-border px-5 pb-5 pt-6">
-            <p className="font-heading text-lg font-semibold tracking-[-0.03em] text-sidebar-active">
+          <div className="shrink-0 border-b border-border/80 px-5 pb-5 pt-6">
+            <p className="font-heading text-lg font-semibold tracking-[-0.04em] text-sidebar-active">
               <Title/>
               <span className="text-text-muted">.</span>
             </p>
-            {companyName && (
-              <p className="mt-5 truncate text-xs font-medium text-sidebar-text">
-                {companyName}
-              </p>
-            )}
+            <div className="mt-5 rounded-xl border border-border/80 bg-surface-muted/70 px-3 py-2.5">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-text-muted">Workspace</p>
+              <p className="mt-1 truncate text-xs font-semibold text-text">{companyName || "Attribution workspace"}</p>
+            </div>
           </div>
 
           <nav
@@ -88,35 +91,86 @@ function Sidebar({
               min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4
             "
           >
-            <div className="flex flex-col gap-1">
-              {items.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.end ?? (item.path === "/" || item.path === "/super")}
-                  className={({ isActive }) =>
-                    `
-                      flex min-h-10 items-center rounded-lg px-3 py-2
-                      text-sm font-medium transition-colors duration-150
-                      ${isActive
-                        ? "bg-neutral-100 text-sidebar-active"
-                        : "text-sidebar-text hover:bg-neutral-100 hover:text-sidebar-active"}
-                    `
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+            <div className="flex flex-col gap-5">
+              {navigationGroups.map((group) => {
+                const groupItems = items.filter((item) => navigationGroup(item.label) === group);
+                if (!groupItems.length) return null;
+                return (
+                  <div key={group}>
+                    <h2 className="mb-2 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-text-muted">{group}</h2>
+                    <div className="flex flex-col gap-1">
+                      {groupItems.map((item) => (
+                        <NavLink
+                          key={item.path}
+                          to={item.path}
+                          end={item.end ?? (item.path === "/" || item.path === "/super")}
+                          className={({ isActive }) => `flex min-h-10 items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-150 ${isActive ? "bg-primary text-white shadow-[0_4px_10px_rgba(15,23,42,0.14)]" : "text-sidebar-text hover:bg-hover hover:text-sidebar-active"}`}
+                        >
+                          <i aria-hidden="true" className={`${navigationIcon(item.label)} w-4 text-center text-[14px]`} />
+                          <span className="truncate">{item.label}</span>
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </nav>
 
-          <div className="shrink-0 border-t border-border p-4">
+          <div className="shrink-0 border-t border-border/80 p-3">
+            <ThemeToggle />
             <AccountComponent key={location.pathname} />
           </div>
         </div>
       </aside>
     </>
   );
+}
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>(() =>
+    document.documentElement.dataset.theme === "dark" ? "dark" : "light",
+  );
+
+  function selectTheme(nextTheme: Theme) {
+    setTheme(nextTheme);
+    document.documentElement.dataset.theme = nextTheme;
+    document.documentElement.style.colorScheme = nextTheme;
+    try {
+      window.localStorage.setItem("elysium-theme", nextTheme);
+    } catch {
+      // Keep the current page usable when browser storage is unavailable.
+    }
+  }
+
+  return (
+    <div className="mb-3 flex rounded-xl bg-surface-muted p-1" role="group" aria-label="Color theme">
+      {(["light", "dark"] as const).map((value) => {
+        const selected = theme === value;
+        return (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => selectTheme(value)}
+            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2 text-xs font-medium transition-colors ${selected ? "bg-card text-text shadow-sm" : "text-text-muted hover:text-text"}`}
+          >
+            <i aria-hidden="true" className={`fi fi-rr-${value === "light" ? "sun" : "moon"} text-sm`} />
+            {value === "light" ? "Light" : "Dark"}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function navigationGroup(label: string) {
+  if (["Overview", "Dashboard"].includes(label)) return "Overview";
+  if (["Channels", "Campaigns", "Journeys"].includes(label)) return "Attribution";
+  if (["Customers", "Orders", "Refunds", "Bookings"].includes(label)) return "Customers & sales";
+  if (["Locations", "Ad spend & CAC", "Analytics"].includes(label)) return "Performance";
+  if (["Integrations", "Team", "Billing", "API Docs"].includes(label)) return "Workspace";
+  return "Platform";
 }
 
 function AccountComponent() {
@@ -231,7 +285,7 @@ function AccountComponent() {
         aria-haspopup="menu"
         aria-label={`Open account menu for ${userName}`}
         onClick={() => setMenuOpen((prev) => !prev)}
-        className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left transition-colors hover:bg-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
       >
         <span
           aria-hidden="true"
@@ -351,6 +405,34 @@ function formatPlanName(plan?: string) {
   return plan
     .replace(/[-_]+/g, " ")
     .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function navigationIcon(label: string) {
+  const icons: Record<string, string> = {
+    Overview: "fi fi-rr-apps",
+    Dashboard: "fi fi-rr-apps",
+    Channels: "fi fi-rr-share",
+    Campaigns: "fi fi-rr-bullseye",
+    Journeys: "fi fi-rr-route",
+    Customers: "fi fi-rr-users",
+    Orders: "fi fi-rr-shopping-bag",
+    Refunds: "fi fi-rr-rotate-left",
+    Bookings: "fi fi-rr-calendar",
+    Locations: "fi fi-rr-marker",
+    "Ad spend & CAC": "fi fi-rr-coins",
+    Analytics: "fi fi-rr-chart-histogram",
+    Integrations: "fi fi-rr-plug",
+    Team: "fi fi-rr-user-add",
+    Settings: "fi fi-rr-settings",
+    Billing: "fi fi-rr-credit-card",
+    "API Docs": "fi fi-rr-book-alt",
+    "Platform health": "fi fi-rr-heart-rate",
+    Workspaces: "fi fi-rr-building",
+    Members: "fi fi-rr-users",
+    "Audit log": "fi fi-rr-list-check",
+    "FX rates": "fi fi-rr-exchange",
+  };
+  return icons[label] ?? "fi fi-rr-circle-small";
 }
 
 export default Sidebar;
