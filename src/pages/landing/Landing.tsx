@@ -12,7 +12,7 @@ const FONT_HREF = "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:
 /** Loads the display face once (kept out of index.html so the dashboard does not pay for it). */
 function useDisplayFont() {
   useEffect(() => {
-    if (document.querySelector(`link[href="${FONT_HREF}"]`)) return;
+    if (document.querySelector('link[href*="Bricolage+Grotesque"]')) return;
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = FONT_HREF;
