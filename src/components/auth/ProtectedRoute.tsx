@@ -55,8 +55,9 @@ function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   if (
     user.role === "company_admin" &&
     user.workspace?.status === "pending" &&
-    location.pathname !== "/billing" &&
-    location.pathname !== "/settings/billing"
+    location.pathname !== "/billing"
+    // &&
+    // location.pathname !== "/settings/billing"
   ) {
     return <Navigate to="/billing?onboarding=1" replace />;
   }

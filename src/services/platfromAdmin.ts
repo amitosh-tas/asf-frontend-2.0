@@ -37,6 +37,21 @@ export interface WorkspaceWriteData {
   rawRetentionMonths?: number;
 }
 
+export type WorkspacePlan = "free" | "pro" | "ultra";
+export type WorkspaceBillingInterval = "monthly" | "annually";
+
+export interface WorkspacePlanUpdate {
+  plan: WorkspacePlan;
+  billingInterval: WorkspaceBillingInterval;
+  reason: string;
+  cancelStripeSubscription: boolean;
+}
+
+export interface WorkspacePlanRevoke {
+  reason: string;
+  cancelStripeSubscription: boolean;
+}
+
 export interface CreateWorkspaceUserData {
   name: string;
   email: string;
@@ -75,6 +90,20 @@ export async function getWorkspaceById(id: string){
   }
   );
   return res;
+}
+
+export async function updateWorkspacePlan(
+  workspaceId: string,
+  data: WorkspacePlanUpdate,
+) {
+  return api.patch(`/api/platform-admin/workspaces/${workspaceId}/plan`, data);
+}
+
+export async function revokeWorkspacePlan(
+  workspaceId: string,
+  data: WorkspacePlanRevoke,
+) {
+  return api.post(`/api/platform-admin/workspaces/${workspaceId}/plan/revoke`, data);
 }
 
 export async function updateUser( {id, data}: IUpdateUserProps){

@@ -14,6 +14,7 @@ export interface ReasonDialogProps {
   reasonLabel?: string;
   /** the user must type this exactly (e.g. the company slug) */
   confirmText?: string;
+  additionalFields?: ReactNode;
   busy?: boolean;
   onConfirm: (reason: string) => void;
   onClose: () => void;
@@ -28,6 +29,7 @@ export default function ReasonDialog({
   requireReason = true,
   reasonLabel = "Reason (shown in the company's audit log)",
   confirmText,
+  additionalFields,
   busy = false,
   onConfirm,
   onClose,
@@ -46,6 +48,7 @@ export default function ReasonDialog({
         }}
       >
         {description && <div className="text-sm leading-6 text-text-muted">{description}</div>}
+        {additionalFields}
         {requireReason && (
           <FormField label={reasonLabel} htmlFor="reason-dialog-reason" error={reason && !reasonOk ? "At least 5 characters" : undefined}>
             <Input id="reason-dialog-reason" autoFocus value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. Requested by the company in ticket #1234" />

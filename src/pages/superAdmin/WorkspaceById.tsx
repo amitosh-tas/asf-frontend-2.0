@@ -8,6 +8,7 @@ import Pill from "@/components/ui/Pill";
 import StatusPill from "@/components/ui/StatusPill";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import Modal from "@/components/ui/Modal";
 import { WorkspaceDetailsSkeleton } from "@/components/ui/Skeleton";
 import CompanyDetailsFields, {
   type CompanyDetailsValues,
@@ -25,8 +26,13 @@ import {
   updateUser,
   setWorkspaceStatus,
   updateWorkspace,
+  updateWorkspacePlan,
+  revokeWorkspacePlan,
+  type WorkspaceBillingInterval,
+  type WorkspacePlan,
   type WorkspaceWriteData,
 } from "@/services/platfromAdmin";
+import { getPlatformAdminPlans, type Plan } from "@/services/billingService";
 import SupportTools from "@/features/support/components/SupportTools";
 import ReasonDialog from "@/components/ui/ReasonDialog";
 import toast from "react-hot-toast";
@@ -67,10 +73,45 @@ interface Workspace {
   paymentMethod?: string | null;
   websiteUrl: string | null;
   plan: string | null;
+  billingCustomerId?: string | null;
+  billingInterval?: WorkspaceBillingInterval | null;
+  cancelAtPeriodEnd?: boolean;
+  currentPeriodStart?: string | null;
+  currentPeriodEnd?: string | null;
+  currentPeriodOrderCount?: number;
+  monthlyOrderLimit?: number;
+  subscriptionStatus?: string | null;
+  subscriptionId?: string | null;
+  trialEndsAt?: string | null;
+  billing?: WorkspaceBilling | null;
+}
+
+interface WorkspaceBillingCurrent {
+  plan: WorkspacePlan;
+  planName: string;
+  billingInterval: WorkspaceBillingInterval | null;
+  status: string;
+  currentPeriodStart: string | null;
+  currentPeriodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  trialEndsAt: string | null;
+  limits: Record<string, number>;
+  features: Record<string, boolean | string[]>;
+  usage: {
+    ordersUsed: number;
+    orderLimit: number;
+    percentUsed: number;
+    isOverLimit: boolean;
+  };
+}
+
+interface WorkspaceBilling {
+  current: WorkspaceBillingCurrent;
+  plans: Plan[];
 }
 
 const WORKSPACE_DETAIL_FIELDS: ReadonlyArray<{
-  key: keyof Workspace;
+  key: Exclude<keyof Workspace, "billing">;
   label: string;
   suffix?: string;
 }> = [
@@ -95,6 +136,7 @@ interface WorkspaceResponse {
   apiKeys: WorkspaceApiKey[];
   connectors: WorkspaceConnector[];
   webhooks: unknown[];
+  billing?: WorkspaceBilling | null;
 }
 
 function getStatusPillStatus(status: string) {
@@ -120,12 +162,17 @@ function getStatusPillStatus(status: string) {
   }
 }
 
+function isWorkspacePlan(value: string): value is WorkspacePlan {
+  return value === "free" || value === "pro" || value === "ultra";
+}
+
 function WorkspaceById() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [workspaceData, setWorkspaceData] =
     useState<WorkspaceResponse | null>(null);
+  const [planCatalog, setPlanCatalog] = useState<Plan[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -139,7 +186,7 @@ function WorkspaceById() {
   const [showAddMember, setShowAddMember] = useState(false);
   const [savingWorkspace, setSavingWorkspace] = useState(false);
   const [deletingWorkspace, setDeletingWorkspace] = useState(false);
-  const [dialog, setDialog] = useState<null | "deleteUser" | "deleteWorkspace" | "suspend">(null);
+  const [dialog, setDialog] = useState<null | "deleteUser" | "deleteWorkspace" | "suspend" | "revokePlan">(null);
   const [editingWorkspace, setEditingWorkspace] = useState(false);
   const [workspaceEditForm, setWorkspaceEditForm] =
     useState<CompanyDetailsValues>({
@@ -152,6 +199,14 @@ function WorkspaceById() {
       // paymentMethod: "",
     });
   const [workspaceFormError, setWorkspaceFormError] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState<WorkspacePlan>("pro");
+  const [selectedBillingInterval, setSelectedBillingInterval] =
+    useState<WorkspaceBillingInterval>("monthly");
+  const [planReason, setPlanReason] = useState("");
+  const [cancelStripeSubscription, setCancelStripeSubscription] = useState(false);
+  const [savingPlan, setSavingPlan] = useState(false);
+  const [showPlanEditor, setShowPlanEditor] = useState(false);
+  const [revokeStripeSubscription, setRevokeStripeSubscription] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -168,11 +223,24 @@ function WorkspaceById() {
         setLoading(true);
         setError(null);
 
-        const res = await getWorkspaceById(workspaceId);
+        const [workspaceResult, plansResult] = await Promise.allSettled([
+          getWorkspaceById(workspaceId),
+          getPlatformAdminPlans(workspaceId),
+        ]);
+        if (workspaceResult.status === "rejected") {
+          throw workspaceResult.reason;
+        }
+        const res = workspaceResult.value;
         const result: WorkspaceResponse = res.data.data;
 
         if (!cancelled) {
           setWorkspaceData(result);
+          if (plansResult.status === "fulfilled") {
+            setPlanCatalog(plansResult.value);
+          } else {
+            console.error("Failed to fetch billing plans:", plansResult.reason);
+            setPlanCatalog([]);
+          }
         }
       } catch (err) {
         console.error("Failed to fetch workspace:", err);
@@ -396,6 +464,51 @@ function WorkspaceById() {
     }
   };
 
+  const savePlan = async (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!id || savingPlan || planReason.trim().length < 5) return;
+
+    setSavingPlan(true);
+    try {
+      await updateWorkspacePlan(id, {
+        plan: selectedPlan,
+        billingInterval: selectedBillingInterval,
+        reason: planReason.trim(),
+        cancelStripeSubscription,
+      });
+      toast.success("Workspace plan updated.");
+      setPlanReason("");
+      setCancelStripeSubscription(false);
+      setShowPlanEditor(false);
+      await refreshWorkspaceData();
+    } catch (planError) {
+      console.error("Failed to update workspace plan:", planError);
+      toast.error(getRequestErrorMessage(planError));
+    } finally {
+      setSavingPlan(false);
+    }
+  };
+
+  const revokePlan = async (reason: string) => {
+    if (!id || savingPlan) return;
+
+    setSavingPlan(true);
+    try {
+      await revokeWorkspacePlan(id, {
+        reason,
+        cancelStripeSubscription: revokeStripeSubscription,
+      });
+      toast.success("Workspace plan revoked.");
+      setRevokeStripeSubscription(false);
+      await refreshWorkspaceData();
+    } catch (revokeError) {
+      console.error("Failed to revoke workspace plan:", revokeError);
+      toast.error(getRequestErrorMessage(revokeError));
+    } finally {
+      setSavingPlan(false);
+    }
+  };
+
   const createMember = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!id || savingUser) return;
@@ -419,6 +532,40 @@ function WorkspaceById() {
       setSavingUser(false);
     }
   };
+
+  const billing = workspaceData
+    ? workspaceData.billing ?? workspaceData.workspace.billing ?? (
+      workspaceData.workspace.plan
+        ? {
+            current: {
+              plan: isWorkspacePlan(workspaceData.workspace.plan)
+                ? workspaceData.workspace.plan
+                : "free",
+              planName: planCatalog.find((plan) => plan.tier === workspaceData.workspace.plan)?.name
+                ?? workspaceData.workspace.plan,
+              billingInterval: workspaceData.workspace.billingInterval ?? null,
+              status: workspaceData.workspace.subscriptionStatus ?? "unknown",
+              currentPeriodStart: workspaceData.workspace.currentPeriodStart ?? null,
+              currentPeriodEnd: workspaceData.workspace.currentPeriodEnd ?? null,
+              cancelAtPeriodEnd: workspaceData.workspace.cancelAtPeriodEnd ?? false,
+              trialEndsAt: workspaceData.workspace.trialEndsAt ?? null,
+              limits: {},
+              features: {},
+              usage: {
+                ordersUsed: workspaceData.workspace.currentPeriodOrderCount ?? 0,
+                orderLimit: workspaceData.workspace.monthlyOrderLimit ?? 0,
+                percentUsed: workspaceData.workspace.monthlyOrderLimit
+                  ? ((workspaceData.workspace.currentPeriodOrderCount ?? 0) / workspaceData.workspace.monthlyOrderLimit) * 100
+                  : 0,
+                isOverLimit: (workspaceData.workspace.currentPeriodOrderCount ?? 0)
+                  > (workspaceData.workspace.monthlyOrderLimit ?? 0),
+              },
+            },
+            plans: planCatalog,
+          }
+        : null
+    )
+    : null;
 
   const userColumns: DataTableColumn<WorkspaceUser>[] = [
     {
@@ -560,6 +707,101 @@ function WorkspaceById() {
               ))}
             </div>
           </section>
+
+          {billing && (
+            <section className="rounded-2xl border border-border bg-card p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm text-text-muted">Billing</p>
+                  <h2 className="mt-1 text-xl font-semibold text-text">
+                    {billing.current.planName}
+                  </h2>
+                  <p className="mt-1 text-sm text-text-muted">
+                    {billing.current.status} · {billing.current.billingInterval ?? "No interval"}
+                    {billing.current.cancelAtPeriodEnd ? " · Cancels at period end" : ""}
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedPlan(billing.current.plan);
+                    setSelectedBillingInterval(billing.current.billingInterval ?? "monthly");
+                    setShowPlanEditor(true);
+                  }}
+                  disabled={savingPlan}
+                >
+                  Update plan
+                </Button>
+              </div>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <p className="text-sm text-text-muted">Monthly orders</p>
+                  <p className="mt-1 font-medium">
+                    {billing.current.usage.ordersUsed.toLocaleString()} / {billing.current.usage.orderLimit.toLocaleString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-text-muted">Current period</p>
+                  <p className="mt-1 font-medium">
+                    {billing.current.currentPeriodEnd ?? "Not scheduled"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-text-muted">Trial ends</p>
+                  <p className="mt-1 font-medium">{billing.current.trialEndsAt ?? "Not trialing"}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-text-muted">Available plans</p>
+                  <p className="mt-1 font-medium">{billing.plans.length}</p>
+                </div>
+              </div>
+              <div className="mt-6 border-t border-border pt-5">
+                <p className="text-sm font-medium text-text">Available plans</p>
+                {billing.plans.length > 0 ? (
+                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                    {billing.plans.map((plan) => (
+                      <div
+                        key={plan.id}
+                        className={`rounded-lg border p-4 ${
+                          plan.tier === billing.current.plan
+                            ? "border-primary bg-primary/5"
+                            : "border-border"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="font-medium">{plan.name}</p>
+                          {plan.tier === billing.current.plan && (
+                            <Pill name="Current" />
+                          )}
+                        </div>
+                        <p className="mt-2 text-sm text-text-muted">
+                          {plan.pricing.monthly?.formatted ?? "Unavailable"} / month
+                        </p>
+                        <p className="text-sm text-text-muted">
+                          {plan.pricing.annually?.formatted ?? "Unavailable"} / year
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-2 text-sm text-text-muted">
+                    No plan catalog was returned by the billing service.
+                  </p>
+                )}
+              </div>
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                className="mt-5"
+                disabled={savingPlan}
+                onClick={() => setDialog("revokePlan")}
+              >
+                Revoke plan
+              </Button>
+            </section>
+          )}
 
           <DataTable
             tableHead="Workspace Users"
@@ -985,6 +1227,93 @@ function WorkspaceById() {
             void changeWorkspaceStatus(reason);
           }}
         />
+      )}
+      {dialog === "revokePlan" && workspaceData && (
+        <ReasonDialog
+          title={`Revoke ${workspaceData.workspace.name}'s plan?`}
+          description="The workspace plan will be revoked. This action is recorded in the platform audit log."
+          reasonLabel="Reason (kept in the platform audit log)"
+          confirmLabel="Revoke plan"
+          destructive
+          busy={savingPlan}
+          additionalFields={
+            <label className="flex items-center gap-2 text-sm text-text">
+              <input
+                type="checkbox"
+                checked={revokeStripeSubscription}
+                onChange={(event) => setRevokeStripeSubscription(event.target.checked)}
+              />
+              Cancel the Stripe subscription
+            </label>
+          }
+          onClose={() => {
+            setDialog(null);
+            setRevokeStripeSubscription(false);
+          }}
+          onConfirm={(reason) => {
+            setDialog(null);
+            void revokePlan(reason);
+          }}
+        />
+      )}
+      {showPlanEditor && billing && (
+        <Modal
+          open
+          title="Update workspace plan"
+          description="Changes are recorded in the platform audit log."
+          onClose={() => setShowPlanEditor(false)}
+        >
+          <form className="space-y-5" onSubmit={(event) => void savePlan(event)}>
+            <label className="block text-sm font-medium text-text">
+              Plan
+              <select
+                value={selectedPlan}
+                onChange={(event) => setSelectedPlan(event.target.value as WorkspacePlan)}
+                className="mt-1.5 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm"
+              >
+                {billing.plans.map((plan) => (
+                  <option key={plan.id} value={plan.id}>{plan.name}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block text-sm font-medium text-text">
+              Billing interval
+              <select
+                value={selectedBillingInterval}
+                onChange={(event) => setSelectedBillingInterval(event.target.value as WorkspaceBillingInterval)}
+                className="mt-1.5 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm"
+              >
+                <option value="monthly">Monthly</option>
+                <option value="annually">Annually</option>
+              </select>
+            </label>
+            <label className="block text-sm font-medium text-text">
+              Reason
+              <Input
+                value={planReason}
+                onChange={(event) => setPlanReason(event.target.value)}
+                placeholder="Reason for this plan change"
+                required
+              />
+            </label>
+            <label className="flex items-center gap-2 text-sm text-text">
+              <input
+                type="checkbox"
+                checked={cancelStripeSubscription}
+                onChange={(event) => setCancelStripeSubscription(event.target.checked)}
+              />
+              Cancel the Stripe subscription
+            </label>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setShowPlanEditor(false)} disabled={savingPlan}>
+                Cancel
+              </Button>
+              <Button type="submit" loading={savingPlan} disabled={savingPlan || planReason.trim().length < 5}>
+                Save plan
+              </Button>
+            </div>
+          </form>
+        </Modal>
       )}
     </PageLayout>
   );

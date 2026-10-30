@@ -176,6 +176,13 @@ export async function getAvailablePlans() {
   return plansFromResponse(response.data);
 }
 
+export async function getPlatformAdminPlans(workspaceId: string) {
+  const response = await api.get<PlanResponse>("/api/billing/plans", {
+    params: { workspaceId },
+  });
+  return plansFromResponse(response.data);
+}
+
 export async function getWorkspacePlans() {
   const response = await api.get<PlanResponse>("/api/workspace/billing/plans");
   return plansFromResponse(response.data);
