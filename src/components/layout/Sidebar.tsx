@@ -1,6 +1,6 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import type { SidebarItem } from "@/config/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { logout } from "@/store/slices/authSlice";
 import { logoutUser } from "@/services/authService";
@@ -65,7 +65,7 @@ function Sidebar({
         <div
           className={`
             fixed inset-y-0 left-0 z-40 flex h-dvh w-60 flex-col
-            overflow-hidden border-r border-border bg-sidebar text-sidebar-text
+            isolate border-r border-border bg-sidebar text-sidebar-text
             transition-transform duration-200 ease-out md:sticky md:top-0 md:translate-x-0
             ${isOpen ? "translate-x-0" : "-translate-x-full"}
           `}
@@ -111,7 +111,7 @@ function Sidebar({
           </nav>
 
           <div className="shrink-0 border-t border-border p-4">
-            <AccountComponent />
+            <AccountComponent key={location.pathname} />
           </div>
         </div>
       </aside>
@@ -124,14 +124,65 @@ function AccountComponent() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const currentPlan = user?.workspace?.plan;
+  const [menuOpen, setMenuOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [plansLoading, setPlansLoading] = useState(false);
   const [upgradeError, setUpgradeError] = useState("");
   const [interval, setInterval] = useState<BillingInterval>("monthly");
   const [busyTier, setBusyTier] = useState<string | null>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const isFreePlan = currentPlan?.trim().toLowerCase() === "free";
+  const userName = user?.name?.trim() || "Account";
+  const initials = getInitials(userName);
+  const planLabel = formatPlanName(currentPlan);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!accountRef.current?.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        triggerRef.current?.focus();
+        return;
+      }
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+
+      const menuItems = menuRef.current?.querySelectorAll<HTMLButtonElement>(
+        '[role="menuitem"]',
+      );
+      if (!menuItems?.length) return;
+      event.preventDefault();
+      const currentIndex = Array.from(menuItems).indexOf(
+        document.activeElement as HTMLButtonElement,
+      );
+      const direction = event.key === "ArrowDown" ? 1 : -1;
+      const nextIndex =
+        currentIndex < 0
+          ? 0
+          : (currentIndex + direction + menuItems.length) % menuItems.length;
+      menuItems[nextIndex]?.focus();
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
 
   async function openUpgrade() {
+    setMenuOpen(false);
     setUpgradeOpen(true);
     setUpgradeError("");
     if (plans.length > 0) return;
@@ -172,44 +223,77 @@ function AccountComponent() {
   };
 
   return (
-    <div className="flex flex-col gap-1">
-      <p className="truncate text-sm font-semibold text-sidebar-active">
-        {user?.name}
-      </p>
-
-      <p className="truncate text-xs text-sidebar-text">
-        {user?.email}
-      </p>
-
-      <span
-        className="
-          mt-2 w-max max-w-full truncate rounded-md
-          border bg-white/10 border-white/20 px-2 py-1
-          text-[10px] font-medium text-sidebar-text
-        "
-      >
-        {user?.role}
-      </span>
-      {user?.workspace?.plan && (
-        <span className="mt-1 w-max max-w-full rounded-md border border-primary/20 bg-primary/5 px-2 py-1 text-[10px] font-medium text-sidebar-text">
-          {user.workspace.plan}
-        </span>
-      )}
-
-      {user?.role === "company_admin" && (
-        <Button type="button" size="sm" onClick={() => void openUpgrade()}>
-          Upgrade
-        </Button>
-      )}
-
-      <Button
+    <div ref={accountRef} className="relative">
+      <button
         type="button"
-        variant="outline"
-        size="sm"
-        onClick={handleLogout}
+        ref={triggerRef}
+        aria-expanded={menuOpen}
+        aria-haspopup="menu"
+        aria-label={`Open account menu for ${userName}`}
+        onClick={() => setMenuOpen((prev) => !prev)}
+        className="flex w-full items-center gap-2.5 rounded-lg p-2 text-left transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
       >
-        Sign out
-      </Button>
+        <span
+          aria-hidden="true"
+          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white"
+        >
+          {initials}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <span className="truncate text-sm font-semibold text-sidebar-active">
+              {userName}
+            </span>
+            {planLabel && (
+              <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-sidebar-active">
+                {planLabel}
+              </span>
+            )}
+          </span>
+        </span>
+        <i
+          className={`fi fi-rr-angle-small-${menuOpen ? "up" : "down"} shrink-0 text-xs text-sidebar-text`}
+          aria-hidden="true"
+        />
+      </button>
+
+      {menuOpen && (
+        <div
+          ref={menuRef}
+          role="menu"
+          aria-label="Account menu"
+          className="absolute bottom-[calc(100%+0.5rem)] left-0 z-[60] w-[calc(100vw-2rem)] max-w-72 overflow-hidden rounded-xl border border-border bg-card p-1.5 shadow-xl"
+        >
+          <div className="px-3 py-2.5">
+            <p className="truncate text-sm font-semibold text-text">{userName}</p>
+            <p className="mt-0.5 truncate text-xs text-text-muted">{user?.email}</p>
+            {planLabel && (
+              <span className="mt-2 inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-text">
+                {planLabel} plan
+              </span>
+            )}
+          </div>
+          {isFreePlan && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => void openUpgrade()}
+              className="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-text transition-colors hover:bg-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              Upgrade plan
+            </button>
+          )}
+          <div className="my-1 border-t border-border" />
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => void handleLogout()}
+            className="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-text transition-colors hover:bg-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            Sign out
+          </button>
+        </div>
+      )}
 
       <Modal
         open={upgradeOpen}
@@ -250,6 +334,23 @@ function AccountComponent() {
       </Modal>
     </div>
   );
+}
+
+function getInitials(name: string) {
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("");
+  return initials.toUpperCase() || "?";
+}
+
+function formatPlanName(plan?: string) {
+  if (!plan) return "";
+  return plan
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
 export default Sidebar;
