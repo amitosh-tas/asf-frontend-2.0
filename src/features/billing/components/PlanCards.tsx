@@ -36,16 +36,16 @@ export default function PlanCards({
         return (
           <article
             key={plan.tier}
-            className={`flex flex-col rounded-2xl border bg-card p-6 ${
+            className={`flex flex-col rounded-2xl border bg-card p-6 text-text ${
               selected ? "border-primary ring-2 ring-primary/15" : "border-border"
             }`}
           >
-            <button type="button" className="text-left" onClick={() => onSelect(plan.tier)}>
-              <h3 className="font-heading text-lg font-semibold">{plan.name}</h3>
+            <button type="button" className="text-left text-text" onClick={() => onSelect(plan.tier)}>
+              <h3 className="font-heading text-lg font-semibold text-text">{plan.name}</h3>
               {plan.description && (
                 <p className="mt-2 text-sm leading-5 text-text-muted">{plan.description}</p>
               )}
-              <p className="mt-3 text-2xl font-semibold">
+              <p className="mt-3 text-2xl font-semibold text-text">
                 {price?.formatted ?? "Unavailable"}
               </p>
               {price?.discountPercent ? (
