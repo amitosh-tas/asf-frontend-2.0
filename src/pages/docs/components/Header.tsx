@@ -1,5 +1,6 @@
 import type { RefObject } from "react";
 import { VERSION_LABEL } from "../docs/meta";
+import { SECTIONS } from "../docs/sections";
 
 function LogoMark() {
   return (
@@ -20,9 +21,11 @@ interface HeaderProps {
   menuOpen: boolean;
   onMenuToggle: () => void;
   menuButtonRef: RefObject<HTMLButtonElement | null>;
+  activeSectionId: string;
 }
 
-export function Header({ menuOpen, onMenuToggle, menuButtonRef }: HeaderProps) {
+export function Header({ menuOpen, onMenuToggle, menuButtonRef, activeSectionId }: HeaderProps) {
+  const activeSection = SECTIONS.find((section) => section.id === activeSectionId);
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="mx-auto flex h-14 max-w-[90rem] items-center gap-3 px-4 sm:px-6">
@@ -51,18 +54,18 @@ export function Header({ menuOpen, onMenuToggle, menuButtonRef }: HeaderProps) {
         <span aria-hidden="true" className="hidden h-5 w-px bg-neutral-200 sm:block" />
         <span className="hidden text-sm text-neutral-600 sm:block">Documentation</span>
 
-        <span
-          title="Placeholder: set VERSION_LABEL in src/docs/meta.ts to the released version"
-          className="rounded-full border border-neutral-200 bg-neutral-50 px-2 py-0.5 font-mono text-[11px] text-neutral-600"
-        >
+        <span className="rounded-full border border-neutral-200 bg-neutral-50 px-2 py-0.5 font-mono text-[11px] text-neutral-600">
           {VERSION_LABEL}
         </span>
 
+        <span aria-hidden="true" className="hidden h-5 w-px bg-neutral-200 md:block" />
+        <span className="hidden max-w-56 truncate text-sm text-neutral-500 md:block" aria-live="polite">{activeSection?.title}</span>
+
         <nav aria-label="Quick links" className="ml-auto hidden items-center gap-1 md:flex">
           {[
-            { href: "#installation", label: "Installation" },
-            { href: "#payment-button", label: "Payment button" },
-            { href: "#troubleshooting", label: "Troubleshooting" },
+            { href: "#sdk-integration", label: "SDK" },
+            { href: "#sites-without-npm", label: "No NPM" },
+            { href: "#verification", label: "Troubleshooting" },
           ].map((link) => (
             <a
               key={link.href}

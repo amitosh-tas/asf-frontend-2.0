@@ -49,7 +49,7 @@ import { restoreSession } from "@/services/restoreSession";
 import { Toaster } from "react-hot-toast";
 import Workspaces from "@/pages/superAdmin/Workspaces";
 import WorkspaceById from "@/pages/superAdmin/WorkspaceById";
-import Docs from "@/docs/Docs";
+import Docs from "@/pages/docs/Docs";
 
 function App() {
 

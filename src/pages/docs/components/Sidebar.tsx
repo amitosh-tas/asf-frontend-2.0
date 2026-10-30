@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+import { useState, type RefObject } from "react";
 import { SECTIONS } from "../docs/sections";
 
 interface SidebarProps {
@@ -8,7 +8,7 @@ interface SidebarProps {
   closeButtonRef: RefObject<HTMLButtonElement | null>;
 }
 
-const GROUPS = ["Get started", "Reference"] as const;
+const GROUPS = ["Choose a path", "SDK integration", "Sites without NPM", "Reference"] as const;
 
 export function Sidebar({
   open,
@@ -16,6 +16,12 @@ export function Sidebar({
   activeSectionId,
   closeButtonRef,
 }: SidebarProps) {
+  const [query, setQuery] = useState("");
+  const normalizedQuery = query.trim().toLowerCase();
+  const hasSearchMatches = SECTIONS.some((section) =>
+    section.title.toLowerCase().includes(normalizedQuery) ||
+    section.children?.some((child) => child.title.toLowerCase().includes(normalizedQuery)),
+  );
   return (
     <>
       {open ? (
@@ -53,17 +59,32 @@ export function Sidebar({
         </div>
 
         <nav aria-label="Sections">
+          <label className="mb-5 block px-1">
+            <span className="sr-only">Search documentation sections</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search sections…"
+              className="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-800 outline-none placeholder:text-neutral-400 focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/15"
+            />
+          </label>
           {GROUPS.map((group) => (
             <div key={group} className="mb-6">
-              <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">
-                {group}
-              </p>
-              <ul className="space-y-0.5">
-                {SECTIONS.filter((section) => section.group === group).map(
-                  (section) => {
-                    const active = section.id === activeSectionId;
-                    return (
-                      <li key={section.id}>
+              {SECTIONS.filter((section) => section.group === group)
+                .map((section) => ({
+                  ...section,
+                  children: section.children?.filter((child) =>
+                    `${child.title} ${section.title}`.toLowerCase().includes(normalizedQuery),
+                  ),
+                }))
+                .filter((section) => !normalizedQuery || section.title.toLowerCase().includes(normalizedQuery) || section.children?.length)
+                .map((section, index) => {
+                  const active = section.id === activeSectionId;
+                  return (
+                    <div key={section.id}>
+                      {index === 0 ? <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">{group}</p> : null}
+                      <div>
                         <a
                           href={`#${section.id}`}
                           onClick={onClose}
@@ -77,13 +98,16 @@ export function Sidebar({
                         >
                           {section.title}
                         </a>
-                      </li>
-                    );
-                  },
-                )}
-              </ul>
+                        {section.children?.map((child) => (
+                          <a key={child.id} href={`#${child.id}`} onClick={onClose} className="ml-2 block rounded-md px-2 py-1 text-[13px] text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900">{child.title}</a>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           ))}
+          {normalizedQuery && !hasSearchMatches ? <p className="px-2 text-xs text-neutral-400">No matching sections</p> : null}
         </nav>
       </aside>
     </>

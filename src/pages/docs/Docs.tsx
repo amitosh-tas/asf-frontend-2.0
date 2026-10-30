@@ -72,7 +72,8 @@ export default function Docs() {
       <Header
         menuOpen={menuOpen}
         onMenuToggle={() => setMenuOpen((open) => !open)}
-        menuButtonRef={menuButtonRef} 
+        menuButtonRef={menuButtonRef}
+        activeSectionId={activeSectionId}
       />
 
       <div className="mx-auto flex max-w-360">
