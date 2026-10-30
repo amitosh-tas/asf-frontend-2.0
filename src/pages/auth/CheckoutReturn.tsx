@@ -18,7 +18,7 @@ function CheckoutReturn() {
 
   useEffect(() => {
     if (canceled) {
-      window.location.replace("https://asf-tas.vercel.app/settings/billing?canceled=true");
+      window.location.replace("https://asf-tas.vercel.app/billing?canceled=true");
       return;
     }
 
