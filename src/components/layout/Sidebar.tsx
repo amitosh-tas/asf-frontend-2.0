@@ -262,7 +262,7 @@ function AccountComponent() {
           ref={menuRef}
           role="menu"
           aria-label="Account menu"
-          className="absolute bottom-[calc(100%+0.5rem)] left-0 z-[60] w-[calc(100vw-2rem)] max-w-72 overflow-hidden rounded-xl border border-border bg-card p-1.5 shadow-xl"
+          className="absolute bottom-[calc(100%+0.5rem)] left-0 z-60 w-[calc(100vw-2rem)] max-w-72 overflow-hidden rounded-xl border border-border bg-card p-1.5 shadow-xl"
         >
           <div className="px-3 py-2.5">
             <p className="truncate text-sm font-semibold text-text">{userName}</p>
