@@ -50,6 +50,7 @@ import { Toaster } from "react-hot-toast";
 import Workspaces from "@/pages/superAdmin/Workspaces";
 import WorkspaceById from "@/pages/superAdmin/WorkspaceById";
 import Docs from "@/pages/docs/Docs";
+import Landing from "@/pages/landing/Landing";
 
 function App() {
 
@@ -142,6 +143,9 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
+
+        <Route path="/landing" element={<Landing/>} />
+
         {/* Reached from emailed links: work signed in or out */}
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
