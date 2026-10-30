@@ -7,7 +7,7 @@ import TrendChart from "@/features/insights/components/TrendChart";
 import { Kpi, KpiGrid, Section, ShareBars, Warnings, ErrorBox } from "@/features/insights/components/Kpi";
 import { useReport, useReportFilters, useViewWorkspaceId } from "@/features/insights/hooks/useReport";
 import { useBasePath } from "@/features/insights/hooks/useBasePath";
-import { formatMinorUnits, formatMinorCompact, formatPercent, formatNumber } from "@/features/reports/utils/formatting";
+import { formatMinorUnits, formatMinorCompact, formatPercent, formatNumber, formatReportDate } from "@/features/reports/utils/formatting";
 import {
   MATCH_LABELS,
   reportUrl,
@@ -63,8 +63,57 @@ function Overview() {
       <ErrorBox error={report.error} onRetry={report.reload} />
       <Warnings warnings={d?.warnings} />
 
+      <button
+        type="button"
+        onClick={() => drill({})}
+        className="group relative grid w-full min-w-0 grid-cols-1 gap-7 overflow-hidden rounded-2xl border border-hero-outline bg-hero-background p-6 text-left text-hero-foreground shadow-[0_8px_28px_rgba(15,23,42,0.06)] transition before:absolute before:inset-y-6 before:left-0 before:w-1 before:rounded-r-full before:bg-primary hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(15,23,42,0.1)] focus-visible:outline-hero-foreground sm:p-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(260px,0.7fr)] lg:items-center"
+        aria-label={`Net revenue ${money(s?.revenue.netMinorUnits)}. View transactions for this period.`}
+      >
+        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-28 size-80 rounded-full bg-hero-glow blur-3xl" />
+        <div className="relative min-w-0">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-hero-muted">Net revenue</span>
+            <span className="rounded-full border border-hero-outline bg-hero-surface px-2.5 py-1 text-[11px] font-medium text-hero-muted">
+              {formatReportDate(filters.range.from)} – {formatReportDate(filters.range.to)}
+            </span>
+          </div>
+          {report.loading ? (
+            <div aria-label="Loading net revenue" className="mt-4 h-12 w-3/4 max-w-md animate-pulse rounded-lg bg-hero-surface" />
+          ) : (
+            <p className="mt-3 break-words font-heading text-[clamp(2rem,5vw,3.5rem)] font-semibold leading-none tracking-[-0.05em] tabular-nums">
+              {money(s?.revenue.netMinorUnits)}
+            </p>
+          )}
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-hero-muted">
+            {report.loading ? (
+                <span className="h-5 w-40 animate-pulse rounded-full bg-hero-surface" />
+            ) : d?.changes.netRevenue == null ? (
+              <span>No previous period to compare</span>
+            ) : (
+              <>
+                <span className="inline-flex items-center gap-1 rounded-full border border-hero-outline bg-hero-surface px-2.5 py-1 font-semibold text-hero-foreground">
+                  <span aria-hidden="true">{d.changes.netRevenue >= 0 ? "↑" : "↓"}</span>
+                  {Math.abs(d.changes.netRevenue).toLocaleString("en-IN", { maximumFractionDigits: 1 })}%
+                </span>
+                <span>vs previous period</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="relative grid grid-cols-2 gap-3 border-t border-hero-outline pt-5 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
+          <div className="min-w-0 rounded-xl border border-hero-outline bg-hero-surface p-4">
+            <p className="text-xs font-medium text-hero-muted">Gross revenue</p>
+            <p className="mt-2 truncate text-lg font-semibold tabular-nums tracking-tight text-hero-foreground">{report.loading ? "—" : money(s?.revenue.grossMinorUnits)}</p>
+          </div>
+          <div className="min-w-0 rounded-xl border border-hero-outline bg-hero-surface p-4">
+            <p className="text-xs font-medium text-hero-muted">Refunds</p>
+            <p className="mt-2 truncate text-lg font-semibold tabular-nums tracking-tight text-hero-foreground">{report.loading ? "—" : money(s?.revenue.refundsMinorUnits)}</p>
+          </div>
+        </div>
+      </button>
+
       <KpiGrid>
-        <Kpi label="Net revenue" value={money(s?.revenue.netMinorUnits)} change={d?.changes.netRevenue} loading={report.loading} hint={s ? `Gross ${money(s.revenue.grossMinorUnits)} · refunds ${money(s.revenue.refundsMinorUnits)}` : undefined} onClick={() => drill({})} />
         <Kpi label="Orders" value={formatNumber(s?.orders.total)} change={d?.changes.orders} loading={report.loading} onClick={() => drill({})} />
         <Kpi label="Average order value" value={money(s?.revenue.averageOrderValueMinorUnits)} change={d?.changes.averageOrderValue} loading={report.loading} />
         <Kpi label="Attribution coverage" value={formatPercent(d?.coverage.rate)} change={d?.coverage.changePercent} loading={report.loading} hint="revenue with a known source" onClick={() => drill({ unattributed: "true" })} />
