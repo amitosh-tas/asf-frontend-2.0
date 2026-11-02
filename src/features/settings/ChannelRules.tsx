@@ -27,7 +27,7 @@ export default function ChannelRules() {
 
   return (
     <Section title="Channel mapping rules" subtitle="Rules run lowest priority first and win over the default channel classification">
-      <div className="mb-4 flex flex-wrap items-end gap-2">
+      <div className="mb-4 flex flex-wrap items-end gap-2 dark:text-white">
         <select aria-label="Field" value={draft.field} onChange={(e) => setDraft({ ...draft, field: e.target.value })} className="h-10 rounded-md border border-border px-2 text-sm">
           {["source", "medium", "campaign", "referrerHost", "landingPage", "content", "term"].map((f) => <option key={f} value={f}>{f}</option>)}
         </select>
