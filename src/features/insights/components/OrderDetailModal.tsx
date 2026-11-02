@@ -15,7 +15,7 @@ export default function OrderDetailModal({ orderId, workspaceId, onClose }: { or
       {r.error && <p className="text-sm text-danger">{r.error}</p>}
       {!o && !r.error && <p className="text-sm text-text-muted">Loading…</p>}
       {o && (
-        <div className="flex flex-col gap-5 text-sm">
+        <div className="flex flex-col gap-5 text-sm text-text">
           <div className="flex flex-wrap gap-2">
             <Badge variant={o.matchMethod === "none" ? "warning" : "success"}>Matched by: {MATCH_LABELS[o.matchMethod] ?? o.matchMethod}</Badge>
             <Badge>{o.isNewCustomer ? "New customer" : "Returning / unknown"}</Badge>
