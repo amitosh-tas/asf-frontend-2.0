@@ -116,8 +116,8 @@ html[data-theme="dark"] {
   }
 
   ::selection {
-    background: var(--color-active);
-    color: var(--color-text);
+    background-color: var(--color-text);
+    color: var(--color-page-background);
   }
 }
 
