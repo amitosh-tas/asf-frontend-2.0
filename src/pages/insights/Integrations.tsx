@@ -76,7 +76,7 @@ export default function Integrations() {
       <Section title="Data quality checks" actions={isAdmin ? <Button type="button" size="sm" variant="outline" loading={rerunning} onClick={rerun}>Re-run attribution</Button> : undefined}>
         <ul className="flex flex-col divide-y divide-border">
           {(quality.data?.checks ?? []).map((c) => (
-            <li key={c.key} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
+            <li key={c.key} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm text-text">
               <span>{c.label}</span>
               <span className="flex items-center gap-2">
                 {c.share !== undefined && <span className="text-xs text-text-muted">{formatPercent(c.share)}</span>}
@@ -90,7 +90,7 @@ export default function Integrations() {
       {open && (
         <Modal open title={`${open.source} · ${open.type}`} description={formatDateTime(open.at)} onClose={() => setOpen(null)} size="lg">
           {open.error && <p className="mb-3 text-sm text-danger">{open.error}</p>}
-          <pre className="max-h-96 overflow-auto rounded-md bg-surface-muted p-3 text-xs">{JSON.stringify(open.payload, null, 2)}</pre>
+          <pre className="max-h-96 overflow-auto rounded-md bg-surface-muted p-3 text-xs text-text">{JSON.stringify(open.payload, null, 2)}</pre>
         </Modal>
       )}
     </PageLayout>
