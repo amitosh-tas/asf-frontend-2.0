@@ -24,6 +24,7 @@ import {
   viewReportLocations,
   viewReportSummary,
 } from "@/services/viewonlyService";
+import { useAttributionModels } from "@/features/insights/hooks/useAttributionModels";
 
 interface CampaignResult {
   key: string;
@@ -39,12 +40,13 @@ interface CampaignResult {
 
 function Campaign() {
   const { id: workspaceId } = useParams<{ id: string }>();
+  const { defaultModel } = useAttributionModels();
   const [dateRange, setDateRange] = useState<DateRange>(() =>
     getPresetDateRange(30),
   );
   const { from, to } = dateRange;
   const [locationId, setLocationId] = useState<string>();
-  const requestKey = `${from}:${to}:${locationId ?? ""}`;
+  const requestKey = `${from}:${to}:${locationId ?? ""}:${defaultModel ?? ""}`;
   const [result, setResult] = useState<CampaignResult>();
   const currentResult = result?.key === requestKey ? result : undefined;
   const campaigns = currentResult?.campaigns ?? [];
@@ -55,14 +57,14 @@ function Campaign() {
 
   useEffect(() => {
     let cancelled = false;
-    const key = `${from}:${to}:${locationId ?? ""}`;
+    const key = `${from}:${to}:${locationId ?? ""}:${defaultModel ?? ""}`;
     const params = {
       from,
       to,
-      model: "last_non_direct",
+      model: defaultModel,
       ...(locationId ? { locationId } : {}),
     };
-    const locationParams = { from, to, model: "last_non_direct" };
+    const locationParams = { from, to, model: defaultModel };
 
     void Promise.allSettled([
       workspaceId
@@ -144,7 +146,7 @@ function Campaign() {
     return () => {
       cancelled = true;
     };
-  }, [from, to, locationId, workspaceId]);
+  }, [from, to, locationId, workspaceId, defaultModel]);
 
   const locationOptions = locations.flatMap((location) =>
     location.locationId

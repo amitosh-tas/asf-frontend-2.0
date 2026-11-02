@@ -9,8 +9,9 @@ import { Section } from "@/features/insights/components/Kpi";
 import { useAsync } from "@/features/insights/hooks/useReport";
 import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
 import { loadReferenceData } from "@/lib/referenceData";
-import { ATTRIBUTION_MODELS } from "@/services/insights";
 import { api } from "@/services/api";
+import AttributionModelSelect from "@/features/insights/components/AttributionModelSelect";
+import { useAttributionModels } from "@/features/insights/hooks/useAttributionModels";
 
 export interface WorkspaceSettings {
   id: string;
@@ -66,6 +67,7 @@ function getCurrencyCode(
 /** Company profile + attribution settings (5.10). Changing timezone / currency / model / lookback recalculates reports. */
 export default function CompanySettings() {
   const settings = useAsync<WorkspaceSettings>(async () => (await api.get<{ data: WorkspaceSettings }>("/api/workspace/settings")).data.data, []);
+  const { defaultModel } = useAttributionModels();
   const referenceData = useAsync(loadReferenceData, []);
   const [form, setForm] = useState<WorkspaceSettings | null>(null);
   const [overrides, setOverrides] = useState("");
@@ -190,7 +192,7 @@ export default function CompanySettings() {
           <Select id="s-week" value={form.weekStart} onChange={(e) => set("weekStart", Number(e.target.value))}>{DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}</Select>
         </FormField>
         <FormField label="Default attribution model" htmlFor="s-model">
-          <Select id="s-model" value={form.defaultModel} onChange={(e) => set("defaultModel", e.target.value)}>{ATTRIBUTION_MODELS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select>
+          <AttributionModelSelect id="s-model" value={form.defaultModel || defaultModel || ""} onChange={(e) => set("defaultModel", e.target.value)} className="h-10 min-w-0 rounded-md border border-border bg-card px-3 text-sm text-text shadow-sm" />
         </FormField>
         <FormField label="Lookback window (days)" htmlFor="s-lb"><Input id="s-lb" type="number" min={1} max={365} value={form.lookbackDays} onChange={(e) => set("lookbackDays", Number(e.target.value))} /></FormField>
         <FormField label="Lookback per channel" htmlFor="s-lbo" hint='e.g. "email=7, meta=28"'><Input id="s-lbo" value={overrides} onChange={(e) => setOverrides(e.target.value)} /></FormField>

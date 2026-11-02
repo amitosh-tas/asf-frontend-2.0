@@ -2,12 +2,14 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import ReportFilters from "@/features/reports/components/ReportFilters";
 import Button from "@/components/ui/Button";
-import { ATTRIBUTION_MODELS, downloadCsv, type AttributionModel, type FxInfo, type ReportQuery } from "@/services/insights";
+import { downloadCsv, type AttributionModel, type FxInfo, type ReportQuery } from "@/services/insights";
 import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
 import { formatDateTime } from "@/features/reports/utils/formatting";
 import type { ReportFiltersState } from "../hooks/useReport";
 import { useAsync, useLocationOptions } from "../hooks/useReport";
 import { api } from "@/services/api";
+import AttributionModelSelect from "./AttributionModelSelect";
+import { useAttributionModels } from "../hooks/useAttributionModels";
 
 /** The company's reporting currency, for the "Company currency (INR)" label (read once per page load). */
 let companyCurrencyRequest: Promise<string | null> | null = null;
@@ -31,7 +33,6 @@ interface ReportToolbarProps {
   /** When set, an "Export CSV" button downloads this URL with the current filters. */
   csv?: { url: string; query: ReportQuery; filename: string };
   lastUpdated?: string;
-  defaultModel?: AttributionModel;
   /** which exchange rates the money figures use (the report's `fx` block) */
   fx?: FxInfo | null;
   /** show the "View in" currency picker (default true) */
@@ -42,9 +43,10 @@ interface ReportToolbarProps {
 export const VIEW_CURRENCIES = ["USD", "INR", "EUR", "GBP", "AED", "SAR", "SGD", "AUD", "CAD", "JPY", "CHF", "NZD", "ZAR", "QAR", "KWD", "MYR", "THB", "IDR", "PHP", "HKD", "CNY", "BRL", "MXN"];
 
 /** Date range, location, attribution model, export and "last updated" — the same on every screen (section 5). */
-export default function ReportToolbar({ filters, onChange, workspaceId, showModel = true, csv, lastUpdated, defaultModel, fx, showCurrency = true }: ReportToolbarProps) {
+export default function ReportToolbar({ filters, onChange, workspaceId, showModel = true, csv, lastUpdated, fx, showCurrency = true }: ReportToolbarProps) {
   const locations = useLocationOptions(workspaceId);
   const companyCurrency = useCompanyCurrency(workspaceId);
+  const { defaultModel } = useAttributionModels();
   const [exporting, setExporting] = useState(false);
 
   const exportCsv = async () => {
@@ -93,18 +95,12 @@ export default function ReportToolbar({ filters, onChange, workspaceId, showMode
           {showModel && (
             <label className="flex items-center gap-2 text-xs font-medium text-text-muted">
               Model
-              <select
+              <AttributionModelSelect
                 value={filters.model ?? defaultModel ?? ""}
                 onChange={(event) => onChange({ model: (event.target.value || undefined) as AttributionModel | undefined })}
                 className="rounded-full border border-border bg-transparent px-3 py-1.5 text-sm text-text"
-              >
-                {!defaultModel && <option value="">Company default</option>}
-                {ATTRIBUTION_MODELS.map((m) => (
-                  <option key={m.value} value={m.value}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
+                includeDefaultOption
+              />
             </label>
           )}
           {csv && (

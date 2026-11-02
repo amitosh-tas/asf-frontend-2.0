@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { getAttributionModelLabel } from "@/services/insights";
 
 interface JourneyCustomer {
   id: string;
@@ -210,7 +211,7 @@ export default function CustomerJourneyDrawer({
               { label: "Paid orders", value: paidOrders.length },
               {
                 label: "Attribution",
-                value: attributionModel.replaceAll("_", " "),
+                value: getAttributionModelLabel(attributionModel),
               },
             ].map((item) => (
               <div
@@ -482,7 +483,7 @@ export default function CustomerJourneyDrawer({
             <p className="text-xs text-text-muted">
               Model:{" "}
               <span className="font-semibold text-text">
-                {attributionModel.replaceAll("_", " ")}
+                {getAttributionModelLabel(attributionModel)}
               </span>
             </p>
 

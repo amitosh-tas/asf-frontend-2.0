@@ -40,6 +40,7 @@ import {
   viewReportSummary,
   viewReportTrend,
 } from "@/services/viewonlyService";
+import { useAttributionModels } from "@/features/insights/hooks/useAttributionModels";
 
 interface AnalyticsResult {
   key: string;
@@ -67,12 +68,13 @@ const emptyResult: Omit<AnalyticsResult, "key" | "errors"> = {
 
 function Analytics() {
   const { id: workspaceId } = useParams<{ id: string }>();
+  const { defaultModel } = useAttributionModels();
   const [dateRange, setDateRange] = useState<DateRange>(() =>
     getPresetDateRange(30),
   );
   const { from, to } = dateRange;
   const [locationId, setLocationId] = useState<string>();
-  const requestKey = `${from}:${to}:${locationId ?? ""}`;
+  const requestKey = `${from}:${to}:${locationId ?? ""}:${defaultModel ?? ""}`;
   const [result, setResult] = useState<AnalyticsResult>();
   const currentResult = result?.key === requestKey ? result : undefined;
   const trend = currentResult?.trend ?? [];
@@ -86,17 +88,17 @@ function Analytics() {
 
   useEffect(() => {
     let cancelled = false;
-    const key = `${from}:${to}:${locationId ?? ""}`;
+    const key = `${from}:${to}:${locationId ?? ""}:${defaultModel ?? ""}`;
     const params: ReportsParams = {
       from,
       to,
-      model: "last_non_direct",
+      model: defaultModel,
       ...(locationId ? { locationId } : {}),
     };
     const locationParams: ReportsParams = {
       from,
       to,
-      model: "last_non_direct",
+      model: defaultModel,
     };
     const locationsRequest = workspaceId
       ? viewReportLocations(workspaceId, params)
@@ -237,7 +239,7 @@ function Analytics() {
     return () => {
       cancelled = true;
     };
-  }, [from, to, locationId, workspaceId]);
+  }, [from, to, locationId, workspaceId, defaultModel]);
 
   const currency = summary?.currency;
   const locationOptions = allLocations.flatMap((location) =>

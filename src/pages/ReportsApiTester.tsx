@@ -11,6 +11,8 @@ import {
   getWorkspaceDashboard,
   type ReportsParams,
 } from "../services/companyServices"
+import { useAttributionModels } from "@/features/insights/hooks/useAttributionModels";
+import AttributionModelSelect from "@/features/insights/components/AttributionModelSelect";
 
 type ApiResult = {
   status?: number;
@@ -95,7 +97,8 @@ const apiTests: ApiTest[] = [
 export default function ReportsApiTester() {
   const [from, setFrom] = useState(defaultDates.from);
   const [to, setTo] = useState(defaultDates.to);
-  const [model, setModel] = useState("last_non_direct");
+  const { defaultModel } = useAttributionModels();
+  const [model, setModel] = useState<string | undefined>(() => defaultModel);
   const [locationId, setLocationId] = useState("");
 
   const [results, setResults] = useState<Record<string, ApiResult>>({});
@@ -287,14 +290,12 @@ export default function ReportsApiTester() {
 
             <label className="space-y-1 text-sm">
               <span className="font-medium">Attribution Model</span>
-              <select
-                value={model}
+              <AttributionModelSelect
+                includeDefaultOption
+                value={model ?? defaultModel ?? ""}
                 onChange={(event) => setModel(event.target.value)}
                 className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2"
-              >
-                <option value="last_non_direct">Last Non-Direct</option>
-                <option value="">Workspace Default</option>
-              </select>
+              />
             </label>
 
             <label className="space-y-1 text-sm">

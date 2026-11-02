@@ -1,12 +1,14 @@
 import Modal from "@/components/ui/Modal";
 import Badge from "@/components/ui/Badge";
 import { useAsync } from "../hooks/useReport";
-import { ATTRIBUTION_MODELS, MATCH_LABELS, REASON_LABELS, channelLabel, fetchOrderAttribution, type OrderAttribution } from "@/services/insights";
+import { MATCH_LABELS, REASON_LABELS, channelLabel, fetchOrderAttribution, type OrderAttribution } from "@/services/insights";
 import { formatDateTime, formatMinorUnits } from "@/features/reports/utils/formatting";
+import { useAttributionModels } from "../hooks/useAttributionModels";
 
 /** Order detail (5.4): the journey and the credit each model gives, side by side. */
 export default function OrderDetailModal({ orderId, workspaceId, onClose }: { orderId: string; workspaceId?: string; onClose: () => void }) {
   const r = useAsync<OrderAttribution>(() => fetchOrderAttribution(orderId, workspaceId), [orderId, workspaceId]);
+  const { options: modelOptions } = useAttributionModels();
   const o = r.data;
   return (
     <Modal open title={o ? `Order ${o.externalId}` : "Order"} description={o ? formatDateTime(o.orderedAt) : undefined} onClose={onClose} size="lg">
@@ -54,7 +56,7 @@ export default function OrderDetailModal({ orderId, workspaceId, onClose }: { or
                 </tr>
               </thead>
               <tbody>
-                {ATTRIBUTION_MODELS.map((m) => (
+                {modelOptions.map((m) => (
                   <tr key={m.value} className="border-t border-border">
                     <td className="py-1.5 pr-3 font-medium">{m.label}</td>
                     <td className="py-1.5">

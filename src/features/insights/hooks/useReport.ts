@@ -4,6 +4,7 @@ import { getRequestErrorMessage } from "@/features/reports/utils/requestError";
 import { getPresetDateRange, type DateRange } from "@/features/reports/utils/dateRange";
 import { api } from "@/services/api";
 import { fetchReport, fetchList, type AttributionModel, type ReportName, type ReportQuery } from "@/services/insights";
+import { useAttributionModels } from "./useAttributionModels";
 
 /** Platform admins "view as" a company under /super/workspaces/:id/view/*; company users have no id. */
 export function useViewWorkspaceId(): string | undefined {
@@ -42,9 +43,11 @@ function readStored(): Partial<ReportFiltersState> {
 
 /** Shared filters (date range, model, location, channel) that follow the user from screen to screen. */
 export function useReportFilters(defaultDays: 7 | 14 | 30 | 90 = 30) {
+  const { defaultModel, availableModels } = useAttributionModels();
   const [filters, setFilters] = useState<ReportFiltersState>(() => {
     const stored = readStored();
-    return { range: stored.range ?? getPresetDateRange(defaultDays), model: stored.model, locationId: stored.locationId, channel: undefined, currency: readCurrency() };
+    const storedModel = stored.model && (!availableModels || availableModels.includes(stored.model)) ? stored.model : undefined;
+    return { range: stored.range ?? getPresetDateRange(defaultDays), model: storedModel ?? defaultModel, locationId: stored.locationId, channel: undefined, currency: readCurrency() };
   });
   const update = (patch: Partial<ReportFiltersState>) =>
     setFilters((current) => {

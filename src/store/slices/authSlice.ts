@@ -10,6 +10,8 @@ export interface AuthWorkspace {
   status: WorkspaceStatus;
   plan?: string;
   subscriptionStatus?: string;
+  availableModels?: string[];
+  defaultModel?: string;
   billingInterval?: "monthly" | "annually" | null;
   currentPeriodEndsAt?: string | null;
   cancelAtPeriodEnd?: boolean;
@@ -29,6 +31,8 @@ export interface AuthUser {
   mfaPending?: boolean;
   /** company viewers limited to some locations (empty = all) */
   allowedLocationIds?: string[];
+  // availableModels?: string[];
+  // defaultModel?: string;
   workspace?: AuthWorkspace | null;
 }
 

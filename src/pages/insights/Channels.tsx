@@ -5,11 +5,13 @@ import ReportToolbar from "@/features/insights/components/ReportToolbar";
 import { Section, Warnings, ErrorBox } from "@/features/insights/components/Kpi";
 import { useReport, useReportFilters, useViewWorkspaceId } from "@/features/insights/hooks/useReport";
 import { formatMinorUnits, formatNumber } from "@/features/reports/utils/formatting";
-import { ATTRIBUTION_MODELS, channelLabel, reportUrl, type CampaignRow, type ChannelsReport, type ReportMeta } from "@/services/insights";
+import { channelLabel, reportUrl, type CampaignRow, type ChannelsReport, type ReportMeta } from "@/services/insights";
+import { useAttributionModels } from "@/features/insights/hooks/useAttributionModels";
 
 /** Channels and campaigns (scope 5.2): table by channel, model comparison, drill into campaigns. */
 export default function Channels() {
   const workspaceId = useViewWorkspaceId();
+  const { options: modelOptions } = useAttributionModels();
   const { filters, update, query } = useReportFilters();
   const [compare, setCompare] = useState(false);
   const [drill, setDrill] = useState<string | null>(null);
@@ -82,14 +84,14 @@ export default function Channels() {
                 <thead>
                   <tr className="border-b border-border text-left text-[10px] uppercase tracking-wider text-text-muted">
                     <th className="px-3 py-2">Channel</th>
-                    {ATTRIBUTION_MODELS.map((m) => <th key={m.value} className="px-3 py-2 text-right">{m.label}</th>)}
+                    {modelOptions.map((m) => <th key={m.value} className="px-3 py-2 text-right">{m.label}</th>)}
                   </tr>
                 </thead>
                 <tbody>
                   {channels.data.comparison.data.map((row) => (
                     <tr key={row.channel} className="border-b border-border last:border-0">
                       <td className="px-3 py-2">{channelLabel(row.channel)}</td>
-                      {ATTRIBUTION_MODELS.map((m) => <td key={m.value} className="px-3 py-2 text-right tabular-nums">{money(row[m.value])}</td>)}
+                      {modelOptions.map((m) => <td key={m.value} className="px-3 py-2 text-right tabular-nums">{money(row[m.value])}</td>)}
                     </tr>
                   ))}
                 </tbody>

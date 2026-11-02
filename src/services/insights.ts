@@ -8,16 +8,27 @@
 
 import { api } from "./api";
 
-export type AttributionModel = "first_touch" | "last_touch" | "last_non_direct" | "linear" | "time_decay" | "position_based";
+export type AttributionModel = string;
 
-export const ATTRIBUTION_MODELS: { value: AttributionModel; label: string }[] = [
-  { value: "last_non_direct", label: "Last non-direct" },
-  { value: "last_touch", label: "Last touch" },
-  { value: "first_touch", label: "First touch" },
-  { value: "linear", label: "Linear" },
-  { value: "time_decay", label: "Time decay" },
-  { value: "position_based", label: "Position based (40/20/40)" },
-];
+export const ATTRIBUTION_MODEL_LABELS: Record<string, string> = {
+  first_touch: "First touch",
+  last_touch: "Last touch",
+  last_non_direct: "Last non-direct",
+  linear: "Linear",
+  time_decay: "Time decay",
+  position_based: "Position based (40/20/40)",
+};
+
+export const getAttributionModelLabel = (model: string) =>
+  ATTRIBUTION_MODEL_LABELS[model] ??
+  model
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+export function getAttributionModelOptions(models: readonly string[]) {
+  return models.map((value) => ({ value, label: getAttributionModelLabel(value) }));
+}
 
 export interface ReportQuery {
   from?: string;

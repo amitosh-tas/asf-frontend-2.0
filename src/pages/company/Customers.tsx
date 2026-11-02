@@ -33,7 +33,7 @@ function Customers() {
   return (
     <PageLayout title="Customers" headTitle="Audience" description="Who your customers are, where they first came from, and how often they come back."
       actions={
-        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={r?.lastUpdated} fx={r?.fx} csv={{ url: listUrl.customers(workspaceId), query: { search: search || undefined, sort, type: type || undefined }, filename: "customers.csv" }} />
+        <ReportToolbar filters={filters} onChange={update} workspaceId={workspaceId} lastUpdated={r?.lastUpdated} fx={r?.fx} csv={{ url: listUrl.customers(workspaceId), query: { search: search || undefined, sort, type: type || undefined, model: filters.model }, filename: "customers.csv" }} />
       }
     >
       <ErrorBox error={list.error ?? report.error} onRetry={() => (list.reload(), report.reload())} />
