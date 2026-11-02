@@ -63,13 +63,13 @@ function Overview() {
       <ErrorBox error={report.error} onRetry={report.reload} />
       <Warnings warnings={d?.warnings} />
 
-      <button
+      <div
         type="button"
         // onClick={() => drill({})}
         className="group relative grid w-full min-w-0 grid-cols-1 gap-7 overflow-hidden rounded-2xl border border-hero-outline bg-hero-background p-6 text-left text-hero-foreground shadow-[0_8px_28px_rgba(15,23,42,0.06)] transition before:absolute before:inset-y-6 before:left-0 before:w-1 before:rounded-r-full before:bg-primary hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(15,23,42,0.1)] focus-visible:outline-hero-foreground sm:p-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(260px,0.7fr)] lg:items-center"
         aria-label={`Net revenue ${money(s?.revenue.netMinorUnits)}. View transactions for this period.`}
       >
-        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-28 size-80 rounded-full bg-hero-glow blur-3xl" />
+        <div aria-hidden="true" className=" absolute -right-16 -top-28 size-80 rounded-full bg-hero-glow blur-3xl" />
         <div className="relative min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-hero-muted">Net revenue</span>
@@ -111,7 +111,7 @@ function Overview() {
             <p className="mt-2 truncate text-lg font-semibold tabular-nums tracking-tight text-hero-foreground">{report.loading ? "—" : money(s?.revenue.refundsMinorUnits)}</p>
           </div>
         </div>
-      </button>
+      </div>
 
       <KpiGrid>
         <Kpi label="Orders" value={formatNumber(s?.orders.total)} change={d?.changes.orders} loading={report.loading} onClick={() => drill({})} />
