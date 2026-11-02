@@ -21,11 +21,11 @@ export default function RevokeApiKeyModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="revoke-api-key-title"
-        className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 sm:p-6"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 text-text shadow-2xl sm:p-6"
       >
         <h3
           id="revoke-api-key-title"
-          className="font-heading text-lg font-medium"
+          className="font-heading text-lg font-medium text-text"
         >
           Revoke API key?
         </h3>
@@ -40,7 +40,7 @@ export default function RevokeApiKeyModal({
             type="button"
             disabled={revoking}
             onClick={onCancel}
-            className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm text-text transition hover:bg-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
@@ -48,7 +48,7 @@ export default function RevokeApiKeyModal({
             type="button"
             disabled={revoking}
             onClick={onConfirm}
-            className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-medium text-on-primary transition hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {revoking ? "Revoking…" : "Revoke key"}
           </button>
