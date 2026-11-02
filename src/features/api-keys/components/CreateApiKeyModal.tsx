@@ -192,7 +192,7 @@ function CreateApiKeyModal({
           </Button>
         </div>
         {origins.length > 0 && (
-          <ul className="mt-3 flex flex-wrap gap-2">
+          <ul className="mt-3 flex flex-wrap gap-2 dark:text-white">
             {origins.map((origin) => (
               <li
                 key={origin}
