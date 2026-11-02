@@ -21,7 +21,7 @@ export default function PageLayout({
   return (
     <div className="mx-auto w-full max-w-360">
       {(title || description || actions) && (
-        <header className="mb-7 grid grid-cols-1 items-end gap-5 border-b border-border/80 pb-6 md:grid-cols-[minmax(0,1fr)_auto]">
+        <header className="mb-7 grid grid-cols-1 items-end gap-5 border-b border-border/80 pb-6 xl:grid-cols-[minmax(0,1fr)_auto]">
           <div className="flex min-w-0 flex-col gap-2">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-text-muted">
               {headTitle}
