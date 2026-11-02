@@ -232,7 +232,7 @@ function Connectors() {
     <section className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h2 className="font-heading text-lg font-semibold">Connectors</h2>
+          <h2 className="font-heading text-lg font-semibold text-text">Connectors</h2>
           <p className="text-sm text-text-muted">Connect Stripe, PayPal or Razorpay so paid orders and refunds are attributed automatically.</p>
         </div>
         <Button type="button" onClick={() => setConnectOpen(true)} disabled={!canConnect} icon={<i className="fi fi-rr-plus" aria-hidden="true" />}>
