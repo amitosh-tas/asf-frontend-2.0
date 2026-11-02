@@ -15,7 +15,7 @@ interface KpiProps {
 
 export function Kpi({ label, value, change, inverse = false, hint, loading, onClick }: KpiProps) {
   const good = change === null || change === undefined ? null : inverse ? change <= 0 : change >= 0;
-  const className = `group flex min-h-32 min-w-0 flex-col gap-2 rounded-2xl border border-border/80 bg-card p-5 text-left shadow-[0_2px_10px_rgba(15,23,42,0.025)] transition duration-200 ${onClick ? "cursor-pointer hover:-translate-y-0.5 hover:border-border hover:shadow-[0_10px_28px_rgba(15,23,42,0.08)]" : ""}`;
+  const className = `group flex min-h-32 min-w-0 flex-col gap-2 rounded-2xl border border-border/80 bg-card p-5 text-left shadow-[0_2px_10px_rgba(15,23,42,0.025)] transition duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-[0_14px_32px_rgba(15,23,42,0.12)] ${onClick ? "cursor-pointer" : ""}`;
   const body = (
     <>
       <span className="text-[12px] font-medium tracking-[0.01em] text-text-muted">{label}</span>
