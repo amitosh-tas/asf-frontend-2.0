@@ -113,7 +113,7 @@ export default function ConnectorDetailModal({ connector, onClose, onChanged }: 
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {connection.enabledEvents.map((event) => (
                     <li key={event}>
-                      <code className="rounded-md border border-border bg-surface-muted px-2 py-1 text-xs">{event}</code>
+                      <code className="rounded-md border border-border bg-surface-muted px-2 py-1 text-xs text-text">{event}</code>
                     </li>
                   ))}
                 </ul>
