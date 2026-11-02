@@ -184,7 +184,7 @@ export default function ConnectorEventsPanel({ connector, onChanged }: Connector
               </div>
               {event.error && <p className="mt-2 text-xs text-danger">{event.error}</p>}
               {openPayloadId === event.id && (
-                <pre className="mt-2 max-h-64 overflow-auto rounded-lg border border-border bg-surface-muted p-3 text-xs">
+                <pre className="mt-2 max-h-64 overflow-auto rounded-lg border border-border bg-surface-muted p-3 text-xs text-text">
                   {payloadLoading ? "Loading…" : payload}
                 </pre>
               )}
