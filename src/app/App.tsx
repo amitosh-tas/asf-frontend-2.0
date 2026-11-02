@@ -176,10 +176,10 @@ function App() {
         toastOptions={{
           duration: 3500,
           style: {
-            border: "1px solid #e5e5e5",
+            border: "1px solid var(--color-border)",
             borderRadius: "6px",
-            background: "#ffffff",
-            color: "#171717",
+            background: "var(--color-card)",
+            color: "var(--color-text)",
             fontSize: "13px",
             boxShadow: "0 8px 30px rgba(0, 0, 0, 0.08)",
           },

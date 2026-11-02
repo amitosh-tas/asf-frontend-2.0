@@ -248,7 +248,7 @@ export default function CustomerTable({
       {journeyError && !journeyLoading && (
         <div
           role="alert"
-          className="fixed bottom-5 right-5 z-60 max-w-sm rounded-xl border border-red-200 bg-card p-4 shadow-lg"
+          className="fixed bottom-5 right-5 z-60 max-w-sm rounded-xl border border-danger/30 bg-card p-4 shadow-lg"
         >
           <p className="text-sm text-text">{journeyError}</p>
           <button

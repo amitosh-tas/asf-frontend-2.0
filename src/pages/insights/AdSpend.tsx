@@ -95,7 +95,7 @@ export default function AdSpend() {
         <TrendChart
           loading={spend.loading}
           data={(spend.data?.trend ?? []).map((d) => ({ date: d.date, spend: Number(d.spendMinorUnits), revenue: Number(d.netMinorUnits) }))}
-          series={[{ key: "revenue", label: "Net revenue", color: "#111111" }, { key: "spend", label: "Spend", color: "#3b82f6" }]}
+          series={[{ key: "revenue", label: "Net revenue", color: "var(--color-chart-1)" }, { key: "spend", label: "Spend", color: "var(--color-chart-2)" }]}
           format={(v) => formatMinorCompact(v, cur)}
         />
       </Section>
@@ -137,7 +137,7 @@ export default function AdSpend() {
           <TrendChart
             xKey="month"
             data={cac.data.payback.map((p) => ({ month: `M${p.monthsSinceAcquisition}`, revenue: Number(p.cumulativeRevenuePerCustomerMinorUnits), cac: Number(cac.data?.blendedCacMinorUnits ?? 0) }))}
-            series={[{ key: "revenue", label: "Cumulative revenue per new customer", color: "#15803d" }, { key: "cac", label: "Blended CAC", color: "#b91c1c", dashed: true }]}
+            series={[{ key: "revenue", label: "Cumulative revenue per new customer", color: "var(--color-success)" }, { key: "cac", label: "Blended CAC", color: "var(--color-danger)", dashed: true }]}
             format={(v) => formatMinorCompact(v, cur)}
           />
         </Section>

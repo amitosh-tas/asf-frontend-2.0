@@ -23,7 +23,7 @@ export default function AuditLog() {
       tableSubHead="Logins, key and settings changes, and every platform-admin access"
       filters={
         <div className="flex flex-wrap gap-2">
-          <select aria-label="Actor" value={actorType} onChange={(e) => (setActorType(e.target.value), setPage(1))} className="rounded-full border border-border px-3 py-1.5 text-sm">
+          <select aria-label="Actor" value={actorType} onChange={(e) => (setActorType(e.target.value), setPage(1))} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-text">
             <option value="">Everyone</option>
             <option value="user">Your team</option>
             <option value="platform_admin">Platform support</option>

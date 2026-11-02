@@ -164,7 +164,7 @@ export default function DataTable<T>({
                   }
                   className={[
                     "border-b border-border last:border-b-0",
-                    "transition-colors hover:bg-neutral-50",
+                    "transition-colors hover:bg-hover",
                     onRowClick ? "cursor-pointer" : "",
                   ].join(" ")}
                 >

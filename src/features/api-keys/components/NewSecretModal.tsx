@@ -31,11 +31,11 @@ export default function NewSecretModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="new-secret-title"
-        className="max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-card p-5 sm:p-6"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-card p-5 text-text shadow-2xl sm:p-6"
       >
         <h3
           id="new-secret-title"
-          className="font-heading text-xl font-semibold"
+          className="font-heading text-xl font-semibold text-text"
         >
           Your new API key is ready
         </h3>
@@ -63,7 +63,7 @@ export default function NewSecretModal({
             value={secret}
             rows={3}
             onFocus={(event) => event.currentTarget.select()}
-            className="min-w-0 flex-1 resize-none break-all rounded-lg border border-border bg-surface-muted p-3 font-mono text-sm focus-visible:ring-2 focus-visible:ring-primary"
+            className="min-w-0 flex-1 resize-none break-all rounded-lg border border-border bg-surface-muted p-3 font-mono text-sm text-text focus-visible:ring-2 focus-visible:ring-primary"
           />
         </div>
 
@@ -81,12 +81,12 @@ export default function NewSecretModal({
           <button
             type="button"
             onClick={onCopy}
-            className="flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium transition hover:bg-surface-muted"
+            className="flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium text-text transition hover:bg-hover"
           >
             <i
               className={` flex
                 ${copied
-                  ? "fi fi-rr-check text-green-600"
+                  ? "fi fi-rr-check text-success"
                   : "fi fi-rr-copy-alt"} ` 
               }
             />
@@ -95,7 +95,7 @@ export default function NewSecretModal({
           <button
             type="button"
             onClick={downloadSecret}
-            className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-medium transition hover:bg-surface-muted"
+            className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-text transition hover:bg-hover"
           >
             <i className="fi fi-rr-download flex" aria-hidden="true" />
             Download key
@@ -103,7 +103,7 @@ export default function NewSecretModal({
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            className="cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
           >
             I've saved my key
           </button>

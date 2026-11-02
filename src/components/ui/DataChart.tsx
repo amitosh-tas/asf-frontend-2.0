@@ -37,7 +37,7 @@ function DataChart({
   subtitle,
   data,
   type = "line",
-  color = "#111111",
+  color = "var(--color-chart-1)",
   valuePrefix = "",
   valueSuffix = "",
   valueFormatter,
@@ -96,10 +96,10 @@ function DataChart({
                 data={data}
                 margin={{ top: 8, right: 4, left: 4, bottom: 0 }}
               >
-                <CartesianGrid vertical={false} stroke="#e5e5e5" />
+                <CartesianGrid vertical={false} stroke="var(--color-border)" />
                 <XAxis
                   dataKey="label"
-                  tick={{ fontSize: 11, fill: "#737373" }}
+                  tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
                   tickLine={false}
                   axisLine={false}
                   minTickGap={24}
@@ -107,12 +107,16 @@ function DataChart({
                 <YAxis hide />
                 <Tooltip
                   formatter={(value) => formatValue(Number(value))}
+                  cursor={{ fill: "var(--color-hover)" }}
                   contentStyle={{
                     borderRadius: 10,
-                    border: "1px solid #e5e5e5",
+                    border: "1px solid var(--color-border)",
+                    backgroundColor: "var(--color-card)",
                     fontSize: 12,
-                    color: "#171717",
+                    color: "var(--color-text)",
                   }}
+                  labelStyle={{ color: "var(--color-text-muted)" }}
+                  itemStyle={{ color: "var(--color-text)" }}
                 />
                 <Bar
                   dataKey="value"
@@ -126,10 +130,10 @@ function DataChart({
                 data={data}
                 margin={{ top: 8, right: 4, left: 4, bottom: 0 }}
               >
-                <CartesianGrid vertical={false} stroke="#e5e5e5" />
+                <CartesianGrid vertical={false} stroke="var(--color-border)" />
                 <XAxis
                   dataKey="label"
-                  tick={{ fontSize: 11, fill: "#737373" }}
+                  tick={{ fontSize: 11, fill: "var(--color-text-muted)" }}
                   tickLine={false}
                   axisLine={false}
                   minTickGap={24}
@@ -137,12 +141,16 @@ function DataChart({
                 <YAxis hide />
                 <Tooltip
                   formatter={(value) => formatValue(Number(value))}
+                  cursor={{ fill: "var(--color-hover)" }}
                   contentStyle={{
                     borderRadius: 10,
-                    border: "1px solid #e5e5e5",
+                    border: "1px solid var(--color-border)",
+                    backgroundColor: "var(--color-card)",
                     fontSize: 12,
-                    color: "#171717",
+                    color: "var(--color-text)",
                   }}
+                  labelStyle={{ color: "var(--color-text-muted)" }}
+                  itemStyle={{ color: "var(--color-text)" }}
                 />
                 <Line
                   type="linear"

@@ -20,7 +20,7 @@ export default function AvgOrderValueTrend({
       subtitle="by day"
       data={data}
       type="line"
-      color="#111111"
+      color="var(--color-chart-1)"
       valueFormatter={
         currency ? (value) => formatCurrency(value, currency) : undefined
       }

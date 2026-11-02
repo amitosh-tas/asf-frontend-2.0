@@ -17,7 +17,7 @@ export default function NewCustomersTrend({
       subtitle="by day · company-wide"
       data={data}
       type="bar"
-      color="#78876B"
+      color="var(--color-chart-2)"
       loading={loading}
       error={error}
     />

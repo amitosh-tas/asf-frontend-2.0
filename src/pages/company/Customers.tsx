@@ -73,7 +73,7 @@ function Customers() {
 
       <div className="mt-6">
         <Section title="New vs returning" subtitle="Distinct customers per local day">
-          <TrendChart type="bar" loading={report.loading} data={(r?.trend ?? []).map((t) => ({ date: t.date, newCustomers: t.newCustomers, returning: t.returningCustomers }))} series={[{ key: "newCustomers", label: "New", color: "#111111" }, { key: "returning", label: "Returning", color: "#a3a3a3" }]} format={(v) => formatNumber(v)} />
+          <TrendChart type="bar" loading={report.loading} data={(r?.trend ?? []).map((t) => ({ date: t.date, newCustomers: t.newCustomers, returning: t.returningCustomers }))} series={[{ key: "newCustomers", label: "New", color: "var(--color-chart-1)" }, { key: "returning", label: "Returning", color: "var(--color-chart-3)" }]} format={(v) => formatNumber(v)} />
         </Section>
         <Section title="Cohorts" subtitle="Customers by first-purchase month and the share who bought again in later months">
           <div className="overflow-x-auto">
@@ -91,7 +91,7 @@ function Customers() {
                     <td className="px-2 py-1.5 font-medium">{c.cohort}</td>
                     <td className="px-2 py-1.5 text-right">{c.customers}</td>
                     {c.repeatRateByMonth.map((m) => (
-                      <td key={m.month} className="px-2 py-1.5 text-right tabular-nums" style={{ background: m.rate ? `rgba(17,17,17,${Math.min(0.6, m.rate / 100 + 0.05)})` : undefined, color: m.rate > 30 ? "white" : undefined }}>
+                      <td key={m.month} className="px-2 py-1.5 text-right tabular-nums" style={{ background: m.rate ? `color-mix(in srgb, var(--color-text) ${Math.min(60, m.rate + 5)}%, var(--color-card))` : undefined, color: m.rate ? (m.rate > 30 ? "var(--color-page-background)" : "var(--color-text)") : undefined }}>
                         {m.rate ? `${m.rate}%` : ""}
                       </td>
                     ))}

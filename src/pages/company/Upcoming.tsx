@@ -55,7 +55,7 @@ function Upcoming() {
           <Kpi label="Booked value" value={upcoming.data ? money(upcoming.data.bookedValueMinorUnits) : "—"} loading={upcoming.loading} hint="service price at booking (not yet revenue)" />
         </KpiGrid>
         {group === "byDay" || group === "byWeek" ? (
-          <TrendChart type="bar" loading={upcoming.loading} xKey="key" data={groupRows.map((g) => ({ key: g.key, count: g.count }))} series={[{ key: "count", label: "Bookings", color: "#111111" }]} format={(v) => formatNumber(v)} />
+          <TrendChart type="bar" loading={upcoming.loading} xKey="key" data={groupRows.map((g) => ({ key: g.key, count: g.count }))} series={[{ key: "count", label: "Bookings", color: "var(--color-chart-1)" }]} format={(v) => formatNumber(v)} />
         ) : (
           <ul className="flex flex-col gap-2 text-sm">
             {groupRows.map((g) => (

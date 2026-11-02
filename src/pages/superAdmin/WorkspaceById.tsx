@@ -1144,7 +1144,7 @@ function WorkspaceById() {
                   }
                   placeholder="Reason for deactivation"
                   rows={3}
-                  className="mt-2 w-full resize-none rounded-lg border border-border bg-white px-3 py-2.5 text-sm text-text"
+                  className="mt-2 w-full resize-none rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-text"
                 /> */}
                 <div className="mt-6 flex justify-end gap-2">
                   <Button

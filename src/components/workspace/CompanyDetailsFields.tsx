@@ -280,7 +280,7 @@ export default function CompanyDetailsFields({
         </div>
 
         {optionsError && (
-          <p role="alert" className="text-sm text-red-500">
+          <p role="alert" className="text-sm text-danger">
             Failed to load country and currency options. Please refresh
             the page and try again.
           </p>

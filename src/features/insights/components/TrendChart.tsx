@@ -33,6 +33,10 @@ export default function TrendChart({ data, xKey = "date", series, format, loadin
           <YAxis tickFormatter={(v: number) => format(v)} tick={{ fontSize: 11, fill: "var(--color-text-muted)" }} tickLine={false} axisLine={false} width={84} />
           <Tooltip
             formatter={(value, name) => [format(Number(value ?? 0)), name]}
+            cursor={{ fill: "var(--color-hover)" }}
+            contentStyle={{ backgroundColor: "var(--color-card)", borderColor: "var(--color-border)", borderRadius: 10, color: "var(--color-text)" }}
+            labelStyle={{ color: "var(--color-text-muted)" }}
+            itemStyle={{ color: "var(--color-text)" }}
             labelFormatter={(value) =>
               /^\d{4}-\d{2}-\d{2}$/.test(String(value))
                 ? /* your existing date formatting */

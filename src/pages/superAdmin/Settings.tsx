@@ -184,7 +184,7 @@ function Settings() {
             className="flex items-center justify-between gap-3 px-5 py-3"
           >
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-secondary text-text-muted">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-muted text-text-muted">
                 <i
                   className={
                     type === "industry"
@@ -195,7 +195,7 @@ function Settings() {
                 />
               </div>
 
-              <span className="truncate text-sm font-medium text-text-primary">
+              <span className="truncate text-sm font-medium text-text">
                 {item.name}
               </span>
             </div>
@@ -230,7 +230,7 @@ function Settings() {
         {/* Page actions */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold text-text-primary">
+            <h2 className="text-base font-semibold text-text">
               Reference data
             </h2>
             <p className="mt-1 text-sm text-text-muted">
@@ -276,7 +276,7 @@ function Settings() {
             <section className="overflow-hidden rounded-2xl border border-border bg-surface">
               <div className="flex items-center justify-between gap-3 p-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-secondary">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-muted">
                     <i
                       className="fi fi-rr-building text-lg"
                       aria-hidden="true"
@@ -284,7 +284,7 @@ function Settings() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-text-primary">
+                    <h3 className="font-semibold text-text">
                       Industries
                     </h3>
                     <p className="text-sm text-text-muted">
@@ -312,7 +312,7 @@ function Settings() {
             <section className="overflow-hidden rounded-2xl border border-border bg-surface">
               <div className="flex items-center justify-between gap-3 p-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-secondary">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-muted">
                     <i
                       className="fi fi-rr-credit-card text-lg"
                       aria-hidden="true"
@@ -320,7 +320,7 @@ function Settings() {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-text-primary">
+                    <h3 className="font-semibold text-text">
                       Payment gateways
                     </h3>
                     <p className="text-sm text-text-muted">
@@ -422,7 +422,7 @@ function Settings() {
             <div className="rounded-xl border border-danger/20 bg-danger/5 p-4">
               <p className="text-sm text-text-muted">
                 Are you sure you want to delete{" "}
-                <span className="font-semibold text-text-primary">
+                <span className="font-semibold text-text">
                   {deleteTarget.item.name}
                 </span>
                 ?
