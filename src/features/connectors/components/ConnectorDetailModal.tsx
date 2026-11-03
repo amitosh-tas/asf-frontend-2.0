@@ -75,7 +75,7 @@ export default function ConnectorDetailModal({ connector, onClose, onChanged }: 
               onClick={() => setTab(value)}
               className={[
                 "rounded-full px-4 py-1.5 text-sm font-medium transition",
-                tab === value ? "bg-primary text-white" : "text-text-muted hover:text-text",
+                tab === value ? "bg-primary text-on-primary" : "text-text-muted hover:text-text",
               ].join(" ")}
             >
               {value === "overview" ? "Overview" : "Event log"}

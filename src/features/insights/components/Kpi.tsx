@@ -15,11 +15,11 @@ interface KpiProps {
 
 export function Kpi({ label, value, change, inverse = false, hint, loading, onClick }: KpiProps) {
   const good = change === null || change === undefined ? null : inverse ? change <= 0 : change >= 0;
-  const className = `group flex min-h-32 min-w-0 flex-col gap-2 rounded-2xl border border-border/80 bg-card p-5 text-left shadow-[0_2px_10px_rgba(15,23,42,0.025)] transition duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-[0_14px_32px_rgba(15,23,42,0.12)] ${onClick ? "cursor-pointer" : ""}`;
+  const className = `group flex min-h-32 min-w-0 flex-col gap-2 rounded-[20px] border border-border bg-card p-5 text-left shadow-[0_5px_22px_rgba(32,43,37,0.035)] transition duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-[0_12px_30px_rgba(32,43,37,0.08)] ${onClick ? "cursor-pointer" : ""}`;
   const body = (
     <>
       <span className="text-[12px] font-medium tracking-[0.01em] text-text-muted">{label}</span>
-      {loading ? <Skeleton className="h-8 w-2/3" /> : <span className="font-heading text-[28px] font-semibold tabular-nums tracking-[-0.04em] text-text">{value}</span>}
+      {loading ? <Skeleton className="h-8 w-2/3" /> : <span className="font-heading text-[30px] font-semibold tabular-nums tracking-[-0.045em] text-text">{value}</span>}
       {!loading && change !== undefined && (
         <span className={`inline-flex w-fit items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ${good === null ? "bg-surface-muted text-text-muted" : good ? "bg-success/10 text-success" : "bg-danger/10 text-danger"}`}>
           {change === null ? "No previous period" : `${change >= 0 ? "↑" : "↓"} ${Math.abs(change)}%`}
@@ -43,7 +43,7 @@ export function KpiGrid({ children }: { children: ReactNode }) {
 
 export function Section({ title, subtitle, actions, children }: { title: string; subtitle?: string; actions?: ReactNode; children: ReactNode }) {
   return (
-    <section className="mb-1 w-full min-w-0 rounded-2xl border border-border/80 bg-card p-5 shadow-[0_2px_10px_rgba(15,23,42,0.025)] sm:p-6">
+    <section className="mb-1 h-full w-full min-w-0 rounded-[22px] border border-border bg-card p-5 shadow-[0_5px_22px_rgba(32,43,37,0.035)] sm:p-6">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-heading text-[15px] font-semibold tracking-tight text-text">{title}</h2>

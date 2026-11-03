@@ -251,7 +251,7 @@ export default function ReportsApiTester() {
               type="button"
               onClick={testAllApis}
               disabled={loading.length > 0 || dateRangeInvalid}
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
             >
               Test All APIs
             </button>
@@ -349,7 +349,7 @@ export default function ReportsApiTester() {
                       isLoading ||
                       (test.key !== "dashboard" && dateRangeInvalid)
                     }
-                    className="shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                    className="shrink-0 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-on-primary hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isLoading ? (
                       <span

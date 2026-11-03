@@ -113,7 +113,7 @@ function InviteCard({ onUserCreated }: InviteCardProps) {
           <button
             type="submit"
             disabled={submitting}
-            className="h-10 rounded-lg w-full cursor-pointer bg-primary px-5 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-10 rounded-lg w-full cursor-pointer bg-primary px-5 text-sm font-semibold text-on-primary transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? "Creating…" : "Create admin"}
           </button>

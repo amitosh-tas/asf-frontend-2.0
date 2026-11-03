@@ -19,7 +19,7 @@ function Notfound() {
         </p>
         <Link
           to="/"
-          className="mt-7 inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-white transition hover:bg-primary/90"
+          className="mt-7 inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-on-primary transition hover:bg-primary/90"
         >
           Back to dashboard
         </Link>
