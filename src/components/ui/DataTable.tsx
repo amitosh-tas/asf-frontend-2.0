@@ -67,7 +67,7 @@ export default function DataTable<T>({
   return (
     <section
       aria-busy={loading}
-      className="w-full min-w-0 overflow-hidden rounded-lg border border-border bg-card shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+      className="w-full min-w-0 overflow-hidden rounded-[22px] border border-border bg-card shadow-[0_5px_22px_rgba(32,43,37,0.035)]"
     >
       {loading && (
         <span role="status" className="sr-only">
@@ -102,7 +102,7 @@ export default function DataTable<T>({
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-140 border-collapse text-sm">
           <thead>
-            <tr className="border-y border-border bg-surface-muted/60">
+            <tr className="border-y border-border bg-surface-muted/70">
               {columns.map((column) => (
                 <th
                   key={column.key}

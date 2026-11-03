@@ -135,7 +135,7 @@ export default function ReportFilters({
               onClick={() => selectPreset(preset)}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
                 selectedPreset === preset.label
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-on-primary"
                   : "text-text-muted hover:bg-hover hover:text-text"
               }`}
             >
@@ -156,7 +156,7 @@ export default function ReportFilters({
             }}
             className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
               selectedPreset === "custom"
-                ? "bg-primary text-white"
+                ? "bg-primary text-on-primary"
                 : "text-text-muted hover:bg-hover hover:text-text"
             }`}
           >
@@ -222,7 +222,7 @@ export default function ReportFilters({
                 type="button"
                 disabled={!customRangeValid}
                 onClick={applyCustomRange}
-                className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-on-primary transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Apply range
               </button>

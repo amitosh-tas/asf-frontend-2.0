@@ -826,7 +826,7 @@ function WorkspaceById() {
           <button
                 type="button"
                 onClick={() => setShowAddMember(true)}
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:bg-primary/90"
               >
                 Add company member
               </button>
