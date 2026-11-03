@@ -54,7 +54,7 @@ function Sidebar({
           rounded-lg border border-border bg-card px-3 text-xs font-medium text-text
           duration-300 hover:bg-hover
           md:hidden
-          ${isOpen ? "translate-x-40" : "translate-x-0"}
+          ${isOpen ? "translate-x-47" : "translate-x-0"}
         `}
       >
         {isOpen ? <X size={17} /> : <Menu size={18} />}
