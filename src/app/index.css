@@ -118,6 +118,17 @@ html[data-theme="dark"] {
     -webkit-tap-highlight-color: transparent;
   }
 
+  input,
+  textarea {
+    outline: none;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 42%, transparent);
+  }
+
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
