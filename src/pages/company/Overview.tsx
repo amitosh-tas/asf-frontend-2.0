@@ -99,7 +99,7 @@ function Overview() {
           <OpenIcon aria-hidden="true" size={16} className="absolute bottom-6 right-6 text-white/35 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white/75" />
         </button>
 
-        <div className="min-w-0 xl:col-span-7">
+        <div className="min-w-0 sm:col-span-2 xl:col-span-7">
           <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-3">
             <MetricTile icon={<ShoppingBag size={17} />} label="Orders" value={formatNumber(s?.orders.total)} change={d?.changes.orders} loading={report.loading} onClick={() => drill({})} />
             <MetricTile icon={<ChartNoAxesCombined size={17} />} label="Average order value" value={money(s?.revenue.averageOrderValueMinorUnits)} change={d?.changes.averageOrderValue} loading={report.loading} />
