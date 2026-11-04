@@ -50,7 +50,7 @@ function Overview() {
 
   return (
     <PageLayout
-      headTitle="ELYSiUM / OVERVIEW"
+      headTitle="TRACKVYN / OVERVIEW"
       title="Revenue at a glance"
       description="A clear view of sales performance, attribution, and customer growth for this period."
       actions={

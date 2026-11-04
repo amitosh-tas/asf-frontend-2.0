@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
+import Title from "@/components/ui/Title";
 
 function Notfound() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-page-background px-5 py-12">
       <main className="w-full max-w-lg rounded-3xl border border-border bg-card px-6 py-10 shadow-lg text-center sm:px-10">
         <p className="font-heading text-lg font-bold tracking-tight text-text">
-          Elysium
+          <Title />
         </p>
         <p className="mt-8 font-heading text-7xl font-semibold tracking-tight text-border sm:text-8xl">
           404

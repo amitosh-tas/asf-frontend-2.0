@@ -172,7 +172,7 @@ export const FAQ = [
   },
   {
     q: "What happens when a customer switches devices or blocks tracking?",
-    a: "Elysium falls back to matching by email, phone or ad click ID. Sales it still cannot trace are shown as “Direct / unknown” with the reason, and the dashboard tells you what share of revenue has a known source.",
+    a: "Trackvyn falls back to matching by email, phone or ad click ID. Sales it still cannot trace are shown as “Direct / unknown” with the reason, and the dashboard tells you what share of revenue has a known source.",
   },
   {
     q: "Can I change the attribution model later?",

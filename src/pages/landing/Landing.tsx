@@ -6,6 +6,7 @@ import JourneyScroll from "./JourneyScroll";
 import Plasma from "./Plasma";
 import { usePageProgress, useReveal } from "./scrollFx";
 import { FAQ, FEATURES, INTEGRATIONS, STEPS } from "./landingData";
+import Title from "@/components/ui/Title";
 
 const FONT_HREF = "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap";
 
@@ -57,7 +58,7 @@ const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-4 focus-
 function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`font-display text-xl font-bold tracking-tight ${className}`}>
-      Elysium
+      <Title />
     </span>
   );
 }
@@ -73,7 +74,7 @@ export default function Landing() {
 
   useEffect(() => {
     const previous = document.title;
-    document.title = "Elysium: see which ad paid for every sale";
+    document.title = "Trackvyn: see which ad paid for every sale";
     return () => {
       document.title = previous;
     };
@@ -137,7 +138,7 @@ export default function Landing() {
               ))}
             </h1>
             <p style={{ ["--d" as string]: 550 }} className="h-after mt-7 mb-0 max-w-[34rem] text-lg leading-relaxed text-neutral-700">
-              Elysium follows each customer from the first ad they click to the order or booking they make, so you know
+              <Title /> follows each customer from the first ad they click to the order or booking they make, so you know
               where your revenue really comes from: Meta, Google, email or a friend's link.
             </p>
             <div style={{ ["--d" as string]: 700 }} className="h-after mt-9 flex flex-wrap items-center gap-3">
@@ -258,7 +259,7 @@ export default function Landing() {
             <li><Link to="/docs" className={`text-inherit no-underline hover:text-white ${focusRing}`}>Developer docs</Link></li>
             <li><Link to="/signin" className={`text-inherit no-underline hover:text-white ${focusRing}`}>Sign in</Link></li>
           </ul>
-          <p className="m-0 text-white/50">© {new Date().getFullYear()} Elysium</p>
+          <p className="m-0 text-white/50">© {new Date().getFullYear()} <Title /></p>
         </div>
       </footer>
     </div>

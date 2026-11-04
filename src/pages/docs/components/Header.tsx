@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 import { VERSION_LABEL } from "../docs/meta";
 import { SECTIONS } from "../docs/sections";
+import Title from "@/components/ui/Title";
 
 function LogoMark() {
   return (
@@ -48,7 +49,7 @@ export function Header({ menuOpen, onMenuToggle, menuButtonRef, activeSectionId 
           className="flex items-center gap-2 rounded-md text-[15px] font-semibold tracking-tight text-neutral-900"
         >
           <LogoMark />
-          Elysium
+          <Title />
         </a>
 
         <span aria-hidden="true" className="hidden h-5 w-px bg-neutral-200 sm:block" />

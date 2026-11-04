@@ -3,6 +3,7 @@ import GlbScene, { type ScreenPoint } from "./GlbScene";
 import Plasma from "./Plasma";
 import { usePrefersReducedMotion, useScrollProgress } from "./scrollFx";
 import { JOURNEY, ORDER_VALUE, shares } from "./landingData";
+import Title from "@/components/ui/Title";
 
 /** The story told as the visitor scrolls: three visits, one sale, credit for each. */
 const BEATS = [
@@ -10,7 +11,7 @@ const BEATS = [
   { until: 0.3, day: "Thursday", title: "They search on Google", body: "They remember you, search, click your ad and browse." },
   { until: 0.45, day: "Saturday", title: "Your email brings them back", body: "A back-in-stock reminder lands at the right moment." },
   { until: 0.85, day: "Sunday", title: "They buy", body: "Three visits turn into one $240 order." },
-  { until: 1.01, day: "Your dashboard", title: "Every step gets its share", body: "Elysium links all three visits to the sale and credits each one under the model you choose." },
+  { until: 1.01, day: "Your dashboard", title: "Every step gets its share", body: <><Title /> links all three visits to the sale and credits each one under the model you choose.</> },
 ];
 
 const TOUCH_NODES = ["touch_meta", "touch_google", "touch_email"] as const;
