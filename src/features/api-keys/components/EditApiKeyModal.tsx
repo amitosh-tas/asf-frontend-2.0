@@ -159,7 +159,7 @@ export default function EditApiKeyModal({
             {origins.map((origin) => (
               <li
                 key={origin}
-                className="flex items-center gap-2 rounded-full border border-border bg-surface-muted px-3 py-1 text-xs"
+                className="flex items-center gap-2 rounded-full border border-border bg-surface-muted px-3 py-1 text-xs text-text"
               >
                 <span className="max-w-72 truncate">{origin}</span>
                 <button
