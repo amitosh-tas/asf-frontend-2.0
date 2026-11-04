@@ -80,7 +80,7 @@ function Sidebar({
         >
           <div className="shrink-0 border-b border-border px-5 pb-5 pt-6">
             <div className="flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-[14px] bg-primary text-on-primary shadow-[0_5px_14px_rgba(142,189,60,0.24)]"><ChartNoAxesCombined size={20} strokeWidth={2.2} /></span>
+              {/* <span className="flex size-10 items-center justify-center rounded-[14px] bg-primary text-on-primary shadow-[0_5px_14px_rgba(142,189,60,0.24)]"><ChartNoAxesCombined size={20} strokeWidth={2.2} /></span> */}
               <span className="min-w-0">
                 <span className="block font-heading text-[17px] font-extrabold leading-tight tracking-[-0.055em] text-sidebar-active"><Title /></span>
                 <span className="mt-1 block text-[8px] font-bold uppercase tracking-[0.18em] text-text-muted">Revenue intelligence</span>
