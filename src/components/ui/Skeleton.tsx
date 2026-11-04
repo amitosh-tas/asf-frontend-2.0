@@ -10,7 +10,7 @@ export function Skeleton({
   return (
     <div
       aria-hidden="true"
-      className={`animate-pulse rounded-md bg-border/60 motion-reduce:animate-none ${className}`}
+      className={`animate-pulse rounded-md bg-skeleton motion-reduce:animate-none ${className}`}
       {...props}
     />
   );

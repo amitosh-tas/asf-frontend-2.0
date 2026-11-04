@@ -8,6 +8,7 @@
   --color-sidebar-active: #20231f;
   --color-card: #ffffff;
   --color-border: #e8eae4;
+  --color-skeleton: #e2e5dd;
   --color-surface-muted: #f3f6f1;
   --color-primary: #c5f36b;
   --color-primary-hover: #b6e45a;
@@ -42,6 +43,7 @@ html[data-theme="dark"] {
   --color-sidebar-active: #f3f4f6;
   --color-card: #191c22;
   --color-border: #2b2f38;
+  --color-skeleton: #343943;
   --color-surface-muted: #20242b;
   --color-primary: #c5f36b;
   --color-primary-hover: #b6e45a;
