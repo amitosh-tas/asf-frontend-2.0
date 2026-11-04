@@ -93,7 +93,7 @@ export default function DataTable<T>({
 
       {/* Optional filters / toolbar */}
       {filters && (
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 text-text sm:px-6">
           {filters}
         </div>
       )}
