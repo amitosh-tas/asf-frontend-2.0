@@ -52,9 +52,9 @@ export default function Webhooks() {
             Add endpoint
           </Button>
         </div>
-        <div className="flex flex-wrap gap-3 text-xs">
+        <div className="flex flex-wrap gap-3 text-xs text-text">
           {EVENTS.map((ev) => (
-            <label key={ev} className="flex items-center gap-1">
+            <label key={ev} className="flex items-center gap-1 text-text">
               <input type="checkbox" checked={events.includes(ev)} onChange={(e) => setEvents(e.target.checked ? [...events, ev] : events.filter((x) => x !== ev))} /> {ev}
             </label>
           ))}
