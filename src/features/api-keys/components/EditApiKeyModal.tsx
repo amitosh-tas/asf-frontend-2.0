@@ -95,7 +95,7 @@ export default function EditApiKeyModal({
       >
         <h3
           id="edit-api-key-title"
-          className="font-heading text-xl font-semibold"
+          className="font-heading text-xl font-semibold text-text"
         >
           Edit API key
         </h3>
@@ -149,7 +149,7 @@ export default function EditApiKeyModal({
             type="button"
             onClick={addOrigin}
             disabled={!originInput.trim()}
-            className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm font-medium transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm font-medium text-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50"
           >
             Add origin
           </button>
@@ -190,7 +190,7 @@ export default function EditApiKeyModal({
             type="button"
             onClick={onCancel}
             disabled={saving}
-            className="cursor-pointer rounded-lg border border-border px-4 py-2.5 text-sm font-medium transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-text transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
