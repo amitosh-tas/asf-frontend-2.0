@@ -67,7 +67,7 @@ export default function FxRates() {
               if (file) setText(await file.text());
             }}
           />
-          <textarea className="min-h-32 rounded-md border border-border bg-card p-3 font-mono text-xs" value={text} onChange={(e) => setText(e.target.value)} placeholder="date,base,quote,rate" />
+          <textarea className="min-h-32 rounded-md border border-border bg-card p-3 font-mono text-xs text-text" value={text} onChange={(e) => setText(e.target.value)} placeholder="date,base,quote,rate" />
           {parsed.errors.length > 0 && <p className="text-xs text-danger">{parsed.errors.length} line(s) not valid: {parsed.errors.slice(0, 3).join(" · ")}</p>}
           <div>
             <Button

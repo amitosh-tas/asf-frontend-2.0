@@ -40,7 +40,7 @@ export default function ApiKeyTable({
       key: "keyPrefix",
       header: "API key",
       render: (key) => (
-        <code className="whitespace-nowrap rounded bg-surface-muted px-2 py-1 text-xs">
+        <code className="whitespace-nowrap rounded bg-surface-muted px-2 py-1 text-xs text-text">
           {key.keyPrefix}
           {"*".repeat(12)}
         </code>

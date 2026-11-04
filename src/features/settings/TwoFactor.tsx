@@ -41,7 +41,7 @@ export default function TwoFactor({ enabled, onChanged, required = false }: { en
       {setup && (
         <div className="flex flex-col gap-3 text-sm">
           <p>1. In your authenticator app, add an account with this key (or open the link on your phone):</p>
-          <code className="w-max rounded bg-surface-muted px-2 py-1 font-mono tracking-wider">{setup.secret.match(/.{1,4}/g)?.join(" ")}</code>
+          <code className="w-max rounded bg-surface-muted px-2 py-1 font-mono tracking-wider text-text">{setup.secret.match(/.{1,4}/g)?.join(" ")}</code>
           <a href={setup.otpauthUrl} className="text-xs underline">Open in authenticator app</a>
           <p>2. Enter the 6-digit code it shows:</p>
           <div className="flex gap-2">

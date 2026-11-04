@@ -86,8 +86,8 @@ function Transactions() {
               <option value="new">New customers</option>
               <option value="returning">Returning customers</option>
             </select>
-            <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={extra.refunded === "true"} onChange={(e) => setFilter("refunded", e.target.checked ? "true" : undefined)} /> Refunded</label>
-            <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={extra.unattributed === "true"} onChange={(e) => setFilter("unattributed", e.target.checked ? "true" : undefined)} /> Unattributed</label>
+            <label className="flex items-center gap-1 text-xs text-text"><input type="checkbox" checked={extra.refunded === "true"} onChange={(e) => setFilter("refunded", e.target.checked ? "true" : undefined)} /> Refunded</label>
+            <label className="flex items-center gap-1 text-xs text-text"><input type="checkbox" checked={extra.unattributed === "true"} onChange={(e) => setFilter("unattributed", e.target.checked ? "true" : undefined)} /> Unattributed</label>
             {extra.campaign && <Badge>Campaign: {extra.campaign} <button type="button" className="ml-1" onClick={() => setFilter("campaign")}>×</button></Badge>}
           </div>
         }

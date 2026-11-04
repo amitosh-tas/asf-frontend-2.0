@@ -101,6 +101,11 @@ html[data-theme="dark"] {
     font: inherit;
   }
 
+  input,
+  textarea {
+    color: var(--color-text);
+  }
+
   select,
   option,
   optgroup {

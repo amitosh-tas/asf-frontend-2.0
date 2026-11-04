@@ -37,10 +37,10 @@ function Upcoming() {
         subtitle="Scheduled and confirmed bookings from now, in local time"
         actions={
           <div className="flex gap-2">
-            <select aria-label="Days ahead" value={days} onChange={(e) => setDays(Number(e.target.value))} className="rounded-full border border-border px-3 py-1.5 text-sm">
+            <select aria-label="Days ahead" value={days} onChange={(e) => setDays(Number(e.target.value))} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-text">
               {[7, 14, 30, 60, 90].map((d) => <option key={d} value={d}>Next {d} days</option>)}
             </select>
-            <select aria-label="Group by" value={group} onChange={(e) => setGroup(e.target.value as typeof group)} className="rounded-full border border-border px-3 py-1.5 text-sm">
+            <select aria-label="Group by" value={group} onChange={(e) => setGroup(e.target.value as typeof group)} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-text">
               <option value="byDay">By day</option>
               <option value="byWeek">By week</option>
               <option value="byLocation">By location</option>

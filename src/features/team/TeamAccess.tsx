@@ -35,7 +35,7 @@ export function LocationPicker({ options, value, onChange }: { options: Location
       <p className="text-xs text-text-muted">Leave all unticked to allow every location.</p>
       <div className="grid max-h-48 grid-cols-1 gap-1 overflow-y-auto sm:grid-cols-2">
         {options.map((l) => (
-          <label key={l.id} className="flex items-center gap-2 text-sm">
+          <label key={l.id} className="flex items-center gap-2 text-sm text-text">
             <input
               type="checkbox"
               checked={value.includes(l.id)}

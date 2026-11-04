@@ -79,7 +79,7 @@ export default function WorkspaceResources({
       key: "keyPrefix",
       header: "API key",
       render: (apiKey) => (
-        <code className="whitespace-nowrap rounded bg-surface-muted px-2 py-1 text-xs">
+        <code className="whitespace-nowrap rounded bg-surface-muted px-2 py-1 text-xs text-text">
           {apiKey.keyPrefix}
           {"*".repeat(12)}
         </code>

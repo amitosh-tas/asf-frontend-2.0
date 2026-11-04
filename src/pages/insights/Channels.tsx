@@ -76,7 +76,7 @@ export default function Channels() {
         <Section
           title="Model comparison"
           subtitle="The same channels under every attribution model, side by side"
-          actions={<label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={compare} onChange={(e) => setCompare(e.target.checked)} /> Show</label>}
+          actions={<label className="flex items-center gap-2 text-sm text-text"><input type="checkbox" checked={compare} onChange={(e) => setCompare(e.target.checked)} /> Show</label>}
         >
           {compare && channels.data?.comparison ? (
             <div className="overflow-x-auto">
