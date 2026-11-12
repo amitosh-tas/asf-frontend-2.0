@@ -5,8 +5,8 @@
     "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas,
     "Liberation Mono", monospace;
-  --color-accent: #4f46e5;
-  --color-accent-soft: #eef2ff;
+  --color-accent: #688d3d;
+  --color-accent-soft: #eff5e6;
 }
 
 html {
@@ -22,7 +22,7 @@ html {
 body {
   background-color: #ffffff;
   color: var(--color-neutral-900);
-  font-family: var(--font-sans);
+  font-family: "Manrope", var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 

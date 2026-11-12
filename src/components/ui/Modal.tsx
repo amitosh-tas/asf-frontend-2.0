@@ -40,7 +40,7 @@ export default function Modal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`max-h-[calc(100dvh-2rem)] w-full overflow-y-auto rounded-lg border border-border bg-card p-5 shadow-2xl sm:p-6 ${sizeClasses[size]}`}
+        className={`max-h-[calc(100dvh-2rem)] w-full overflow-y-auto rounded-[24px] border border-border bg-card p-5 shadow-[0_30px_90px_-35px_rgba(0,0,0,0.45)] sm:p-7 ${sizeClasses[size]}`}
       >
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>

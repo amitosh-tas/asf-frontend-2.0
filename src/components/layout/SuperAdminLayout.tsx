@@ -22,7 +22,7 @@ function SuperAdminLayout() {
     : superAdminNavigation;
 
   return (
-    <div className="flex min-h-dvh bg-page-background font-body cursor-default">
+    <div className="app-shell flex min-h-dvh font-body cursor-default">
       <Sidebar
         items={navigationItems}
       />

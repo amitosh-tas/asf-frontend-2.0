@@ -25,7 +25,7 @@ import {
 
 type Theme = "light" | "dark";
 
-const navigationGroups = ["Overview", "Attribution", "Customers & Sales", "Performance", "Settings", "Workspace", "Platform"] as const;
+const navigationGroups = ["Overview", "Attribution", "Customers & Sales", "Performance", "Workspace", "Platform", "Settings"] as const;
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -80,10 +80,10 @@ function Sidebar({
         >
           <div className="shrink-0 border-b border-border px-5 pb-5 pt-6">
             <div className="flex items-center gap-3">
-              {/* <span className="flex size-10 items-center justify-center rounded-[14px] bg-primary text-on-primary shadow-[0_5px_14px_rgba(142,189,60,0.24)]"><ChartNoAxesCombined size={20} strokeWidth={2.2} /></span> */}
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-[14px] bg-primary text-on-primary shadow-[0_6px_16px_rgba(117,151,59,0.2)]"><ChartNoAxesCombined size={20} strokeWidth={2.2} aria-hidden="true" /></span>
               <span className="min-w-0">
                 <span className="block font-heading text-[17px] font-extrabold leading-tight tracking-[-0.055em] text-sidebar-active"><Title /></span>
-                <span className="mt-1 block text-[8px] font-bold uppercase tracking-[0.18em] text-text-muted">Revenue intelligence</span>
+                <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.16em] text-text-muted">Revenue intelligence</span>
               </span>
             </div>
           </div>

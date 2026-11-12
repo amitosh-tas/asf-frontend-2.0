@@ -19,9 +19,9 @@ export default function Input({
         {...props}
         type={type}
         className={[
-          "h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-text shadow-sm",
-          "placeholder:text-text-muted focus:border-primary focus:outline-none",
-          "focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60",
+          "h-11 w-full rounded-xl border border-border bg-card px-3.5 text-sm text-text shadow-[inset_0_1px_1px_rgba(20,35,22,0.025)]",
+          "placeholder:text-text-muted/80 focus:border-primary focus:outline-none",
+          "focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-60",
           className,
         ].join(" ")}
       />
@@ -34,9 +34,9 @@ export default function Input({
         {...props}
         type={isPasswordVisible ? "text" : "password"}
         className={[
-          "h-10 w-full rounded-md border border-border bg-card px-3 pr-10 text-sm text-text shadow-sm",
-          "placeholder:text-text-muted focus:border-primary focus:outline-none",
-          "focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60",
+          "h-11 w-full rounded-xl border border-border bg-card px-3.5 pr-11 text-sm text-text shadow-[inset_0_1px_1px_rgba(20,35,22,0.025)]",
+          "placeholder:text-text-muted/80 focus:border-primary focus:outline-none",
+          "focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-60",
           className,
         ].join(" ")}
       />
@@ -45,7 +45,7 @@ export default function Input({
         aria-label={isPasswordVisible ? "Hide password" : "Show password"}
         aria-pressed={isPasswordVisible}
         onClick={() => setIsPasswordVisible((visible) => !visible)}
-        className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-text-muted transition-colors hover:text-text focus-visible:text-text disabled:cursor-not-allowed"
+        className="absolute inset-y-1 right-1 flex w-9 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-hover hover:text-text focus-visible:text-text disabled:cursor-not-allowed"
         disabled={props.disabled}
       >
         <i

@@ -177,11 +177,11 @@ function App() {
           duration: 3500,
           style: {
             border: "1px solid var(--color-border)",
-            borderRadius: "6px",
+            borderRadius: "12px",
             background: "var(--color-card)",
             color: "var(--color-text)",
             fontSize: "13px",
-            boxShadow: "0 8px 30px rgba(0, 0, 0, 0.08)",
+            boxShadow: "0 12px 32px rgba(22, 35, 24, 0.14)",
           },
         }}
       />

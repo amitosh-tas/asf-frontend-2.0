@@ -53,8 +53,8 @@ function CheckoutReturn() {
   }, [canceled, navigate]);
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-page-background px-4 py-8">
-      <main className="w-full max-w-lg rounded-3xl border border-border bg-card p-8 shadow-lg">
+    <div className="auth-page flex min-h-dvh items-center justify-center px-4 py-8">
+      <main className="auth-card w-full max-w-lg rounded-[26px] border border-border/90 bg-card p-7 sm:p-8">
         <p className="font-heading text-2xl font-bold"><Title /><span className="text-text-muted">.</span></p>
         <h1 className="mt-10 font-heading text-2xl font-semibold">
           {canceled || status === "canceled" ? "Checkout canceled" : status === "failed" ? "Payment could not be verified" : "Provisioning your workspace"}

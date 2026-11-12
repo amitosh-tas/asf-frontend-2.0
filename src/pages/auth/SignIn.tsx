@@ -64,8 +64,8 @@ function SignIn() {
   }
 
   return (
-    <div className=" cursor-default flex min-h-dvh w-full items-center justify-center bg-page-background px-4 py-10 text-text sm:px-6">
-      <main className="w-full max-w-md rounded-3xl border border-border bg-card px-6 py-9 shadow-lg sm:px-10 sm:py-10">
+    <div className=" cursor-default auth-page flex min-h-dvh w-full items-center justify-center px-4 py-10 text-text sm:px-6">
+      <main className="auth-card w-full max-w-md rounded-[26px] border border-border/90 bg-card px-6 py-9 sm:px-10 sm:py-10">
         <div className="w-full">
           {/* Brand */}
           <div className="mb-12">
@@ -77,7 +77,7 @@ function SignIn() {
 
           {/* Heading */}
           <div className="mb-10">
-            <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h2 className="font-heading text-2xl font-semibold tracking-[-0.035em] sm:text-[28px]">
               Welcome back
             </h2>
 

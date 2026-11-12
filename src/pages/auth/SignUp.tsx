@@ -107,8 +107,8 @@ function SignUp() {
   }
 
   return (
-    <div className="cursor-default min-h-dvh w-full bg-page-background px-4 py-8 text-text sm:px-6 sm:py-12">
-      <main className="mx-auto w-full max-w-3xl rounded-3xl border border-border bg-card px-5 py-8 shadow-lg sm:px-10 sm:py-10">
+    <div className="auth-page cursor-default min-h-dvh w-full px-4 py-8 text-text sm:px-6 sm:py-12">
+      <main className="auth-card mx-auto w-full max-w-3xl rounded-[26px] border border-border/90 bg-card px-5 py-8 sm:px-10 sm:py-10">
           <div className="w-full">
             {/* Brand */}
             <div className="mb-10">

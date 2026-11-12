@@ -31,8 +31,8 @@ function AccountInactive() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-page-background px-5 py-12">
-      <main className="w-full max-w-lg rounded-3xl border border-border bg-card px-6 py-10 text-center shadow-lg sm:px-10">
+    <div className="auth-page flex min-h-dvh items-center justify-center px-5 py-12">
+      <main className="auth-card w-full max-w-lg rounded-[26px] border border-border/90 bg-card px-6 py-10 text-center sm:px-10">
         <p className="font-heading text-lg font-bold tracking-tight text-text">
           <Title/>
         </p>

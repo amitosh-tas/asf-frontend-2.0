@@ -67,7 +67,7 @@ export default function DataTable<T>({
   return (
     <section
       aria-busy={loading}
-      className="w-full min-w-0 overflow-hidden rounded-[22px] border border-border bg-card shadow-[0_5px_22px_rgba(32,43,37,0.035)]"
+      className="w-full min-w-0 overflow-hidden rounded-[22px] border border-border/90 bg-card shadow-[0_12px_34px_-26px_rgba(26,47,31,0.4)]"
     >
       {loading && (
         <span role="status" className="sr-only">
@@ -76,15 +76,15 @@ export default function DataTable<T>({
       )}
       {/* Table header */}
       {(tableHead || tableSubHead) && (
-        <div className="flex flex-wrap items-end justify-between gap-2 border-b border-border px-5 py-4 sm:px-6">
+        <div className="flex flex-col gap-1.5 border-b border-border px-5 py-4 sm:flex-row sm:items-end sm:justify-between sm:gap-3 sm:px-6 sm:py-5">
           {tableHead && (
-            <h2 className="font-heading text-base font-semibold tracking-tight text-text">
+            <h2 className="font-heading text-[17px] font-semibold tracking-[-0.02em] text-text">
               {tableHead}
             </h2>
           )}
 
           {tableSubHead && (
-            <p className="text-xs text-text-muted">
+            <p className="text-xs leading-5 text-text-muted">
               {tableSubHead}
             </p>
           )}
@@ -102,7 +102,7 @@ export default function DataTable<T>({
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-140 border-collapse text-sm">
           <thead>
-            <tr className="border-y border-border bg-surface-muted/70">
+            <tr className="border-y border-border bg-surface-muted/80">
               {columns.map((column) => (
                 <th
                   key={column.key}
@@ -188,7 +188,7 @@ export default function DataTable<T>({
       </div>
       {pagination ? (
         <div className="flex flex-col gap-3 border-t border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p className="text-xs text-text-muted">
+          <p className="text-xs leading-5 text-text-muted">
             {pagination.total === 0
               ? "No results"
               : `Showing ${(pagination.page - 1) * pagination.limit + 1
@@ -229,7 +229,7 @@ export default function DataTable<T>({
         </div>
       ) : useInternalPagination && data.length > pageSize ? (
         <div className="flex items-center justify-between border-t border-border px-5 py-4 sm:px-6">
-          <p className="text-xs text-text-muted">
+          <p className="text-xs leading-5 text-text-muted">
             Showing {Math.min((internalPage - 1) * pageSize + 1, data.length)}
             –{Math.min(internalPage * pageSize, data.length)} of {data.length} entries
           </p>
