@@ -69,9 +69,9 @@ function Overview() {
       <Warnings warnings={d?.warnings} />
 
       <section aria-label="Revenue and core metrics" className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-12">
-        <button
-          type="button"
-          onClick={() => drill({})}
+        <div
+          // type="button"
+          // onClick={() => console.log("please dont do it")}
           className="group relative flex min-h-[218px] min-w-0 flex-col justify-between overflow-hidden rounded-[22px] bg-[#202b25] p-6 text-left text-white shadow-[0_14px_35px_rgba(30,48,36,0.13)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_rgba(30,48,36,0.18)] sm:col-span-2 xl:col-span-5 xl:p-7"
         >
           <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 size-52 rounded-full border border-white/10" />
@@ -97,7 +97,7 @@ function Overview() {
             <div><p className="text-[10px] uppercase tracking-[0.12em] text-white/50">Refunds</p><p className="mt-1 text-sm font-semibold tabular-nums">{report.loading ? "—" : money(s?.revenue.refundsMinorUnits)}</p></div>
           </div>
           <OpenIcon aria-hidden="true" size={16} className="absolute bottom-6 right-6 text-white/35 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white/75" />
-        </button>
+        </div>
 
         <div className="min-w-0 sm:col-span-2 xl:col-span-7">
           <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-3">
