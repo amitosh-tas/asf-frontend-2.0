@@ -674,7 +674,7 @@ function WorkspaceById() {
       ) : workspaceData ? (
         <div className="space-y-6">
           {/* Workspace overview */}
-          <section className="rounded-2xl border border-border bg-card p-6">
+          <section className="rounded-2xl border border-border bg-card p-6 text-text">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-semibold text-text">
@@ -709,7 +709,7 @@ function WorkspaceById() {
           </section>
 
           {billing && (
-            <section className="rounded-2xl border border-border bg-card p-6">
+            <section className="rounded-2xl border border-border bg-card p-6 text-text">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-sm text-text-muted">Billing</p>
