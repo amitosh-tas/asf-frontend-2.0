@@ -1,6 +1,6 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import type { SidebarItem } from "@/config/navigation";
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { logout } from "@/store/slices/authSlice";
 import { logoutUser } from "@/services/authService";
@@ -36,11 +36,20 @@ function Sidebar({
 }: SidebarProps) {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const closeMenu = useCallback(() => setIsOpen(false), []);
+  const toggleMenu = useCallback(() => setIsOpen((prev) => !prev), []);
+  const groupedItems = useMemo(
+    () => navigationGroups.map((group) => ({
+      group,
+      items: items.filter((item) => navigationGroup(item.label) === group),
+    })).filter(({ items: groupItems }) => groupItems.length > 0),
+    [items],
+  );
 
   // Close the mobile drawer whenever the route changes.
   useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
+    closeMenu();
+  }, [closeMenu, location.pathname]);
 
   return (
     <>
@@ -48,7 +57,7 @@ function Sidebar({
         type="button"
         aria-label={isOpen ? "Close navigation" : "Open navigation"}
         aria-expanded={isOpen}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={toggleMenu}
         className={`
           fixed left-4 top-4 z-50 flex h-10 items-center justify-center
           rounded-lg border border-border bg-card px-3 text-xs font-medium text-text
@@ -64,7 +73,7 @@ function Sidebar({
         <button
           type="button"
           aria-label="Close navigation backdrop"
-          onClick={() => setIsOpen(false)}
+          onClick={closeMenu}
           className="fixed inset-0 z-30 bg-black/20 md:hidden"
         />
       )}
@@ -93,9 +102,7 @@ function Sidebar({
             className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-5"
           >
             <div className="flex flex-col gap-6">
-              {navigationGroups.map((group) => {
-                const groupItems = items.filter((item) => navigationGroup(item.label) === group);
-                if (!groupItems.length) return null;
+              {groupedItems.map(({ group, items: groupItems }) => {
                 return (
                   <div key={group}>
                     <h2 className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">{group}</h2>
@@ -440,4 +447,4 @@ function NavigationIcon({ label }: { label: string }) {
   }
 }
 
-export default Sidebar;
+export default memo(Sidebar);

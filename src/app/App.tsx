@@ -1,56 +1,55 @@
+import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Notfound from "@/components/layout/Notfound";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import SupportViewGate from "@/features/support/components/SupportViewGate";
 
-import Testing from "@/test/Testing";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ScrollToTop from "@/components/ScrollToTop";
-
-import Overview from "@/pages/company/Overview";
-import Analytics from "@/pages/company/Analytics";
-import Transactions from "@/pages/company/Transactions";
-import Customers from "@/pages/company/Customers";
-import Team from "@/pages/company/Team";
-import Campaign from "@/pages/company/Campaign";
-import Upcoming from "@/pages/company/Upcoming";
-import Refunds from "@/pages/company/Refunds";
-import Channels from "@/pages/insights/Channels";
-import Journeys from "@/pages/insights/Journeys";
-import Locations from "@/pages/insights/Locations";
-import AdSpend from "@/pages/insights/AdSpend";
-import Integrations from "@/pages/insights/Integrations";
-import ForgotPassword from "@/pages/auth/ForgotPassword";
-import ResetPassword from "@/pages/auth/ResetPassword";
-import VerifyEmail from "@/pages/auth/VerifyEmail";
-import AcceptInvite from "@/pages/auth/AcceptInvite";
-import SetupTwoFactor from "@/pages/auth/SetupTwoFactor";
-import PlatformHealth from "@/pages/superAdmin/PlatformHealth";
-import PlatformAuditLog from "@/pages/superAdmin/PlatformAuditLog";
-import FxRates from "@/pages/superAdmin/FxRates";
-
-import SignIn from "@/pages/auth/SignIn";
-import Dashboard from "@/pages/superAdmin/Dashboard";
-import Unauthorized from "@/pages/Unauthorized";
 import SuperAdminLayout from "@/components/layout/SuperAdminLayout";
-import SignUp from "@/pages/auth/SignUp";
 import GuestRoute from "@/components/auth/GuestRoute";
-import AccountInactive from "@/pages/AccountInactive";
 
 import { useAppDispatch } from "@/app/hooks";
-import { useEffect } from "react";
-import Members from "@/pages/superAdmin/Members";
-import Settings from "@/pages/superAdmin/Settings";
-import A_Settings from "@/pages/company/Settings";
-import Billing from "@/pages/company/Billing";
-import CheckoutReturn from "@/pages/auth/CheckoutReturn";
 import { restoreSession } from "@/services/restoreSession";
 import { Toaster } from "react-hot-toast";
-import Workspaces from "@/pages/superAdmin/Workspaces";
-import WorkspaceById from "@/pages/superAdmin/WorkspaceById";
-import Docs from "@/pages/docs/Docs";
-import Landing from "@/pages/landing/Landing";
+
+const Testing = lazy(() => import("@/test/Testing"));
+const Overview = lazy(() => import("@/pages/company/Overview"));
+const Analytics = lazy(() => import("@/pages/company/Analytics"));
+const Transactions = lazy(() => import("@/pages/company/Transactions"));
+const Customers = lazy(() => import("@/pages/company/Customers"));
+const Team = lazy(() => import("@/pages/company/Team"));
+const Campaign = lazy(() => import("@/pages/company/Campaign"));
+const Upcoming = lazy(() => import("@/pages/company/Upcoming"));
+const Refunds = lazy(() => import("@/pages/company/Refunds"));
+const Channels = lazy(() => import("@/pages/insights/Channels"));
+const Journeys = lazy(() => import("@/pages/insights/Journeys"));
+const Locations = lazy(() => import("@/pages/insights/Locations"));
+const AdSpend = lazy(() => import("@/pages/insights/AdSpend"));
+const Integrations = lazy(() => import("@/pages/insights/Integrations"));
+const ForgotPassword = lazy(() => import("@/pages/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("@/pages/auth/ResetPassword"));
+const VerifyEmail = lazy(() => import("@/pages/auth/VerifyEmail"));
+const AcceptInvite = lazy(() => import("@/pages/auth/AcceptInvite"));
+const SetupTwoFactor = lazy(() => import("@/pages/auth/SetupTwoFactor"));
+const PlatformHealth = lazy(() => import("@/pages/superAdmin/PlatformHealth"));
+const PlatformAuditLog = lazy(() => import("@/pages/superAdmin/PlatformAuditLog"));
+const FxRates = lazy(() => import("@/pages/superAdmin/FxRates"));
+const SignIn = lazy(() => import("@/pages/auth/SignIn"));
+const Dashboard = lazy(() => import("@/pages/superAdmin/Dashboard"));
+const Unauthorized = lazy(() => import("@/pages/Unauthorized"));
+const SignUp = lazy(() => import("@/pages/auth/SignUp"));
+const AccountInactive = lazy(() => import("@/pages/AccountInactive"));
+const Members = lazy(() => import("@/pages/superAdmin/Members"));
+const Settings = lazy(() => import("@/pages/superAdmin/Settings"));
+const A_Settings = lazy(() => import("@/pages/company/Settings"));
+const Billing = lazy(() => import("@/pages/company/Billing"));
+const CheckoutReturn = lazy(() => import("@/pages/auth/CheckoutReturn"));
+const Workspaces = lazy(() => import("@/pages/superAdmin/Workspaces"));
+const WorkspaceById = lazy(() => import("@/pages/superAdmin/WorkspaceById"));
+const Docs = lazy(() => import("@/pages/docs/Docs"));
+const Landing = lazy(() => import("@/pages/landing/Landing"));
 
 function App() {
 
@@ -67,6 +66,7 @@ function App() {
     <>
       <ScrollToTop />
 
+      <Suspense fallback={<div className="grid min-h-screen place-items-center text-sm text-text-muted">Loading…</div>}>
       <Routes>
         {/* Company dashboard: company_admin and company_viewer */}
         <Route
@@ -169,6 +169,7 @@ function App() {
         {/* Fallback */}
         <Route path="*" element={<Notfound />} />
       </Routes>
+      </Suspense>
 
       <Toaster
         position="top-right"
