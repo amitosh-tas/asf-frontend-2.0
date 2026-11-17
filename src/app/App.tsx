@@ -66,7 +66,7 @@ function App() {
     <>
       <ScrollToTop />
 
-      <Suspense fallback={<div className="grid min-h-screen place-items-center text-sm text-text-muted">Loading…</div>}>
+      <Suspense fallback={<div className="grid min-h-screen place-items-center" role="status" aria-label="Loading page"><span className="loader" /></div>}>
       <Routes>
         {/* Company dashboard: company_admin and company_viewer */}
         <Route
