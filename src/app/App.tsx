@@ -7,6 +7,7 @@ import SupportViewGate from "@/features/support/components/SupportViewGate";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ScrollToTop from "@/components/ScrollToTop";
+import Loader from "@/components/ui/Loader";
 import SuperAdminLayout from "@/components/layout/SuperAdminLayout";
 import GuestRoute from "@/components/auth/GuestRoute";
 
@@ -66,7 +67,7 @@ function App() {
     <>
       <ScrollToTop />
 
-      <Suspense fallback={<div className="grid min-h-screen place-items-center" role="status" aria-label="Loading page"><span className="loader" /></div>}>
+      <Suspense fallback={<Loader label="Loading page" />}>
       <Routes>
         {/* Company dashboard: company_admin and company_viewer */}
         <Route

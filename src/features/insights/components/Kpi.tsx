@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
+import Surface from "@/components/ui/Surface";
 
 interface KpiProps {
   label: string;
@@ -43,7 +44,7 @@ export function KpiGrid({ children }: { children: ReactNode }) {
 
 export function Section({ title, subtitle, actions, children }: { title: string; subtitle?: string; actions?: ReactNode; children: ReactNode }) {
   return (
-    <section className="mb-1 h-full w-full min-w-0 rounded-[22px] border border-border bg-card p-5 shadow-[0_5px_22px_rgba(32,43,37,0.035)] sm:p-6">
+    <Surface className="mb-1 h-full w-full min-w-0 rounded-[22px] p-5 shadow-[0_5px_22px_rgba(32,43,37,0.035)] sm:p-6">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-heading text-[15px] font-semibold tracking-tight text-text">{title}</h2>
@@ -52,7 +53,7 @@ export function Section({ title, subtitle, actions, children }: { title: string;
         {actions}
       </div>
       {children}
-    </section>
+    </Surface>
   );
 }
 

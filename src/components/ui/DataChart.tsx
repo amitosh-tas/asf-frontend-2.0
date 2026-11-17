@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from "recharts";
 import { ChartSkeleton } from "@/components/ui/Skeleton";
+import Surface from "@/components/ui/Surface";
 
 interface ChartData {
   label: string;
@@ -54,7 +55,7 @@ function DataChart({
   if (loading) return <ChartSkeleton />;
 
   return (
-    <section className="w-full min-w-0 rounded-lg border border-border bg-card p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] sm:p-6">
+    <Surface className="w-full min-w-0 rounded-lg p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] sm:p-6">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
         <h2 className="font-heading text-base font-semibold tracking-tight text-text">
@@ -165,7 +166,7 @@ function DataChart({
           </ResponsiveContainer>
         </div>
       )}
-    </section>
+    </Surface>
   );
 }
 
